@@ -3,8 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+<<<<<<< HEAD
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+=======
+>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -43,6 +46,7 @@ class User
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTime $lastActivity = null;
 
+<<<<<<< HEAD
     // ✅ AJOUTER cette relation OneToMany :
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commandes;
@@ -53,6 +57,8 @@ class User
         $this->commandes = new ArrayCollection();
     }
 
+=======
+>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
     public function getId(): ?int
     {
         return $this->id;
@@ -66,6 +72,10 @@ class User
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -77,6 +87,10 @@ class User
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -88,6 +102,10 @@ class User
     public function setEmail(string $email): static
     {
         $this->email = $email;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -99,6 +117,10 @@ class User
     public function setPassword(string $password): static
     {
         $this->password = $password;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -123,6 +145,10 @@ class User
     public function setAdresse(string $adresse): static
     {
         $this->adresse = $adresse;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -134,6 +160,10 @@ class User
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -145,10 +175,18 @@ class User
     public function setPhoto(string $photo): static
     {
         $this->photo = $photo;
+<<<<<<< HEAD
         return $this;
     }
 
     public function getLastActivity(): ?\DateTimeInterface
+=======
+
+        return $this;
+    }
+
+        public function getLastActivity(): ?\DateTimeInterface
+>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
     {
         return $this->lastActivity;
     }
@@ -158,6 +196,7 @@ class User
         $this->lastActivity = $lastActivity;
         return $this;
     }
+<<<<<<< HEAD
 
     // ✅ AJOUTER ces méthodes pour gérer les commandes :
     /**
@@ -188,3 +227,6 @@ class User
         return $this;
     }
 }
+=======
+}
+>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
