@@ -3,15 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-<<<<<<< HEAD
+
+//<<<<<<< HEAD
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-=======
->>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
+//=======
+//>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`user`')]
+#[ORM\Table(name: '`user`')] //pour eviter le conflit avec le mot réservé "User"
 class User
 {
     #[ORM\Id]
@@ -46,19 +47,25 @@ class User
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTime $lastActivity = null;
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
     // ✅ AJOUTER cette relation OneToMany :
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commandes;
+
+    //relation avec sarra (participation)
+    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $participations;
+
 
     // ✅ AJOUTER dans le constructeur :
     public function __construct()
     {
         $this->commandes = new ArrayCollection();
+        $this->participations = new ArrayCollection();
     }
 
-=======
->>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
+//=======
+//>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
     public function getId(): ?int
     {
         return $this->id;
@@ -72,10 +79,10 @@ class User
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 
->>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
+//>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -87,10 +94,10 @@ class User
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 
->>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
+//>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -102,10 +109,10 @@ class User
     public function setEmail(string $email): static
     {
         $this->email = $email;
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 
->>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
+//>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -117,10 +124,10 @@ class User
     public function setPassword(string $password): static
     {
         $this->password = $password;
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 
->>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
+//>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -145,10 +152,10 @@ class User
     public function setAdresse(string $adresse): static
     {
         $this->adresse = $adresse;
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 
->>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
+//>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -160,10 +167,10 @@ class User
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
 
->>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
+//>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
         return $this;
     }
 
@@ -175,28 +182,28 @@ class User
     public function setPhoto(string $photo): static
     {
         $this->photo = $photo;
-<<<<<<< HEAD
+//<<<<<<< HEAD
         return $this;
     }
 
     public function getLastActivity(): ?\DateTimeInterface
-=======
-
+//=======
+    {
         return $this;
     }
-
-        public function getLastActivity(): ?\DateTimeInterface
->>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
+/*
+    public function getLastActivity(): ?\DateTimeInterface
+//>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
     {
         return $this->lastActivity;
     }
-
+*/
     public function setLastActivity(?\DateTimeInterface $lastActivity): static
     {
         $this->lastActivity = $lastActivity;
-        return $this;
+        return $this->lastActivity;
     }
-<<<<<<< HEAD
+    //<<<<<<< HEAD
 
     // ✅ AJOUTER ces méthodes pour gérer les commandes :
     /**
@@ -226,7 +233,41 @@ class User
         }
         return $this;
     }
+
+     // === Participation ===
+    /**
+     * @return Collection<int, Participation>
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participation $participation): static
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+            $participation->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeParticipation(Participation $participation): static
+    {
+        if ($this->participations->removeElement($participation)) {
+            if ($participation->getUser() === $this) {
+                $participation->setUser(null);
+            }
+        }
+        return $this;
+    }
+
+    
+
+
+
+
 }
-=======
-}
->>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
+//=======
+
+//>>>>>>> 92c2bfb14d358331dd14c36b6881841a677de329
