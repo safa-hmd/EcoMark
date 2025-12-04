@@ -22,7 +22,7 @@ class PointRecyclage
     private ?string $lieu = null;
 
     #[ORM\ManyToOne]
-    private ?Utilisateur $responsable = null;
+    private ?User $responsable = null;
 
     #[ORM\Column(length: 255)]
     private ?string $typeDechet = null;
@@ -66,12 +66,12 @@ class PointRecyclage
         return $this;
     }
 
-    public function getResponsable(): ?Utilisateur
+    public function getResponsable(): ?User
     {
         return $this->responsable;
     }
 
-    public function setResponsable(?Utilisateur $responsable): static
+    public function setResponsable(?User $responsable): static
     {
         $this->responsable = $responsable;
         return $this;
