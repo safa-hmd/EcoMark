@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Admiro admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+    <meta name="keywords" content="admin template, Admiro admin template, best javascript admin, dashboard template, bootstrap admin template, responsive admin template, web app">
+    <meta name="author" content="pixelstrap">
+    <title>Admiro - Premium Admin Template</title>
+    <link rel="icon" href="{{asset('BO/images/favicon.png')}}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{asset('BO/images/favicon.png')}}" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,200;6..12,300;6..12,400;6..12,500;6..12,600;6..12,700;6..12,800;6..12,900;6..12,1000&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{asset('BO/css/vendors/flag-icon.css')}}">
+    <link rel="stylesheet" href="{{asset('BO/css/iconly-icon.css')}}">
+    <link rel="stylesheet" href="{{asset('BO/css/bulk-style.css')}}">
+    <link rel="stylesheet" href="{{asset('BO/css/themify.css')}}">
+    <link rel="stylesheet" href="{{asset('BO/css/fontawesome-min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('BO/css/vendors/weather-icons/weather-icons.min.css')}}">
+    <link id="color" rel="stylesheet" href="{{asset('BO/css/color-1.css')}}" media="screen">
+    <link rel="stylesheet" href="{{asset('BO/css/style.css')}}">
+</head>
+<body>
+<!-- tap on top starts-->
+<div class="tap-top"><i class="iconly-Arrow-Up icli"></i></div>
+<!-- tap on tap ends-->
+<!-- login page start-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-7 login_one_image"><img class="bg-img-cover bg-center" src="{{asset('BO/images/login/2.jpg')}}" alt="looginpage"></div>
+        <div class="col-xl-5 p-0">
+            <div class="login-card login-dark login-bg">
+                <div class="login-main">
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    <form method="POST" action="{{ path('app_login') }}">
+                      
+                        <h2>Se connecter</h2>
+                        <p>Entrez vos identifiants</p>
+                        
+                        <div class="form-group">
+                            <label class="col-form-label">E-mail</label>
+                            <input class="form-control" 
+                                   type="email" 
+                                   placeholder="Email" 
+                                   name="_username" 
+                                   value="{{ last_username }}" 
+                                   required 
+                                   autocomplete="email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="col-form-label">Mot de passe</label>
+                            <input class="form-control" 
+                                   type="password" 
+                                   placeholder="Password" 
+                                   name="_password" 
+                                   required 
+                                   autocomplete="current-password">
+                        </div>
+                        
+                        <!-- Protection CSRF -->
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        
+                        <!-- Mot de passe oublié -->
+                        <div class="d-flex justify-content-end mt-2 mb-3">
+                            <a href="#">Mot de passe oublié?</a>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-block w-100 mt-3" type="submit">
+                            Se connecter
+                        </button>
+                        
+                        <!-- OR separator -->
+                        <div class="text-center my-3">
+                            <span>OU</span>
+                        </div>
+                        
+                        <!-- Auth with Google -->
+                        <a href="#" class="btn border w-100 mb-3" style="display:flex; align-items:center; justify-content:center; gap:10px;">
+                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" />
+                            Continue with Google
+                        </a>
+                        
+                        <p class="mt-4 mb-0 text-center">
+                            Vous n'avez pas de compte?
+                            <a href="{{ path('insc') }}">Register</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{asset('BO/js/vendors/jquery/jquery.min.js')}}"></script>
+<script src="{{asset('BO/js/vendors/bootstrap/dist/js/bootstrap.bundle.min.js')}}" defer=""></script>
+<script src="{{asset('BO/js/vendors/bootstrap/dist/js/popper.min.js')}}" defer=""></script>
+<script src="{{asset('BO/js/vendors/font-awesome/fontawesome-min.js')}}"></script>
+<script src="{{asset('BO/js/password.js')}}"></script>
+<script src="{{asset('BO/js/script.js')}}"></script>
+
+</body>
+</html>

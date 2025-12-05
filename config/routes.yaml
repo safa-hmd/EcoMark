@@ -7,5 +7,24 @@
 # To list all registered routes, run the following command:
 #   bin/console debug:router
 
+# controllers:
+#     resource: routing.controllers
+
 controllers:
-    resource: routing.controllers
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+    
+
+# connect_google:
+#     path: /connect/google
+#     controller: App\Controller\GoogleController::connect
+
+# connect_google_check:
+#     path: /connect/google/check
+#     controller: App\Controller\GoogleController::connectCheck
+
+
+
+

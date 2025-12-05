@@ -1,0 +1,98 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header text-white py-3 bg-primary">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0 fw-bold">Liste des Vendeurs</h3>
+                <span class="badge bg-primary text-white fs-6 px-3 py-2" id="totalCountVendeurs">
+                    Total : {{ totalVendeurs }}
+                </span>
+            </div>
+        </div>
+
+        {# Barre de recherche #}
+        <div class="card-header bg-light py-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-primary border-end-0 text-white">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" id="searchInputVendeurs" class="form-control border-start-0" 
+                               placeholder="Rechercher un vendeur..." value="{{ searchTerm|default('') }}">
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                    <small class="text-muted">
+                        Recherche par nom, prénom, email, téléphone ou adresse
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle text-center">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Email</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Téléphone</th>
+                            <th>Adresse</th>
+                        </tr>
+                    </thead>
+                    {% include 'Admin/GestionUser/_vendeurs_results.html.twig' %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInputVendeurs');
+    const resultsDiv = document.getElementById('resultsVendeurs');
+    const totalCount = document.getElementById('totalCountVendeurs');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value;
+            const adminId = {{ admin.id }};
+            
+            fetch(`/profilAdmin/${adminId}/mes-vendeurs?search=${encodeURIComponent(searchTerm)}`, {
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur réseau');
+                }
+                return response.text();
+            })
+            .then(html => {
+                // Met à jour seulement le tbody
+                resultsDiv.innerHTML = html;
+                
+                // Met à jour le compteur total
+                const rowCount = resultsDiv.querySelectorAll('tr').length;
+                if (resultsDiv.innerHTML.includes('Aucun vendeur trouvé')) {
+                    totalCount.textContent = 'Total : 0';
+                } else {
+                    totalCount.textContent = `Total : ${rowCount}`;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                resultsDiv.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Erreur lors de la recherche</td></tr>';
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

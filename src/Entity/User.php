@@ -3,53 +3,102 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-
-
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 30, nullable: false)]
+    #[Assert\NotBlank(message: "Le nom est obligatoire.")]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 30, nullable: false)]
+    #[Assert\NotBlank(message: "Le prénom est obligatoire.")]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: "L'email est obligatoire.")]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: "string")]
+    #[Assert\NotBlank(message: "Le mot de passe est obligatoire.")]
+    #[Assert\Length(min: 6, minMessage: "Le mot de passe doit contenir au moins {{ limit }} caractères.")]
+    #[Assert\Regex(
+        pattern: "/^(?=.*[A-Za-z])(?=.*\d).+$/",
+        message: "Le mot de passe doit contenir au moins une lettre et un chiffre."
+    )]
     private ?string $password = null;
 
     #[ORM\Column(type: 'json')]
-    private ?array $role = null;
+    private array $roles = [];
 
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 8, nullable: true)]
+    #[Assert\Regex(
+        pattern: "/^[2-9]\d{7}$/",
+        message: "Le numéro de téléphone doit contenir exactement 8 chiffres et commencer par 2 à 9."
+    )]
     private ?string $telephone = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTime $lastActivity = null;
+    private ?\DateTimeInterface $lastActivity = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
+
+    // -----------------------------
+    // REQUIRED BY SYMFONY SECURITY
+    // -----------------------------
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->email;
+    }
+
+    /** Symfony 5 compatibility */
+    public function getUsername(): string
+    {
+        return (string) $this->email;
+    }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        $roles[] = 'ROLE_USER'; // garantit un minimum
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // Ex: $this->plainPassword = null;
+    }
+
+    // -----------------------------
+    // GETTERS / SETTERS
+    // -----------------------------
 
     public function getNom(): ?string
     {
@@ -59,7 +108,6 @@ class User
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -71,7 +119,6 @@ class User
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
@@ -83,7 +130,6 @@ class User
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -95,20 +141,6 @@ class User
     public function setPassword(string $password): static
     {
         $this->password = $password;
-
-        return $this;
-    }
-
-    public function getRole(): array
-    {
-        $roles = $this->role;
-        $roles[] = 'ROLE_USER';
-        return array_unique($roles);
-    }
-
-    public function setRole(array $roles): static
-    {
-        $this->role = $roles;
         return $this;
     }
 
@@ -120,7 +152,6 @@ class User
     public function setAdresse(string $adresse): static
     {
         $this->adresse = $adresse;
-
         return $this;
     }
 
@@ -129,10 +160,9 @@ class User
         return $this->telephone;
     }
 
-    public function setTelephone(string $telephone): static
+    public function setTelephone(?string $telephone): static
     {
         $this->telephone = $telephone;
-
         return $this;
     }
 
@@ -141,14 +171,13 @@ class User
         return $this->photo;
     }
 
-    public function setPhoto(string $photo): static
+    public function setPhoto(?string $photo): static
     {
         $this->photo = $photo;
-
         return $this;
     }
 
-        public function getLastActivity(): ?\DateTimeInterface
+    public function getLastActivity(): ?\DateTimeInterface
     {
         return $this->lastActivity;
     }
@@ -156,7 +185,6 @@ class User
     public function setLastActivity(?\DateTimeInterface $lastActivity): static
     {
         $this->lastActivity = $lastActivity;
-
         return $this;
     }
 }

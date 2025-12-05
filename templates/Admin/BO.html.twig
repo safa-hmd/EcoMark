@@ -284,7 +284,7 @@
                     <li class="d-flex"> 
                       <svg class="svg-color">
                         <use href="https://admin.pixelstrap.net/admiro/asset/BO/svg/iconly-sprite.svg#Login"></use>
-                      </svg><a class="ms-2" href="#">Déconnexion</a>
+                      </svg><a class="ms-2" href="{{path('app_logout')}}">Déconnexion</a>
                     </li>
 
                     
@@ -328,19 +328,20 @@
                   </svg>
                   <h6 class="f-w-600">Users</h6></a>
                 <ul class="sidebar-submenu">
-                  <li><a href="#">Users Profile</a></li>
-                  <li><a href="#">Modifier Profil</a></li>
+                  <li><a href="{{ path('profilAdmin') }}">Users Profile</a></li>
+                  <li><a href="{{ path('profilAdmin_edit', {id: admin.id}) }}">Modifier Profil</a></li>
                 
                 </ul>
               </li>
 
-              <li class="sidebar-list"> <a class="sidebar-link" href="#">
+              <li class="sidebar-list"> <a class="sidebar-link" href="{{path('admin_mes_clients', {id: admin.id})}}">
                   <svg class="stroke-icon">
                   </svg>
                   <h6 class="f-w-600">Consulter Clients </h6></a>
               </li>
 
-              <li class="sidebar-list"> <a class="sidebar-link" href="#">
+              <li class="sidebar-list"> <a class="sidebar-link" href="{{path('admin_mes_vendeurs', {id: admin.id})}}"
+                >
                   <svg class="stroke-icon">
                   </svg>
                   <h6 class="f-w-600">Consulter Vendeurs</h6></a></li>

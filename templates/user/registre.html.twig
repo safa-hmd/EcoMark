@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+
+    <title>EcoMarket</title>
+
+    
+    <link rel="icon"href="{{asset('BO/images/favicon.png')}}" type="image/x-icon">
+    <link rel="shortcut icon"href="{{asset('BO/images/favicon.png')}}" type="image/x-icon">
+    <link rel="stylesheet"href="{{asset('BO/css/vendors/flag-icon.css')}}">
+    <link rel="stylesheet"href="{{asset('BO/css/iconly-icon.css')}}">
+    <link rel="stylesheet"href="{{asset('BO/css/bulk-style.css')}}">
+    <link rel="stylesheet"href="{{asset('BO/css/themify.css')}}">
+    <link rel="stylesheet"href="{{asset('BO/css/fontawesome-min.css')}}">
+    <link rel="stylesheet" type="text/css"href="{{asset('BO/css/vendors/weather-icons/weather-icons.min.css')}}">
+    <link id="color" rel="stylesheet"href="{{asset('BO/css/color-1.css')}}" media="screen">
+    <link rel="stylesheet"href="{{asset('BO/css/style.css')}}">
+  </head>
+  <body>
+   
+    <div class="tap-top"><i class="iconly-Arrow-Up icli"></i></div>
+  
+ 
+    <!-- login page start-->
+
+{% block body %}
+
+<div class="container-fluid p-0"> 
+  <div class="row m-0">
+    <div class="col-xl-7 login_bs_validation p-0">
+      <img class="bg-img-cover bg-center" src="{{ asset('BO/images/login/1.jpg') }}" alt="">
+    </div>
+
+    <div class="col-xl-5 p-0"> 
+      <div class="login-card login-dark login-bg">
+
+        <div class="login-main"> 
+
+         {{ form_start(form, { 'attr': {'class': 'theme-form','novalidate':'novalidate'} }) }}
+
+<h2>Create your account</h2>
+<p>Enter your personal details to create account</p>
+
+<div class="form-group">
+  <div class="row g-2">
+    <div class="col-12">
+      {{ form_label(form.nom) }}<span class="text-danger">*</span>
+      {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'First name'}}) }}
+      <div class="text-danger">
+      {{ form_errors(form.nom) }}
+    </div>
+    <div class="col-12">
+      {{ form_label(form.prenom) }}<span class="text-danger">*</span>
+      {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Last name'}}) }}
+      <div class="text-danger">
+      {{ form_errors(form.prenom) }}
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  {{ form_label(form.email) }}<span class="text-danger">*</span>
+  {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Test@gmail.com'}}) }}
+   <div class="text-danger">
+        {{ form_errors(form.email) }}
+    </div>
+</div>
+
+<div class="form-group">
+  {{ form_label(form.password) }}<span class="text-danger">*</span>
+  {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder': '*********'}}) }}
+    <div class="text-danger">
+        {{ form_errors(form.password) }}
+    </div>
+</div>
+
+<div class="form-group">
+  {{ form_label(form.adresse) }}
+  {{ form_widget(form.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+  {{ form_errors(form.adresse) }}
+</div>
+
+<div class="form-group">
+  {{ form_label(form.telephone) }}
+  {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Telephone'}}) }}
+    <div class="text-danger">
+        {{ form_errors(form.telephone) }}
+    </div>
+</div>
+
+<div class="form-group">
+  {{ form_label(form.photo) }}
+  {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+  {{ form_errors(form.photo) }}
+</div>
+
+{{ form_end(form) }}
+
+ <p class="mt-4 mb-0 text-center">
+    Vous avez déjà un compte ?
+    <a href="{{ path('app_login') }}">Se connecter</a>
+</p>
+
+
+        
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+      
+      <script src="{{ asset('BO/js/vendors/jquery/jquery.min.js') }}"></script>
+      <script src="{{ asset('BO/js/vendors/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
+      <script src="{{ asset('BO/js/vendors/bootstrap/dist/js/popper.min.js') }}"></script>
+      <script src="{{ asset('BO/js/vendors/font-awesome/fontawesome-min.js') }}"></script>
+      <script src="{{ asset('BO/js/password.js') }}"></script>
+      <script src="{{ asset('BO/js/script.js') }}"></script>
+
+    </div>
+  </body>
+
+
+</html>
