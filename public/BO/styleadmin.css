@@ -1,0 +1,181 @@
+/* ======================= Base Table Admin ======================= */
+.admin-table-container {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow-x: auto;
+}
+
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+.admin-table thead {
+    background-color: #4a9475;
+    color: white;
+    font-weight: 600;
+}
+
+.admin-table th, .admin-table td {
+    padding: 12px 15px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.admin-table tbody tr {
+    background-color: #f8f9fa;
+    transition: 0.2s;
+}
+
+.admin-table tbody tr:hover {
+    background-color: #e8f5e9;
+}
+
+.admin-table img.event-img {
+    width: 80px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.btn-sm {
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* ======================= Form Admin ======================= */
+.admin-form-container {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    max-width: 700px;
+    margin: 0 auto 30px auto;
+}
+
+.admin-form-container h1 {
+    text-align: center;
+    color: #4a9475;
+    margin-bottom: 25px;
+    font-size: 26px;
+}
+
+.admin-form-container label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.admin-form-container input,
+.admin-form-container select,
+.admin-form-container textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: 0.3s;
+}
+
+.admin-form-container input:focus,
+.admin-form-container select:focus,
+.admin-form-container textarea:focus {
+    border-color: #4a9475;
+    box-shadow: 0 0 5px rgba(74,148,117,0.3);
+    outline: none;
+}
+
+.admin-form-container .btn {
+    background-color: #4a9475;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.admin-form-container .btn:hover {
+    background-color: #39775a;
+}
+
+/* ======================= Bouton Retour ======================= */
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.2s;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+    color: #4a9475;
+}
+
+/* Conteneur pour les actions / boutons */
+.action-container {
+    display: flex;           /* Affiche les boutons sur une ligne */
+    gap: 15px;               /* Espace entre les boutons */
+    margin-bottom: 20px;     /* Espace sous le conteneur */
+    flex-wrap: wrap;         /* Permet aux boutons de passer à la ligne sur mobile */
+}
+
+/* Optionnel : centrer sur mobile */
+@media (max-width: 768px) {
+    .action-container {
+        justify-content: center;
+    }
+}
+
+
+/* ======================= Responsive ======================= */
+@media (max-width: 768px) {
+    .admin-table thead {
+        display: none;
+    }
+    .admin-table tr {
+        display: block;
+        margin-bottom: 15px;
+        background: #fff;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .admin-table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        font-size: 14px;
+    }
+    .admin-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #4a9475;
+    }
+
+    .admin-form-container {
+        padding: 20px;
+    }
+}
+
+/* ======================= Icones (optionnel) ======================= */
+.btn i {
+    margin-right: 5px;
+}
+/*h1*/
+h1 {
+    text-align: center;
+    color: #4a9475;
+    margin-bottom: 25px;
+    font-size: 26px;
+}

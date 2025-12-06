@@ -1,0 +1,61 @@
+<div class="admin-table-container">
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Lieu</th>
+                <th>Capacité</th>
+                <th>Image</th>
+                <th colspan="2">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for evenement in evenements %}
+                <tr>
+                    <td data-label="ID">{{ evenement.id }}</td>
+                    <td data-label="Titre">{{ evenement.titre }}</td>
+                    <td data-label="Description">{{ evenement.description }}</td>
+                    <td data-label="Date">
+                    {{ evenement.dateEvent|date('d/m/Y H:i') }}
+
+                    {% if loop.first %}
+                <span style="color:red; font-weight:bold;">★ plus proche date</span> {# Icône pour la plus proche #}
+            {% endif %}
+
+                    </td>
+                    <td data-label="Lieu">{{ evenement.lieu }}</td>
+                    <td data-label="Capacité">{{ evenement.capacite }}</td>
+
+                    <td data-label="Image">
+                        {% if evenement.image %}
+                            <img src="{{ asset('uploads/' ~ evenement.image) }}" alt="{{ evenement.titre }}" width="80" style="border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+
+                    <td data-label="Modifier">
+                        <a href="{{ path('admin_evenement_update', {'ii': evenement.id}) }}" class="btn btn-warning btn-sm">
+                            Modifier
+                        </a>
+                    </td>
+
+                    <td data-label="Supprimer">
+                        <a href="{{ path('admin_evenement_delete', {'ii': evenement.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cet événement ?');">
+                            Supprimer
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9" style="text-align:center;">Aucun événement trouvé.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

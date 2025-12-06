@@ -254,5 +254,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return $this;
     }
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> f06b6bc (Ajout EventClientController et corrections)
