@@ -42,9 +42,9 @@
             }) }}
 
             <div class="col-md-12 position-relative">
-                {{ form_label(form.Contenu, 'Message', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_label(form.contenu, 'Message', {'label_attr': {'class': 'form-label'}}) }}
 
-                {{ form_widget(form.Contenu, {
+                {{ form_widget(form.contenu, {
                     'attr': {
                         'class': 'form-control',
                         'placeholder': 'Votre message (10 à 200 caractères)',
@@ -55,7 +55,7 @@
                 }) }}
 
                 <div class="text-danger">
-                    {{ form_errors(form.Contenu) }}
+                    {{ form_errors(form.contenu) }}
                 </div>
 
                 <div class="invalid-tooltip">
