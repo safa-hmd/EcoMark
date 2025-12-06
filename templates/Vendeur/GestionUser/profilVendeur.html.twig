@@ -1,0 +1,82 @@
+{% extends 'Vendeur/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+  <div class="container-fluid">
+
+    <!-- Titre -->
+    <div class="page-title mb-3">
+      <h2 class="fw-bold text-primary">Profil Vendeur</h2>
+      <hr>
+    </div>
+
+    <div class="user-profile">
+      <div class="card shadow-lg border-0 rounded-4">
+
+        <!-- Photo -->
+        <div class="card-body text-center p-4">
+          <img 
+            src="{{ vendeur.photo ? asset('uploads/photos/' ~ vendeur.photo) : asset('uploads/default.jpg') }}"
+            alt="Photo"
+            class="rounded-circle shadow-sm mb-3"
+            width="120"
+          >
+
+          <h3 class="fw-bold mb-0">{{ vendeur.nom }} {{ vendeur.prenom }}</h3>
+       
+
+          <hr class="my-4">
+
+          <!-- Informations -->
+          <div class="row g-4 text-start">
+
+            <div class="col-md-4">
+              <div class="p-3  rounded-3 shadow-sm">
+                <h6 class="fw-bold"></i>Email</h6>
+                <p class="mb-0">{{ vendeur.email }}</p>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="p-3  rounded-3 shadow-sm">
+                <h6 class="fw-bold">Adresse</h6>
+                <p class="mb-0">{{ vendeur.adresse }}</p>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="p-3  rounded-3 shadow-sm">
+                <h6 class="fw-bold"></i>Téléphone</h6>
+                <p class="mb-0">{{ vendeur.telephone }}</p>
+              </div>
+            </div>
+
+          </div>
+
+          <hr class="my-4">
+
+          <!-- Supprimer Profil -->
+          <div class="text-center">
+            <form method="post"
+                  action="{{ path('profilVendeur_delete', {'id': vendeur.id}) }}"
+                  onsubmit="return confirm('Voulez-vous vraiment supprimer ce profil ?');">
+
+              <input type="hidden" name="_token" value="{{ csrf_token('delete-profil' ~ vendeur.id) }}">
+
+              <button class="btn btn-danger px-4 py-2 rounded-3 shadow-sm">
+                 Supprimer le profil
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

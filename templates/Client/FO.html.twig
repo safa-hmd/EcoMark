@@ -98,7 +98,14 @@
                                         <li><a href="#">About</a> </li>
                                         <li><a href="#">Produit</a> </li>
                                         <li><a href="#">Commande</a> </li>
-                                        <li><a href="#">Réclamation</a> </li>
+                                        <li><a href="#">Réclamation({{ nbReclamations }})</a> 
+                                       
+
+    <ul class="sub-menu">
+        <li><a href="{{ path('reclamation_ajoutRec') }}">Passer Réclamation</a></li>
+        <li><a href="{{ path('reclamation_Afficher') }}">Liste des Réclamations</a></li>
+    </ul>
+</li>
                                         <li><a href="#">Evenement</a> </li>
                                     </ul>
                                 </div>
@@ -130,7 +137,7 @@
                                     <a href="#"><i class="icon-user"></i></a>
                                     <ul>
                                         <li><a href="#">My Account</a></li>
-                                        <li><a href="#">Déconnexion</a></li>
+                                        <li><a href="{{path('app_logout')}}">Déconnexion</a></li>
                                     </ul>
                                 </li>
                             </ul>

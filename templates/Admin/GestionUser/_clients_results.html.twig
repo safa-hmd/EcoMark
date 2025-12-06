@@ -1,0 +1,16 @@
+{# templates/Admin/_clients_results.html.twig #}
+<tbody id="results">
+    {% for client in clients %}
+        <tr>
+            <td>{{ client.email|default('N/A') }}</td>
+            <td>{{ client.nom|default('N/A') }}</td>
+            <td>{{ client.prenom|default('N/A') }}</td>
+            <td>{{ client.telephone|default('N/A') }}</td>
+            <td>{{ client.adresse|default('N/A') }}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="5" class="text-center">Aucun client trouvé</td>
+        </tr>
+    {% endfor %}
+</tbody>

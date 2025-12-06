@@ -1,0 +1,15 @@
+<tbody id="resultsVendeurs">
+    {% for vendeur in vendeurs %}
+        <tr>
+            <td>{{ vendeur.email|default('N/A') }}</td>
+        <td>{{ vendeur.nom|default('N/A') }}</td>
+        <td>{{ vendeur.prenom|default('N/A') }}</td>
+        <td>{{ vendeur.telephone|default('N/A') }}</td>
+        <td>{{ vendeur.adresse|default('N/A') }}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="5" class="text-muted">Aucun vendeur trouvé.</td>
+        </tr>
+    {% endfor %}
+</tbody>

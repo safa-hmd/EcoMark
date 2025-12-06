@@ -1,0 +1,106 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+ 
+    <div class="ltn__breadcrumb-area ltn__breadcrumb-area-1 ltn__breadcrumb-color-white bg-overlay-theme-black-90 bg-image" data-bg="{{asset('FO/img/bg/9.jpg')}}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ltn__breadcrumb-inner ltn__breadcrumb-inner-3 justify-content-between">
+                        <div class="section-title-area ltn__section-title-2">
+                            <h1 class="section-title white-color">My Account</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-body text-center p-5">
+
+                   
+                    <div class="mb-3">
+                        <img 
+                            src="{{ client.photo ? asset('uploads/photos/' ~ client.photo) : asset('uploads/default.jpg') }}"
+                            class="rounded-circle shadow-sm border"
+                            width="140"
+                            height="140"
+                            style="object-fit: cover;"
+                            alt="Photo">
+                    </div>
+
+                    
+                    <h3 class="fw-bold mb-1">
+                        {{ client.nom }} {{ client.prenom }}
+                    </h3>
+
+                    <hr>
+
+                    <!-- INFORMATIONS -->
+                    <div class="row text-start g-4 mt-3">
+
+                       
+                        <div class="col-12 col-md-6">
+                            <div class="card h-100 shadow-sm border-0 p-3 rounded-3">
+                                <h6 class="text-muted mb-1">Email</h6>
+                                <p class="fw-semibold mb-0">{{ client.email }}</p>
+                            </div>
+                        </div>
+
+                        
+                        <div class="col-12 col-md-6">
+                            <div class="card h-100 shadow-sm border-0 p-3 rounded-3">
+                                <h6 class="text-muted mb-1">Adresse</h6>
+                                <p class="fw-semibold mb-0">{{ client.adresse }}</p>
+                            </div>
+                        </div>
+
+                        
+                        <div class="col-12 col-md-6">
+                            <div class="card h-100 shadow-sm border-0 p-3 rounded-3">
+                                <h6 class="text-muted mb-1">Téléphone</h6>
+                                <p class="fw-semibold mb-0">{{ client.telephone }}</p>
+                            </div>
+                        </div>
+
+                    
+                <div class="card-footer bg-white p-4 text-center">
+
+                    <div class="d-flex">
+                     <!-- Bouton Modifier -->
+                     <a href="{{ path('profilClient_edit', {'id': client.id}) }}" 
+                     class="btn btn-warning px-4 me-2">Modifier</a>
+
+                     <!-- Bouton Supprimer -->
+                     <form method="post" action="{{ path('profilClient_delete', {'id': client.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce compte ?');">
+                       <input type="hidden" name="_token" value="{{ csrf_token('delete-profil' ~ client.id) }}">
+                       <button class="btn btn-danger px-4">Supprimer</button>
+                     </form>
+                </div>
+
+                 
+
+                </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+             
+
+
+
+
+{% endblock %}

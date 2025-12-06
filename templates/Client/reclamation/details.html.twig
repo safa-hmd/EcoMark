@@ -1,0 +1,20 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block title %}Détail Réclamation{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h2>Détails de la Réclamation</h2>
+
+    <div class="card p-4 mt-3">
+        <p><strong>ID :</strong> {{ reclamation.id }}</p>
+        <p><strong>Objet :</strong> {{ reclamation.Objet }}</p>
+        <p><strong>Description :</strong> {{ reclamation.description }}</p>
+                <p><strong>Statut :</strong> {{ reclamation.statut }}</p>
+
+        <p><strong>Date :</strong> {{ reclamation.dateCreation|date('d/m/Y H:i') }}</p>
+    </div>
+
+    <a href="{{ path('reclamation_Afficher') }}" class="btn btn-secondary mt-3">Retour</a>
+</div>
+{% endblock %}
