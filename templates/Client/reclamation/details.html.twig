@@ -16,5 +16,6 @@
     </div>
 
     <a href="{{ path('reclamation_Afficher') }}" class="btn btn-secondary mt-3">Retour</a>
+    <a href="{{ path('client_reclamation_pdf', { id: reclamation.id }) }}" class="btn btn-danger">Télécharger PDF</a>
 </div>
 {% endblock %}
