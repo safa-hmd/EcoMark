@@ -340,21 +340,17 @@
                   <h6 class="f-w-600">Consulter Clients </h6></a>
               </li>
 
-              <li class="sidebar-list"> <a class="sidebar-link" href="{{path('admin_mes_vendeurs', {id: admin.id})}}"
-                >
+
+              <li class="sidebar-list"> <a class="sidebar-link" href="{{path('admin_mes_vendeurs', {id: admin.id})}}">
                   <svg class="stroke-icon">
                   </svg>
                   <h6 class="f-w-600">Consulter Vendeurs</h6></a></li>
 
-              <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+
+              <li class="sidebar-list"> <a class="sidebar-link" href="{{ path('reponseafficherReponse') }}">
                   <svg class="stroke-icon">
                   </svg>
-                  <h6 class="f-w-600">Gestion Réponse Réclamation</h6></i></a>
-                <ul class="sidebar-submenu">
-                  <li> <a href="add-products.html">Consulter Réclamation  </a></li>
-                  <li> <a href="product.html">Ajouter Reponse</a></li>
-                  <li> <a href="product-page.html">Consulter Reponse</a></li>
-                </ul>
+                  <h6 class="f-w-600"> Traiter réclamation ({{ nbReclamations }})</h6></a>
               </li>
 
             
