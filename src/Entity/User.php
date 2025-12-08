@@ -76,9 +76,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Reponse::class)]
     private Collection $reponses;
 
-    #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'admin')]
-    private Collection $yes;
-
     public function __construct()
     {
         $this->commandes = new ArrayCollection();
@@ -86,7 +83,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->reclamations = new ArrayCollection();
         $this->reclamationsAdmin = new ArrayCollection();
         $this->reponses = new ArrayCollection();
-        $this->yes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -323,28 +319,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Reponse>
-     */
-    public function getYes(): Collection
+    public function removeReponse(Reponse $reponse): static
     {
-        return $this->yes;
-    }
-
-    public function addYe(Reponse $ye): static
-    {
-        if (!$this->yes->contains($ye)) {
-            $this->yes->add($ye);
-            $ye->setAdmin($this);
-        }
-        return $this;
-    }
-
-    public function removeYe(Reponse $ye): static
-    {
-        if ($this->yes->removeElement($ye)) {
-            if ($ye->getAdmin() === $this) {
-                $ye->setAdmin(null);
+        if ($this->reponses->removeElement($reponse)) {
+            if ($reponse->getAdmin() === $this) {
+                $reponse->setAdmin(null);
             }
         }
         return $this;

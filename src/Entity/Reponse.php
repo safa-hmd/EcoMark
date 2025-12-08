@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Entity;
-use Symfony\Component\Validator\Constraints as Assert;
 
 use App\Repository\ReponseRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReponseRepository::class)]
 class Reponse
@@ -15,7 +15,7 @@ class Reponse
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
     #[Assert\Length(
         min: 10,
@@ -23,19 +23,23 @@ class Reponse
         minMessage: "La description doit contenir au moins {{ limit }} caractères.",
         maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
     )]
-    private ?string $Contenu = null;
+    private ?string $contenu = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTime $dateCreation = null;
 
-
-    #[ORM\OneToOne(inversedBy: 'yes', cascade: ['persist'])]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
+    #[ORM\OneToOne(inversedBy: 'reponse', targetEntity: Reclamation::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private ?Reclamation $reclamation = null;
 
-    #[ORM\ManyToOne(inversedBy: 'yes')]
-    #[ORM\JoinColumn(nullable: true,onDelete: "CASCADE")]
+    #[ORM\ManyToOne(inversedBy: 'reponses', targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $admin = null;
+
+    public function __construct()
+    {
+        $this->dateCreation = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -44,13 +48,12 @@ class Reponse
 
     public function getContenu(): ?string
     {
-        return $this->Contenu;
+        return $this->contenu;
     }
 
-    public function setContenu(?string $Contenu): static
+    public function setContenu(string $contenu): static
     {
-        $this->Contenu = $Contenu;
-
+        $this->contenu = $contenu;
         return $this;
     }
 
@@ -59,10 +62,9 @@ class Reponse
         return $this->dateCreation;
     }
 
-    public function setDateCreation(?\DateTime $dateCreation): static
+    public function setDateCreation(\DateTime $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
-
         return $this;
     }
 
@@ -71,10 +73,9 @@ class Reponse
         return $this->reclamation;
     }
 
-    public function setReclamation(Reclamation $reclamation): static
+    public function setReclamation(?Reclamation $reclamation): static
     {
         $this->reclamation = $reclamation;
-
         return $this;
     }
 
@@ -86,11 +87,6 @@ class Reponse
     public function setAdmin(?User $admin): static
     {
         $this->admin = $admin;
-
         return $this;
     }
-public function __construct()
-{
-    $this->dateCreation = new \DateTime();
-}
 }
