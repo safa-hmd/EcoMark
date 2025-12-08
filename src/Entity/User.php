@@ -60,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $lastActivity = null;
 
-    // ✅ AJOUTER CES 4 RELATIONS MANQUANTES :
+    // RELATIONS
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commandes;
 
@@ -70,15 +70,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'client', orphanRemoval: true)]
     private Collection $reclamations;
 
+    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Reclamation::class)]
+    private Collection $reclamationsAdmin;
+
+    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Reponse::class)]
+    private Collection $reponses;
+
     #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'admin')]
     private Collection $yes;
 
-    // ✅ AJOUTER LE CONSTRUCTEUR :
     public function __construct()
     {
         $this->commandes = new ArrayCollection();
         $this->participations = new ArrayCollection();
         $this->reclamations = new ArrayCollection();
+        $this->reclamationsAdmin = new ArrayCollection();
+        $this->reponses = new ArrayCollection();
         $this->yes = new ArrayCollection();
     }
 
@@ -87,16 +94,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    // -----------------------------
-    // REQUIRED BY SYMFONY SECURITY
-    // -----------------------------
-
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /** Symfony 5 compatibility */
     public function getUsername(): string
     {
         return (string) $this->email;
@@ -105,7 +107,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER'; // garantit un minimum
+        $roles[] = 'ROLE_USER';
         return array_unique($roles);
     }
 
@@ -117,13 +119,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // Ex: $this->plainPassword = null;
     }
 
-    // -----------------------------
-    // GETTERS / SETTERS
-    // -----------------------------
-
+    // GETTERS/SETTERS
     public function getNom(): ?string
     {
         return $this->nom;
@@ -212,7 +210,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    // ✅ AJOUTER CES MÉTHODES POUR LES RELATIONS :
+    // MÉTHODES POUR LES RELATIONS
 
     /**
      * @return Collection<int, Commande>
@@ -276,11 +274,41 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->reclamations;
     }
 
+    /** @return Collection|Reclamation[] */
+    public function getReclamationsAdmin(): Collection
+    {
+        return $this->reclamationsAdmin;
+    }
+
+    /** @return Collection|Reponse[] */
+    public function getReponses(): Collection
+    {
+        return $this->reponses;
+    }
+
     public function addReclamation(Reclamation $reclamation): static
     {
         if (!$this->reclamations->contains($reclamation)) {
             $this->reclamations->add($reclamation);
             $reclamation->setClient($this);
+        }
+        return $this;
+    }
+
+    public function addReclamationAdmin(Reclamation $reclamation): static
+    {
+        if (!$this->reclamationsAdmin->contains($reclamation)) {
+            $this->reclamationsAdmin->add($reclamation);
+            $reclamation->setAdmin($this);
+        }
+        return $this;
+    }
+
+    public function addReponse(Reponse $reponse): static
+    {
+        if (!$this->reponses->contains($reponse)) {
+            $this->reponses->add($reponse);
+            $reponse->setAdmin($this);
         }
         return $this;
     }

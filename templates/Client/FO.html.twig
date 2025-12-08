@@ -98,8 +98,21 @@
                                         <li><a href="#">About</a> </li>
                                         <li><a href="#">Produit</a> </li>
                                         <li><a href="#">Commande</a> </li>
-                                        <li><a href="#">Réclamation</a> </li>
+<<<<<<< HEAD
+                                        <li><a href="#">Réclamation({{ nbReclamations }})</a> 
+                                       
+
+    <ul class="sub-menu">
+        <li><a href="{{ path('reclamation_ajoutRec') }}">Passer Réclamation</a></li>
+        <li><a href="{{ path('reclamation_Afficher') }}">Liste des Réclamations</a></li>
+    </ul>
+</li>
                                         <li><a href="#">Evenement</a> </li>
+=======
+                                        <li><a href="#">Réclamation</a> </li>
+                                        <li><a href="{{ path('client_affiche_evenements') }}">Evenement</a></li>
+
+>>>>>>> f06b6bc (Ajout EventClientController et corrections)
                                     </ul>
                                 </div>
                             </nav>

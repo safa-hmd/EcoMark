@@ -40,4 +40,27 @@ class EvenementRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+public function searchEvents(string $search = '')
+{
+    $qb = $this->createQueryBuilder('e')
+               ->orderBy('e.dateEvent', 'ASC');
+
+    if (!empty($search)) {
+        $qb->andWhere('e.titre LIKE :s OR e.description LIKE :s OR e.lieu LIKE :s')
+           ->setParameter('s', '%' . $search . '%');
+    }
+
+    $evenements = $qb->getQuery()->getResult();
+
+    // Tri pondéré par proximité de date
+    usort($evenements, function($a, $b) {
+        $diffA = $a->getDateEvent()->diff(new \DateTime())->days;
+        $diffB = $b->getDateEvent()->diff(new \DateTime())->days;
+        return $diffA <=> $diffB;
+    });
+
+    return $evenements;
+}
+
 }

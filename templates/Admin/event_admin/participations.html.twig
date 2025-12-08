@@ -1,0 +1,70 @@
+{% extends 'Admin/BO.html.twig' %}
+
+
+
+{% block body %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('BO/styleadmin.css') }}">
+{% endblock %}
+
+{{ parent() }}
+
+<h1>Liste des Participations</h1>
+
+<div class="admin-table-container">
+    
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Événement</th>
+                <th>Date participation</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for p in participations %}
+                <tr>
+                    <td data-label="ID">{{ p.id }}</td>
+                    <td data-label="Événement">{{ p.evenement.titre }}</td>
+                    <td data-label="Date">{{ p.dateParticipation|date('Y-m-d H:i') }}</td>
+                    <td data-label="Statut">
+                        {% if p.statut == 'confirmée' %}
+                            <span class="badge badge-success">Confirmée</span>
+                        {% elseif p.statut == 'annulée' %}
+                            <span class="badge badge-danger">Annulée</span>
+                        {% else %}
+                            <span class="badge badge-warning">{{ p.statut }}</span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Actions">
+                        <a href="{{ path('admin_participation_confirmer', {id: p.id}) }}"
+                           class="btn btn-success btn-sm">
+                            Confirmer
+                        </a>
+
+                        <a href="{{ path('admin_participation_annuler', {id: p.id}) }}"
+                           class="btn btn-danger btn-sm">
+                            Annuler
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="text-center">Aucune participation trouvée</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="mt-4 mb-3">
+        <a href="{{ path('affiche_admin') }}" class="btn btn-secondary">
+            ← Retour à la liste des événements
+        </a>
+    </div>
+</div>
+{% endblock %}

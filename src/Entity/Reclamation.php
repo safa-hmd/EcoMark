@@ -45,8 +45,23 @@ class Reclamation
     #[ORM\JoinColumn(nullable: true)]
     private ?User $client = null;
 
+    #[ORM\ManyToOne(inversedBy: 'reclamationsAdmin')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $admin = null;
+
     #[ORM\OneToOne(mappedBy: 'reclamation', cascade: ['persist','remove'],orphanRemoval: true)]
     private ?Reponse $yes = null;
+
+    public function getAdmin(): ?User
+{
+    return $this->admin;
+}
+
+public function setAdmin(?User $admin): static
+{
+    $this->admin = $admin;
+    return $this;
+}
 
     public function getId(): ?int
     {

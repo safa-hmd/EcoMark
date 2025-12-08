@@ -1509,6 +1509,55 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     generate_final_classes?: bool, // Default: true
  *     generate_final_entities?: bool, // Default: false
  * }
+ * @psalm-type EwzRecaptchaConfig = array{
+ *     public_key: scalar|null,
+ *     private_key: scalar|null,
+ *     enabled?: bool, // Default: true
+ *     verify_host?: bool, // Default: false
+ *     ajax?: bool, // Default: false
+ *     locale_key?: scalar|null, // Default: "%kernel.default_locale%"
+ *     api_host?: scalar|null, // Default: "www.google.com"
+ *     locale_from_request?: bool, // Default: false
+ *     version?: int, // Default: 2
+ *     hide_badge?: bool, // Default: false
+ *     score_threshold?: float, // Default: 0.5
+ *     timeout?: int, // Default: null
+ *     trusted_roles?: list<scalar|null>,
+ *     http_proxy?: array{
+ *         host?: scalar|null, // Default: null
+ *         port?: scalar|null, // Default: null
+ *         auth?: scalar|null, // Default: null
+ *     },
+ *     service_definition?: list<array{ // Default: []
+ *         service_name: scalar|null,
+ *         options?: array{
+ *             action_name?: scalar|null,
+ *             script_nonce_csp?: scalar|null,
+ *         },
+ *     }>,
+ * }
+ * @psalm-type KnpPaginatorConfig = array{
+ *     default_options?: array{
+ *         sort_field_name?: scalar|null, // Default: "sort"
+ *         sort_direction_name?: scalar|null, // Default: "direction"
+ *         filter_field_name?: scalar|null, // Default: "filterField"
+ *         filter_value_name?: scalar|null, // Default: "filterValue"
+ *         page_name?: scalar|null, // Default: "page"
+ *         distinct?: bool, // Default: true
+ *         page_out_of_range?: scalar|null, // Default: "ignore"
+ *         default_limit?: scalar|null, // Default: 10
+ *     },
+ *     template?: array{
+ *         pagination?: scalar|null, // Default: "@KnpPaginator/Pagination/sliding.html.twig"
+ *         rel_links?: scalar|null, // Default: "@KnpPaginator/Pagination/rel_links.html.twig"
+ *         filtration?: scalar|null, // Default: "@KnpPaginator/Pagination/filtration.html.twig"
+ *         sortable?: scalar|null, // Default: "@KnpPaginator/Pagination/sortable_link.html.twig"
+ *     },
+ *     page_range?: scalar|null, // Default: 5
+ *     page_limit?: scalar|null, // Default: null
+ *     convert_exception?: bool, // Default: false
+ *     remove_first_page_param?: bool, // Default: false
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1522,6 +1571,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     twig_extra?: TwigExtraConfig,
  *     security?: SecurityConfig,
  *     monolog?: MonologConfig,
+ *     ewz_recaptcha?: EwzRecaptchaConfig,
+ *     knp_paginator?: KnpPaginatorConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1538,6 +1589,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
  *         maker?: MakerConfig,
+ *         ewz_recaptcha?: EwzRecaptchaConfig,
+ *         knp_paginator?: KnpPaginatorConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1552,6 +1605,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
+ *         ewz_recaptcha?: EwzRecaptchaConfig,
+ *         knp_paginator?: KnpPaginatorConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1567,6 +1622,8 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         twig_extra?: TwigExtraConfig,
  *         security?: SecurityConfig,
  *         monolog?: MonologConfig,
+ *         ewz_recaptcha?: EwzRecaptchaConfig,
+ *         knp_paginator?: KnpPaginatorConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

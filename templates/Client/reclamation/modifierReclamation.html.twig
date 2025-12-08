@@ -1,0 +1,89 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block title %}
+    {{ update ? 'Modifier Réclamation' : 'Ajouter Réclamation' }}
+{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header pb-0">
+            <h3>{{ update ? 'Modifier la réclamation' : 'Ajouter une nouvelle réclamation' }}</h3>
+            <p class="mt-1 mb-0">
+                {{ update ? 'Modifiez les informations de votre réclamation.' : 'Remplissez le formulaire pour ajouter une réclamation.' }}
+            </p>
+        </div>
+
+        <div class="card-body">
+
+            {{ form_start(form, {
+                'attr': {
+                    'class': 'row g-3 needs-validation',
+                    'novalidate': 'novalidate'
+                }
+            }) }}
+
+            <div class="col-md-12 position-relative">
+    <label class="form-label">Objet <strong class="text-danger">*</strong></label>
+    {{ form_widget(form.Objet, {
+        'attr': {
+            'class': 'form-control',
+            'placeholder': 'Ex: Problème de livraison',
+            'required': true,
+            'minlength': 5,
+            'maxlength': 10
+        }
+    }) }}
+    <div class="text-danger">{{ form_errors(form.Objet) }}</div>
+    <div class="invalid-tooltip">L’objet doit contenir entre 5 et 10 caractères.</div>
+</div>
+
+<div class="col-md-12 position-relative">
+    <label class="form-label">Description <strong class="text-danger">*</strong></label>
+    {{ form_widget(form.description, {
+        'attr': {
+            'class': 'form-control',
+            'rows': 4,
+            'placeholder': 'Décrivez votre problème...',
+            'required': true,
+            'minlength': 10,
+            'maxlength': 200
+        }
+    }) }}
+    <div class="text-danger">{{ form_errors(form.description) }}</div>
+    <div class="invalid-tooltip">La description doit contenir au minimum 10 caractères.</div>
+</div>
+
+
+            <div class="mt-3 d-flex gap-2">
+                <button type="submit" class="btn btn-primary text-uppercase">
+                    {{ update ? 'Modifier Réclamation' : 'Ajouter Réclamation' }}
+                </button>
+                <a href="{{ path('reclamation_Afficher') }}" class="btn btn-secondary">Retour</a>
+            </div>
+
+            {{ form_end(form) }}
+
+        </div>
+    </div>
+</div>
+
+<!--<script>
+// Validation Bootstrap : empêche reload si erreurs
+(function () {
+  'use strict';
+  var forms = document.querySelectorAll('.needs-validation');
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault(); // ما يعمّـلش reload
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+})();
+</script>-->
+
+{% endblock %}

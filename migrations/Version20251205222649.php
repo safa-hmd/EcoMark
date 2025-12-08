@@ -10,7 +10,9 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
+
 final class Version20251205235733 extends AbstractMigration
+
 {
     public function getDescription(): string
     {
@@ -26,7 +28,7 @@ final class Version20251205235733 extends AbstractMigration
         $this->addSql('CREATE TABLE participation (id INT AUTO_INCREMENT NOT NULL, statut VARCHAR(20) NOT NULL, date_participation DATETIME NOT NULL, user_id INT NOT NULL, evenement_id INT NOT NULL, INDEX IDX_AB55E24FA76ED395 (user_id), INDEX IDX_AB55E24FFD02F13 (evenement_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE point_recyclage (id INT AUTO_INCREMENT NOT NULL, nom VARCHAR(100) NOT NULL, lieu VARCHAR(255) NOT NULL, type_dechet VARCHAR(255) NOT NULL, responsable_id INT DEFAULT NULL, INDEX IDX_6419B2FB53C59D72 (responsable_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE produit (id INT AUTO_INCREMENT NOT NULL, nom VARCHAR(100) NOT NULL, type_produit VARCHAR(100) NOT NULL, quantite DOUBLE PRECISION NOT NULL, date_ajout DATETIME NOT NULL, photo VARCHAR(255) DEFAULT NULL, point_recyclage_id INT NOT NULL, INDEX IDX_29A5EC276D483D9F (point_recyclage_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
-        $this->addSql('CREATE TABLE reclamation (id INT AUTO_INCREMENT NOT NULL, objet VARCHAR(255) NOT NULL, description LONGTEXT NOT NULL, date_creation DATETIME NOT NULL, statut VARCHAR(255) NOT NULL, client_id INT DEFAULT NULL, INDEX IDX_CE60640419EB6921 (client_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
+        $this->addSql('CREATE TABLE reclamation (id INT AUTO_INCREMENT NOT NULL, objet VARCHAR(255) NOT NULL, description LONGTEXT NOT NULL, date_creation DATETIME NOT NULL, statut VARCHAR(255) NOT NULL, client_id INT DEFAULT NULL, admin_id INT DEFAULT NULL, INDEX IDX_CE60640419EB6921 (client_id), INDEX IDX_CE606404642B8210 (admin_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE reponse (id INT AUTO_INCREMENT NOT NULL, contenu LONGTEXT DEFAULT NULL, date_creation DATETIME NOT NULL, reclamation_id INT NOT NULL, admin_id INT DEFAULT NULL, UNIQUE INDEX UNIQ_5FB6DEC72D6BA2D9 (reclamation_id), INDEX IDX_5FB6DEC7642B8210 (admin_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE `user` (id INT AUTO_INCREMENT NOT NULL, nom VARCHAR(30) NOT NULL, prenom VARCHAR(30) NOT NULL, email VARCHAR(180) NOT NULL, password VARCHAR(255) NOT NULL, roles JSON NOT NULL, adresse VARCHAR(255) NOT NULL, telephone VARCHAR(8) DEFAULT NULL, photo VARCHAR(255) DEFAULT NULL, last_activity DATETIME DEFAULT NULL, UNIQUE INDEX UNIQ_8D93D649E7927C74 (email), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE messenger_messages (id BIGINT AUTO_INCREMENT NOT NULL, body LONGTEXT NOT NULL, headers LONGTEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at DATETIME NOT NULL, available_at DATETIME NOT NULL, delivered_at DATETIME DEFAULT NULL, INDEX IDX_75EA56E0FB7336F0 (queue_name), INDEX IDX_75EA56E0E3BD61CE (available_at), INDEX IDX_75EA56E016BA31DB (delivered_at), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
@@ -37,6 +39,7 @@ final class Version20251205235733 extends AbstractMigration
         $this->addSql('ALTER TABLE point_recyclage ADD CONSTRAINT FK_6419B2FB53C59D72 FOREIGN KEY (responsable_id) REFERENCES `user` (id)');
         $this->addSql('ALTER TABLE produit ADD CONSTRAINT FK_29A5EC276D483D9F FOREIGN KEY (point_recyclage_id) REFERENCES point_recyclage (id)');
         $this->addSql('ALTER TABLE reclamation ADD CONSTRAINT FK_CE60640419EB6921 FOREIGN KEY (client_id) REFERENCES `user` (id)');
+        $this->addSql('ALTER TABLE reclamation ADD CONSTRAINT FK_CE606404642B8210 FOREIGN KEY (admin_id) REFERENCES `user` (id)');
         $this->addSql('ALTER TABLE reponse ADD CONSTRAINT FK_5FB6DEC72D6BA2D9 FOREIGN KEY (reclamation_id) REFERENCES reclamation (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE reponse ADD CONSTRAINT FK_5FB6DEC7642B8210 FOREIGN KEY (admin_id) REFERENCES `user` (id) ON DELETE CASCADE');
     }
@@ -51,6 +54,7 @@ final class Version20251205235733 extends AbstractMigration
         $this->addSql('ALTER TABLE point_recyclage DROP FOREIGN KEY FK_6419B2FB53C59D72');
         $this->addSql('ALTER TABLE produit DROP FOREIGN KEY FK_29A5EC276D483D9F');
         $this->addSql('ALTER TABLE reclamation DROP FOREIGN KEY FK_CE60640419EB6921');
+        $this->addSql('ALTER TABLE reclamation DROP FOREIGN KEY FK_CE606404642B8210');
         $this->addSql('ALTER TABLE reponse DROP FOREIGN KEY FK_5FB6DEC72D6BA2D9');
         $this->addSql('ALTER TABLE reponse DROP FOREIGN KEY FK_5FB6DEC7642B8210');
         $this->addSql('DROP TABLE commande');
