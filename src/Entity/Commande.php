@@ -25,10 +25,6 @@ class Commande
     #[Assert\Positive(message: "Le montant doit être un nombre positif")]
     private ?float $montantTotal = null;
 
-    // ❌ SUPPRIMER cette ligne :
-    // private ?string $client = null;
-
-    // ✅ AJOUTER cette relation ManyToOne :
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'commandes')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotNull(message: "Le client est obligatoire")]
@@ -73,6 +69,10 @@ class Commande
     #[Assert\NotBlank(message: "Veuillez sélectionner une méthode de paiement")]
     private ?string $methodePaiement = null;
 
+    // ✅ AJOUTER cette relation OneToOne vers Livraison
+    #[ORM\OneToOne(mappedBy: 'commande', cascade: ['persist', 'remove'])]
+    private ?Livraison $livraison = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -111,7 +111,6 @@ class Commande
         return $this;
     }
 
-    // ✅ REMPLACER getClient/setClient par ces méthodes :
     public function getUser(): ?User
     {
         return $this->user;
@@ -175,6 +174,29 @@ class Commande
     public function setMethodePaiement(string $methodePaiement): static
     {
         $this->methodePaiement = $methodePaiement;
+        return $this;
+    }
+
+    // ✅ AJOUTER ces méthodes pour la relation avec Livraison
+    public function getLivraison(): ?Livraison
+    {
+        return $this->livraison;
+    }
+
+    public function setLivraison(?Livraison $livraison): static
+    {
+        // Unset the owning side of the relation if necessary
+        if ($livraison === null && $this->livraison !== null) {
+            $this->livraison->setCommande(null);
+        }
+
+        // Set the owning side of the relation if necessary
+        if ($livraison !== null && $livraison->getCommande() !== $this) {
+            $livraison->setCommande($this);
+        }
+
+        $this->livraison = $livraison;
+
         return $this;
     }
 }

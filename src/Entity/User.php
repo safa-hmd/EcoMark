@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -52,11 +54,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $telephone = null;
 
-      #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $lastActivity = null;
+
+    // ✅ AJOUTER CES 4 RELATIONS MANQUANTES :
+    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $commandes;
+
+    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $participations;
+
+    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'client', orphanRemoval: true)]
+    private Collection $reclamations;
+
+    #[ORM\OneToMany(targetEntity: Reponse::class, mappedBy: 'admin')]
+    private Collection $yes;
+
+    // ✅ AJOUTER LE CONSTRUCTEUR :
+    public function __construct()
+    {
+        $this->commandes = new ArrayCollection();
+        $this->participations = new ArrayCollection();
+        $this->reclamations = new ArrayCollection();
+        $this->yes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -185,6 +209,116 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastActivity(?\DateTimeInterface $lastActivity): static
     {
         $this->lastActivity = $lastActivity;
+        return $this;
+    }
+
+    // ✅ AJOUTER CES MÉTHODES POUR LES RELATIONS :
+
+    /**
+     * @return Collection<int, Commande>
+     */
+    public function getCommandes(): Collection
+    {
+        return $this->commandes;
+    }
+
+    public function addCommande(Commande $commande): static
+    {
+        if (!$this->commandes->contains($commande)) {
+            $this->commandes->add($commande);
+            $commande->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeCommande(Commande $commande): static
+    {
+        if ($this->commandes->removeElement($commande)) {
+            if ($commande->getUser() === $this) {
+                $commande->setUser(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participation>
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participation $participation): static
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+            $participation->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeParticipation(Participation $participation): static
+    {
+        if ($this->participations->removeElement($participation)) {
+            if ($participation->getUser() === $this) {
+                $participation->setUser(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reclamation>
+     */
+    public function getReclamations(): Collection
+    {
+        return $this->reclamations;
+    }
+
+    public function addReclamation(Reclamation $reclamation): static
+    {
+        if (!$this->reclamations->contains($reclamation)) {
+            $this->reclamations->add($reclamation);
+            $reclamation->setClient($this);
+        }
+        return $this;
+    }
+
+    public function removeReclamation(Reclamation $reclamation): static
+    {
+        if ($this->reclamations->removeElement($reclamation)) {
+            if ($reclamation->getClient() === $this) {
+                $reclamation->setClient(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reponse>
+     */
+    public function getYes(): Collection
+    {
+        return $this->yes;
+    }
+
+    public function addYe(Reponse $ye): static
+    {
+        if (!$this->yes->contains($ye)) {
+            $this->yes->add($ye);
+            $ye->setAdmin($this);
+        }
+        return $this;
+    }
+
+    public function removeYe(Reponse $ye): static
+    {
+        if ($this->yes->removeElement($ye)) {
+            if ($ye->getAdmin() === $this) {
+                $ye->setAdmin(null);
+            }
+        }
         return $this;
     }
 }

@@ -73,9 +73,9 @@ class Livraison
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "Les frais de livraison sont obligatoires")]
-    #[Assert\Type(
-        type: 'numeric',
-        message: 'Les frais de livraison doivent être un nombre'
+    #[Assert\PositiveOrZero(
+        
+        message: 'Les frais de livraison doivent être un nombre positif'
     )]
     private ?float $fraisLivraison = null;
 
