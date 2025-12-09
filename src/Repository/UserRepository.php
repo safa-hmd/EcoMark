@@ -139,4 +139,58 @@ public function findInactiveUsers(int $minutes = 10): array
         ->getQuery()
         ->getResult();
 }
+
+
+
+
+
+/**
+ * Statistiques 
+ */
+
+public function getSimpleStatistics(): array
+{
+    return [
+        'total_users' => $this->count([]),
+        'clients' => $this->countClients(),
+        'vendeurs' => $this->countVendeurs(),
+        'by_role' => $this->getUsersByRole()
+    ];
+}
+/**
+ * Distribution des utilisateurs par rôle
+ */
+public function getUsersByRole(): array
+{
+    $results = $this->createQueryBuilder('u')
+        ->select('
+            SUM(CASE WHEN u.roles LIKE :roleClient THEN 1 ELSE 0 END) as clients,
+            SUM(CASE WHEN u.roles LIKE :roleVendeur THEN 1 ELSE 0 END) as vendeurs,
+            SUM(CASE WHEN u.roles LIKE :roleAdmin THEN 1 ELSE 0 END) as admins
+        ')
+        ->setParameter('roleClient', '%ROLE_CLIENT%')
+        ->setParameter('roleVendeur', '%ROLE_VENDEUR%')
+        ->setParameter('roleAdmin', '%ROLE_ADMIN%')
+        ->getQuery()
+        ->getSingleResult();
+        
+    return [
+        'clients' => (int) ($results['clients'] ?? 0),
+        'vendeurs' => (int) ($results['vendeurs'] ?? 0),
+        'admins' => (int) ($results['admins'] ?? 0)
+    ];
+}
+
+/**
+ * Compte les utilisateurs actifs
+ */
+public function getActiveUsersCount(\DateTimeInterface $since): int
+{
+    return (int) $this->createQueryBuilder('u')
+        ->select('COUNT(u.id)')
+        ->where('u.lastActivity >= :since')
+        ->setParameter('since', $since)
+        ->getQuery()
+        ->getSingleScalarResult();
+}
 }

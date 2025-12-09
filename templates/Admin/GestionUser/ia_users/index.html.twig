@@ -1,0 +1,121 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block title %}Gestion IA - Utilisateurs{% endblock %}
+
+{% block body %}
+{{parent()}}
+<div class="container mt-4">
+    <h1 class="mb-4">📊 Dashboard IA - Gestion des Utilisateurs</h1>
+    
+    <!-- Statistiques -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">👥 Utilisateurs Actifs</h5>
+                    <h2 class="card-text">{{ activeCount }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">⏳ Utilisateurs Inactifs</h5>
+                    <h2 class="card-text">{{ inactiveCount }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="mb-4">
+        <a href="{{ path('admin_ia_send_notifications') }}" class="btn btn-primary">
+            📧 Envoyer des notifications aux inactifs
+        </a>
+    </div>
+
+    <!-- Liste des utilisateurs inactifs -->
+    <div class="card">
+        <div class="card-header bg-warning">
+            <h4>🚨 Utilisateurs Inactifs (plus de 15 minutes)</h4>
+        </div>
+        <div class="card-body">
+            {% if inactiveUsers|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Dernière activité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in inactiveUsers %}
+                                <tr>
+                                    <td>{{ user.id }}</td>
+                                    <td>{{ user.nom }} {{ user.prenom }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        {% if user.lastActivity %}
+                                            {{ user.lastActivity|date('d/m/Y H:i') }}
+                                            <br>
+                                            <small class="text-muted">
+                                                Il y a {{ user.lastActivity|ago }}
+                                            </small>
+                                        {% else %}
+                                            <span class="badge bg-danger">Jamais actif</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="mailto:{{ user.email }}" class="btn btn-sm btn-success">
+                                            📧 Contacter
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-success">
+                    🎉 Tous les utilisateurs sont actifs ! Aucun utilisateur inactif détecté.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Liste des utilisateurs actifs (optionnel) -->
+    <div class="card mt-4">
+        <div class="card-header bg-success">
+            <h4>✅ Utilisateurs Actifs</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for user in activeUsers|slice(0, 10) %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ user.nom }} {{ user.prenom }}</h6>
+                                <p class="card-text text-muted">{{ user.email }}</p>
+                                {% if user.lastActivity %}
+                                    <small class="text-success">
+                                        Dernière activité : {{ user.lastActivity|date('H:i') }}
+                                    </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if activeUsers|length > 10 %}
+                <p class="text-center mt-3">
+                    ... et {{ activeUsers|length - 10 }} autres utilisateurs actifs
+                </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

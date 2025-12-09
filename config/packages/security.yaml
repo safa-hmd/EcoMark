@@ -18,8 +18,8 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            # custom_authenticators:
-            #     - App\Security\GoogleAuthenticator
+            custom_authenticators:
+                - App\Security\GoogleAuthenticator
 
             form_login:
                 login_path: app_login

@@ -1,0 +1,333 @@
+{# templates/Admin/GestionUser/statistiques.html.twig #}
+{% extends 'Admin/BO.html.twig' %}
+
+{% block title %}Statistiques Utilisateurs - EcoMarket Admin{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .progress-stat {
+            height: 10px;
+            border-radius: 5px;
+            background: #ecf0f1;
+            overflow: hidden;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+        
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .role-badge:hover {
+            transform: scale(1.05);
+        }
+        
+        .badge-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: inline-block;
+        }
+        
+        .client-dot { background-color: #3498db; }
+        .vendeur-dot { background-color: #9b59b6; }
+        .admin-dot { background-color: #e74c3c; }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .percentage-circle {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 20px;
+        }
+        
+        .circle-bg {
+            fill: none;
+            stroke: #ecf0f1;
+            stroke-width: 3.8;
+        }
+        
+        .circle {
+            fill: none;
+            stroke-width: 3.8;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dasharray 1.5s ease;
+        }
+        
+        .circle-client { stroke: #3498db; }
+        .circle-vendeur { stroke: #9b59b6; }
+        .circle-admin { stroke: #e74c3c; }
+        
+        .circle-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            fill: #2c3e50;
+        }
+        
+        .circle-label {
+            font-size: 0.9rem;
+            fill: #7f8c8d;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+{{ parent() }}
+<div class="container-fluid py-4">
+    <!-- En-tête avec effet de verre -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card glass-effect border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h3 mb-1 text-dark fw-bold">
+                                Tableau de Bord - Statistiques Utilisateurs
+                            </h1>
+                            <p class="text-muted mb-0">
+                                Vue d'ensemble des utilisateurs EcoMarket
+                            </p>
+                        </div>
+                        <div class="d-flex align-items-center">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Cartes détaillées -->
+    <div class="row g-4">
+        <!-- Carte Clients -->
+        <div class="col-md-4">
+            <div class="stat-card border-0" style="border-top: 4px solid #3498db;">
+                <div class="d-flex align-items-start mb-3">
+                    <div class="p-3 rounded-circle bg-primary bg-opacity-10 me-3">
+                        <i class="fas fa-user text-primary" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-bold">Clients</h5>
+                        <span class="text-muted">Utilisateurs acheteurs</span>
+                    </div>
+                </div>
+                <h2 class="stat-number mb-3">{{ stats.clients }}</h2>
+                <div class="progress progress-stat mb-2">
+                    <div class="progress-bar bg-primary" 
+                         style="width: {{ stats.total_users > 0 ? (stats.clients / stats.total_users) * 100 : 0 }}%">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between text-muted small">
+                    <span>{{ stats.total_users > 0 ? ((stats.clients / stats.total_users) * 100)|round(1) : 0 }}% du total</span>
+                    <span>{{ stats.clients }} utilisateurs</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Carte Vendeurs -->
+        <div class="col-md-4">
+            <div class="stat-card border-0" style="border-top: 4px solid #9b59b6;">
+                <div class="d-flex align-items-start mb-3">
+                    <div class="p-3 rounded-circle bg-info bg-opacity-10 me-3">
+                        <i class="fas fa-store text-info" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-bold">Vendeurs</h5>
+                        <span class="text-muted">Partenaires commerciaux</span>
+                    </div>
+                </div>
+                <h2 class="stat-number mb-3">{{ stats.vendeurs }}</h2>
+                <div class="progress progress-stat mb-2">
+                    <div class="progress-bar bg-info" 
+                         style="width: {{ stats.total_users > 0 ? (stats.vendeurs / stats.total_users) * 100 : 0 }}%">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between text-muted small">
+                    <span>{{ stats.total_users > 0 ? ((stats.vendeurs / stats.total_users) * 100)|round(1) : 0 }}% du total</span>
+                    <span>{{ stats.vendeurs }} utilisateurs</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Carte Administrateurs -->
+        <div class="col-md-4">
+            <div class="stat-card border-0" style="border-top: 4px solid #e74c3c;">
+                <div class="d-flex align-items-start mb-3">
+                    <div class="p-3 rounded-circle bg-danger bg-opacity-10 me-3">
+                        <i class="fas fa-cogs text-danger" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0 fw-bold">Administrateurs</h5>
+                        <span class="text-muted">Gestionnaires système</span>
+                    </div>
+                </div>
+                <h2 class="stat-number mb-3">{{ stats.by_role.admins is defined ? stats.by_role.admins : 0 }}</h2>
+                <div class="progress progress-stat mb-2">
+                    <div class="progress-bar bg-danger" 
+                         style="width: {{ stats.total_users > 0 and stats.by_role.admins is defined ? (stats.by_role.admins / stats.total_users) * 100 : 0 }}%">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between text-muted small">
+                    <span>
+                        {% if stats.total_users > 0 and stats.by_role.admins is defined %}
+                            {{ ((stats.by_role.admins / stats.total_users) * 100)|round(1) }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                        du total
+                    </span>
+                    <span>{{ stats.by_role.admins is defined ? stats.by_role.admins : 0 }} utilisateurs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Timer pour l'actualisation
+    let seconds = 0;
+    const refreshTime = document.getElementById('refresh-time');
+    
+    if (refreshTime) {
+        setInterval(function() {
+            seconds++;
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            refreshTime.textContent = `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }, 1000);
+    }
+    
+    // Animation des cercles
+    const circles = document.querySelectorAll('.circle');
+    circles.forEach(circle => {
+        const length = circle.getTotalLength();
+        circle.style.strokeDasharray = length;
+        circle.style.strokeDashoffset = length;
+        
+        // Animation delay
+        setTimeout(() => {
+            circle.style.transition = 'stroke-dashoffset 1.5s ease';
+            circle.style.strokeDashoffset = 0;
+        }, 500);
+    });
+    
+    // Animation des cartes au scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        observer.observe(card);
+    });
+    
+    // Tooltips Bootstrap
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

@@ -68,7 +68,7 @@ if ($form->isSubmitted() && $form->isValid()) {
     return $this->redirectToRoute('profilVendeur', ['id' => $user->getId()]);
 }
 
-return $this->render('Vendeur/modifierProfilVendeur.html.twig', [
+return $this->render('Vendeur/GestionUser/modifierProfilVendeur.html.twig', [
     'form' => $form->createView(),
     'vendeur' => $user,
 ]);

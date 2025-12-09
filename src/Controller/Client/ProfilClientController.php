@@ -68,7 +68,7 @@ if ($form->isSubmitted() && $form->isValid()) {
     return $this->redirectToRoute('profil_client', ['id' => $user->getId()]);
 }
 
-return $this->render('Client/modifierProfileClient.html.twig', [
+return $this->render('Client/GestionUser/modifierProfileClient.html.twig', [
     'form' => $form->createView(),
     'client' => $user,   
 ]);

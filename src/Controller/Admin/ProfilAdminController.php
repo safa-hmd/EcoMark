@@ -167,6 +167,24 @@ public function myVendeurs(UserRepository $userRepository, Request $request, $id
     ]);
 }
 
+#[Route('/admin/statistiques', name: 'admin_statistiques')]
+public function statistiques(UserRepository $userRepository): Response
+{
+    $admin = $this->getUser();
+    
+    if (!in_array('ROLE_ADMIN', $admin->getRoles())) {
+        throw $this->createAccessDeniedException("Accès non autorisé.");
+    }
+    
+    // Utilisez getSimpleStatistics() qui contient active_7d
+    $stats = $userRepository->getSimpleStatistics();
+    
+    return $this->render('Admin/GestionUser/statistiques.html.twig', [
+        'admin' => $admin,
+        'stats' => $stats
+    ]);
+}
+
 
 }
 

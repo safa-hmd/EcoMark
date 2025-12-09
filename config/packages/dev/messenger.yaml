@@ -1,0 +1,4 @@
+framework:
+    messenger:
+        routing:
+            # Symfony\Component\Mailer\Messenger\SendEmailMessage: sync
