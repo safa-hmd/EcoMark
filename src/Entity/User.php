@@ -3,13 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
-
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -55,27 +54,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $telephone = null;
 
-      #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $lastActivity = null;
+
+    // RELATIONS
+    #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $commandes;
+
+    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user', orphanRemoval: true)]
+    private Collection $participations;
+
+    #[ORM\OneToMany(targetEntity: Reclamation::class, mappedBy: 'client', orphanRemoval: true)]
+    private Collection $reclamations;
+
+    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Reclamation::class)]
+    private Collection $reclamationsAdmin;
+
+    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Reponse::class)]
+    private Collection $reponses;
+
+    public function __construct()
+    {
+        $this->commandes = new ArrayCollection();
+        $this->participations = new ArrayCollection();
+        $this->reclamations = new ArrayCollection();
+        $this->reclamationsAdmin = new ArrayCollection();
+        $this->reponses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    // -----------------------------
-    // REQUIRED BY SYMFONY SECURITY
-    // -----------------------------
-
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /** Symfony 5 compatibility */
     public function getUsername(): string
     {
         return (string) $this->email;
@@ -84,7 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER'; // garantit un minimum
+        $roles[] = 'ROLE_USER';
         return array_unique($roles);
     }
 
@@ -96,13 +115,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // Ex: $this->plainPassword = null;
     }
 
-    // -----------------------------
-    // GETTERS / SETTERS
-    // -----------------------------
-
+    // GETTERS/SETTERS
     public function getNom(): ?string
     {
         return $this->nom;
@@ -191,26 +206,65 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Reclamation::class)]
-    private Collection $reclamations;
+    // MÉTHODES POUR LES RELATIONS
 
-    // Réclamations où l'utilisateur est admin
-    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Reclamation::class)]
-    private Collection $reclamationsAdmin;
-
-    // Réponses créées par cet admin
-    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Reponse::class)]
-    private Collection $reponses;
-
-    public function __construct()
+    /**
+     * @return Collection<int, Commande>
+     */
+    public function getCommandes(): Collection
     {
-        $this->reclamations = new ArrayCollection();
-        $this->reclamationsAdmin = new ArrayCollection();
-        $this->reponses = new ArrayCollection();
+        return $this->commandes;
     }
 
-    // GETTERS
-    /** @return Collection|Reclamation[] */
+    public function addCommande(Commande $commande): static
+    {
+        if (!$this->commandes->contains($commande)) {
+            $this->commandes->add($commande);
+            $commande->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeCommande(Commande $commande): static
+    {
+        if ($this->commandes->removeElement($commande)) {
+            if ($commande->getUser() === $this) {
+                $commande->setUser(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participation>
+     */
+    public function getParticipations(): Collection
+    {
+        return $this->participations;
+    }
+
+    public function addParticipation(Participation $participation): static
+    {
+        if (!$this->participations->contains($participation)) {
+            $this->participations->add($participation);
+            $participation->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeParticipation(Participation $participation): static
+    {
+        if ($this->participations->removeElement($participation)) {
+            if ($participation->getUser() === $this) {
+                $participation->setUser(null);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reclamation>
+     */
     public function getReclamations(): Collection
     {
         return $this->reclamations;
@@ -254,5 +308,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
         return $this;
     }
+    public function removeReclamation(Reclamation $reclamation): static
+    {
+        if ($this->reclamations->removeElement($reclamation)) {
+            if ($reclamation->getClient() === $this) {
+                $reclamation->setClient(null);
+            }
+        }
+        return $this;
+    }
+
+    public function removeReponse(Reponse $reponse): static
+    {
+        if ($this->reponses->removeElement($reponse)) {
+            if ($reponse->getAdmin() === $this) {
+                $reponse->setAdmin(null);
+            }
+        }
+        return $this;
+    }
+
 }
+
+    
 

@@ -1,0 +1,551 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block title %}Détails de la Commande{% endblock %}
+
+{% block body %}
+<div class="form-container">
+    <div class="form-header">
+        <h1>📋 Détails de la commande #{{ commande.id }}</h1>
+        <p>Informations complètes de la commande</p>
+    </div>
+
+    {# ✅ Affichage des messages flash #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="form-grid">
+                <div class="form-section">
+                    <h3>📊 Informations principales</h3>
+                    
+                    <div class="info-field">
+                        <label class="info-label">Statut</label>
+                        <div class="info-value">
+                            <span class="badge 
+                                {% if commande.statut == 'en_attente' %}bg-warning
+                                {% elseif commande.statut == 'en_cours' %}bg-info
+                                {% elseif commande.statut == 'expediee' %}bg-primary
+                                {% elseif commande.statut == 'livree' %}bg-success
+                                {% elseif commande.statut == 'annulee' %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                {{ commande.statut|replace({'_': ' '})|title }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="info-field">
+                        <label class="info-label">Date de commande</label>
+                        <div class="info-value">
+                            {{ commande.dateCommande ? commande.dateCommande|date('d/m/Y à H:i') : 'Non définie' }}
+                        </div>
+                    </div>
+
+                    <div class="info-field">
+                        <label class="info-label">Montant total</label>
+                        <div class="info-value fw-bold text-success">
+                            {{ commande.montantTotal|number_format(2, ',', ' ') }} €
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>👤 Client & Paiement</h3>
+                    
+                    {# ✅ MODIFICATION PRINCIPALE : Afficher les infos du User au lieu de commande.client #}
+                    <div class="info-field">
+                        <label class="info-label">Client</label>
+                        <div class="info-value">
+                            {% if commande.user %}
+                                <div class="d-flex align-items-center">
+                                    <div class="customer-avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                        {{ commande.user.nom|first|upper }}{{ commande.user.prenom|first|upper }}
+                                    </div>
+                                    <div>
+                                        <strong>{{ commande.user.nom }} {{ commande.user.prenom }}</strong><br>
+                                        <small class="text-muted">{{ commande.user.email }}</small>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <em class="text-muted">Client non renseigné</em>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# ✅ Afficher téléphone et adresse du user si disponibles #}
+                    {% if commande.user and commande.user.telephone %}
+                    <div class="info-field">
+                        <label class="info-label">Téléphone</label>
+                        <div class="info-value">
+                            📱 {{ commande.user.telephone }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="info-field">
+                        <label class="info-label">Méthode de paiement</label>
+                        <div class="info-value">
+                            {% if commande.methodePaiement == 'carte_bancaire' %}💳 Carte Bancaire
+                            {% elseif commande.methodePaiement == 'paypal' %}🔵 PayPal
+                            {% elseif commande.methodePaiement == 'carte_postale' %}📮 Carte Postale
+                            {% elseif commande.methodePaiement == 'virement' %}🏦 Virement
+                            {% elseif commande.methodePaiement == 'especes' %}💵 Espèces
+                            {% else %}{{ commande.methodePaiement|replace({'_': ' '})|title }}{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section full-width">
+                    <h3>🏠 Adresse de livraison</h3>
+                    
+                    <div class="info-field">
+                        <label class="info-label">Adresse complète</label>
+                        <div class="info-value">
+                            {{ commande.adresseLivraison|nl2br }}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-field">
+                                <label class="info-label">Ville</label>
+                                <div class="info-value">
+                                    📍 {{ commande.ville }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-field">
+                                <label class="info-label">Code postal</label>
+                                <div class="info-value">
+                                    🔢 {{ commande.codePostal }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section full-width">
+                    <h3>📦 Produits commandés</h3>
+                    <div class="info-field">
+                        <label class="info-label">Détails des produits</label>
+                        <div class="info-value">
+                            {% if commande.produits %}
+                                {{ commande.produits|nl2br }}
+                            {% else %}
+                                <em class="text-muted">Aucun produit spécifié</em>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# ✅ NOUVEAU : Section Livraison (si elle existe) #}
+                {% if commande.livraison %}
+                <div class="form-section full-width livraison-section">
+                    <h3>🚚 Informations de livraison</h3>
+                    
+                    <div class="info-field">
+                        <label class="info-label">Statut de livraison</label>
+                        <div class="info-value">
+                            <span class="badge 
+                                {% if commande.livraison.statut == 'en_preparation' %}bg-warning
+                                {% elseif commande.livraison.statut == 'expediee' %}bg-primary
+                                {% elseif commande.livraison.statut == 'livree' %}bg-success
+                                {% else %}bg-secondary{% endif %}">
+                                {{ commande.livraison.statut|replace({'_': ' '})|title }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-field">
+                                <label class="info-label">Transporteur</label>
+                                <div class="info-value">
+                                    🚛 {{ commande.livraison.transporteur }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-field">
+                                <label class="info-label">Numéro de suivi</label>
+                                <div class="info-value">
+                                    <code>{{ commande.livraison.numeroSuivi }}</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-field">
+                                <label class="info-label">Date de livraison prévue</label>
+                                <div class="info-value">
+                                    📅 {{ commande.livraison.dateLivraison|date('d/m/Y') }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-field">
+                                <label class="info-label">Frais de livraison</label>
+                                <div class="info-value fw-bold">
+                                    {{ commande.livraison.fraisLivraison|number_format(2, ',', ' ') }} €
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="form-section full-width">
+                    <div class="alert alert-info">
+                        ℹ️ Aucune livraison n'a encore été créée pour cette commande.
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ path('app_commande_edit', {'id': commande.id}) }}" class="btn btn-warning">
+                    ✏️ Modifier
+                </a>
+                <a href="{{ path('app_commande_index') }}" class="btn btn-secondary">
+                    ↩ Retour à la liste
+                </a>
+                
+                <form method="post" action="{{ path('app_commande_delete', {'id': commande.id}) }}" 
+                      onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette commande ? Cette action est irréversible.');"
+                      class="delete-form">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ commande.id) }}">
+                    <button type="submit" class="btn btn-danger">
+                        🗑️ Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-header h1 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+/* ✅ Styles pour les messages flash */
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border: 1px solid #bee5eb;
+    color: #0c5460;
+    padding: 1rem;
+    border-radius: 5px;
+    margin: 0;
+}
+
+.form-grid {
+    display: grid;
+    gap: 2rem;
+}
+
+.form-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* ✅ Style spécial pour la section livraison */
+.livraison-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.livraison-section .info-label {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.livraison-section .info-value {
+    color: white;
+}
+
+.livraison-section .info-field {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.livraison-section h3 {
+    color: white;
+    border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+.form-section h3 {
+    color: #34495e;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
+}
+
+.form-section.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-field {
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    border-radius: 5px;
+    background: #f8f9fa;
+}
+
+.info-field:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    word-break: break-word;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.fw-bold {
+    font-weight: 700;
+}
+
+.text-success {
+    color: #27ae60;
+}
+
+code {
+    background: #f8f9fa;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    color: #e74c3c;
+}
+
+.badge {
+    font-size: 0.85rem;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.bg-warning {
+    background-color: #f39c12;
+    color: white;
+}
+
+.bg-info {
+    background-color: #3498db;
+    color: white;
+}
+
+.bg-primary {
+    background-color: #2980b9;
+    color: white;
+}
+
+.bg-success {
+    background-color: #27ae60;
+    color: white;
+}
+
+.bg-danger {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.bg-secondary {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.rounded-circle {
+    border-radius: 50%;
+}
+
+.me-2 {
+    margin-right: 0.5rem;
+}
+
+.customer-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.col-md-6 {
+    width: 100%;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #ecf0f1;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-warning {
+    background: #f39c12;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #e67e22;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.delete-form {
+    margin: 0;
+}
+
+.card {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.border-0 {
+    border: 0;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .form-actions {
+        flex-wrap: nowrap;
+    }
+}
+
+@media (max-width: 767px) {
+    .row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

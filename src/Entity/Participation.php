@@ -57,7 +57,7 @@ class Participation
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'participations')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Evenement $evenement = null;
 
     public function getEvenement(): ?Evenement

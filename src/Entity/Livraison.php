@@ -42,8 +42,8 @@ class Livraison
     )]
     private ?string $statut = null;
 
-    #[ORM\OneToOne(inversedBy: null, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(name: 'commande_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\OneToOne(inversedBy: 'livraison', targetEntity: Commande::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotNull(message: "La commande est obligatoire")]
     private ?Commande $commande = null;
 
@@ -73,9 +73,9 @@ class Livraison
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "Les frais de livraison sont obligatoires")]
-    #[Assert\Type(
-        type: 'numeric',
-        message: 'Les frais de livraison doivent être un nombre'
+    #[Assert\PositiveOrZero(
+        
+        message: 'Les frais de livraison doivent être un nombre positif'
     )]
     private ?float $fraisLivraison = null;
 
