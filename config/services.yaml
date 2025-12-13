@@ -8,14 +8,14 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/photos'
-<<<<<<< HEAD
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
-=======
     uploads_directory: '%kernel.project_dir%/public/uploads'
     openweather_api_key: '%env(OPENWEATHER_API_KEY)%'
->>>>>>> f06b6bc (Ajout EventClientController et corrections)
 
 services:
+
+    Symfony\Contracts\HttpClient\HttpClientInterface: '@http_client'
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -32,3 +32,7 @@ services:
     App\Service\WeatherService:
         arguments:
             $apiKey: '%openweather_api_key%'
+
+    App\Service\HuggingFaceImageService:
+        arguments:
+            $client: '@http_client'

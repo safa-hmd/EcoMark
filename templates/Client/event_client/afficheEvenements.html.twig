@@ -44,9 +44,16 @@
                 </td>
 
                 <td data-label="Action">
-                    <a href="{{ path('client_participer', {ii: evenement.id}) }}" class="btn-green small-btn">
+                    <a href="{{ path('client_participer', {ii: evenement.id}) }}"
+                     class="table-btn btn-green small-btn">
                          Participer
                      </a> 
+                     <span title="QR code pour participer">
+                        <img src="{{ qrCodes[evenement.id] }}" 
+                            alt="QR pour participer" 
+                            width="60" 
+                            style="border-radius:6px;">
+                            </span>
                 </td>
             </tr>
         {% endfor %}

@@ -11,8 +11,9 @@
     <table class="eco-table">
         <thead>
             <tr>
-                <th>ID</th>
+                
                 <th>Événement</th>
+                <th>Date de l'événement</th>
                 <th>Date de participation</th>
                 <th>Statut</th>
                 <th>Annuler</th>
@@ -22,12 +23,18 @@
         <tbody>
         {% for participation in participations %}
             <tr>
-                <td data-label="ID">{{ participation.id }}</td>
+                
                 <td data-label="Événement">{{ participation.evenement.titre }}</td>
+                <td data-label="Date">{{ participation.evenement.dateEvent ? participation.evenement.dateEvent|date('Y-m-d') : '' }}</td>
                 <td data-label="Date">{{ participation.dateParticipation|date('Y-m-d H:i') }}</td>
                 <td data-label="Statut">{{ participation.statut }}</td>
+                {% set today = "now"|date('Y-m-d') %}
                 <td data-label="Annuler">
-                    {% if participation.statut != 'annulee' %}
+                    {% if participation.evenement.dateEvent|date('Y-m-d') < today %}
+                        <span class="badge bg-secondary">
+                            L'événement est déjà passé 
+                        </span>
+                    {% elseif participation.statut != 'annulee' %}
                         <a href="{{ path('client_cancel_participation', {id: participation.id}) }}"
                            class="btn-green small-btn">
                             Annuler
@@ -35,6 +42,7 @@
                     {% else %}
                         <span class="badge bg-secondary">Déjà annulée</span>
                     {% endif %}
+
                 </td>
             </tr>
         {% else %}

@@ -318,88 +318,92 @@
                 </div>
               </li>
               <li class="sidebar-main-title">
-                <div>
-                  <h5  sidebar-title">MENU</h5>
-                </div>
-              </li>
-           
-              <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
-                  <svg class="stroke-icon">
-                  </svg>
-                  <h6 class="f-w-600">Users</h6></a>
-                <ul class="sidebar-submenu">
-                  <li><a href="{{ path('profilAdmin') }}">Users Profile</a></li>
-                  <li><a href="{{ path('profilAdmin_edit', {id: admin.id}) }}">Modifier Profil</a></li>
-                
-                </ul>
-              </li>
+    <div>
+        <h5 class="sidebar-title">MENU</h5>
+    </div>
+</li>
 
-              <li class="sidebar-list"> <a class="sidebar-link" href="{{path('admin_mes_clients', {id: admin.id})}}">
-                  <svg class="stroke-icon">
-                  </svg>
-                  <h6 class="f-w-600">Consulter Clients </h6></a>
-              </li>
+<!-- Users Menu -->
+<li class="sidebar-list">
+    <a class="sidebar-link" href="#">
+        <svg class="stroke-icon"></svg>
+        <h6 class="f-w-600">Users</h6>
+    </a>
+    <ul class="sidebar-submenu">
+        <li><a href="{{ path('profilAdmin') }}">Users Profile</a></li>
+        <li><a href="{{ path('profilAdmin_edit', {id: admin.id}) }}">Modifier Profil</a></li>
+    </ul>
+</li>
 
+<!-- Clients -->
+<li class="sidebar-list">
+    <a class="sidebar-link" href="{{ path('admin_mes_clients', {id: admin.id}) }}">
+        <svg class="stroke-icon"></svg>
+        <h6 class="f-w-600">Consulter Clients</h6>
+    </a>
+</li>
 
-              <li class="sidebar-list"> <a class="sidebar-link" href="{{path('admin_mes_vendeurs', {id: admin.id})}}">
-                  <svg class="stroke-icon">
-                  </svg>
-                  <h6 class="f-w-600">Consulter Vendeurs</h6></a></li>
+<!-- Vendeurs -->
+<li class="sidebar-list">
+    <a class="sidebar-link" href="{{ path('admin_mes_vendeurs', {id: admin.id}) }}">
+        <svg class="stroke-icon"></svg>
+        <h6 class="f-w-600">Consulter Vendeurs</h6>
+    </a>
+</li>
 
+<!-- Réclamations -->
+<li class="sidebar-list">
+    <a class="sidebar-link" href="{{ path('reponseafficherReponse') }}">
+        <svg class="stroke-icon"></svg>
+        <h6 class="f-w-600">Traiter réclamation ({{ nbReclamations }})</h6>
+    </a>
+</li>
 
-              <li class="sidebar-list"> <a class="sidebar-link" href="{{ path('reponseafficherReponse') }}">
-                  <svg class="stroke-icon">
-                  </svg>
-                  <h6 class="f-w-600"> Traiter réclamation ({{ nbReclamations }})</h6></a>
-              </li>
+<!-- Evenements -->
+<li class="sidebar-list">
+    <a class="sidebar-link" href="#">
+        <svg class="stroke-icon"></svg>
+        <h6 class="f-w-600">Evenement</h6>
+    </a>
+    <ul class="sidebar-submenu">
+        <li><a href="{{ path('admin_evenement_ajout') }}">Ajouter Event</a></li>
+        <li><a href="{{ path('affiche_admin') }}">Consulter Event</a></li>
+        <li><a href="{{ path('admin_participations') }}">Liste des participations</a></li>
+    </ul>
+</li>
 
-            
-             
+<!-- Produits -->
+<li class="sidebar-list">
+    <a class="sidebar-link" href="file-manager.html">
+        <svg class="stroke-icon"></svg>
+        <h6 class="f-w-600">Consulter Produits</h6>
+    </a>
+</li>
 
+<!-- Points de recyclage -->
+<li class="sidebar-list">
+    <a class="sidebar-link" href="file-manager.html">
+        <svg class="stroke-icon"></svg>
+        <h6 class="f-w-600">Consulter points de recyclage</h6>
+    </a>
+</li>
 
-              <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
-                  <svg class="stroke-icon">
-                  </svg>
-                  <h6 class="f-w-600">Evenement</h6></a>
-                <ul class="sidebar-submenu">
-                 <li> <a href="{{ path('admin_evenement_ajout') }}">Ajouter Event</a></li>
-                 <li><a href="{{ path('affiche_admin') }}">Consulter Event</a></li>
+<!-- Commandes -->
+<li class="sidebar-list">
+    <a class="sidebar-link" href="file-manager.html">
+        <svg class="stroke-icon"></svg>
+        <h6 class="f-w-600">Commandes</h6>
+    </a>
+</li>
 
-                
-                </ul>
-              </li>
+<!-- Livraison -->
+<li class="sidebar-list">
+    <a class="sidebar-link" href="file-manager.html">
+        <svg class="stroke-icon"></svg>
+        <h6 class="f-w-600">Livraison</h6>
+    </a>
+</li>
 
-
-              
-              <li class="sidebar-list"> <a class="sidebar-link" href="file-manager.html">
-                  <svg class="stroke-icon">
-                  </svg>
-                  <h6 class="f-w-600">Consulter Produits </h6></a>
-              </li>
-
-
-
-              
-              <li class="sidebar-list"> <a class="sidebar-link" href="file-manager.html">
-                  <svg class="stroke-icon">
-                  </svg>
-                  <h6 class="f-w-600">Consulter point de recyclage </h6></a>
-              </li>
-
-
-
-              
-              <li class="sidebar-list"> <a class="sidebar-link" href="file-manager.html">
-                  <svg class="stroke-icon">
-                  </svg>
-                  <h6 class="f-w-600">Commandes </h6></a>
-              </li>
-
-                 <li class="sidebar-list"> <a class="sidebar-link" href="file-manager.html">
-                  <svg class="stroke-icon">
-                  </svg>
-                  <h6 class="f-w-600">Livraison</h6></a>
-              </li>
 
           </div>
           <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
@@ -413,6 +417,23 @@
 
         <footer class="footer"> 
             {% block footer%}
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <script>
+                    Swal.fire({
+                        icon: '{{ label == "success" ? "success" : (label == "warning" ? "warning" : "info") }}',
+                        title: '{{ message }}',
+                        showConfirmButton: false,
+                        timer: 2000
+                            });
+                    </script>
+                {% endfor %}
+            {% endfor %}
+
+
+
           <div class="container-fluid">
             <div class="row"> 
               <div class="col-md-6 footer-copyright">

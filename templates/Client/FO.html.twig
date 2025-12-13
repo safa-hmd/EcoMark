@@ -84,7 +84,7 @@
                     <div class="col">
                         <div class="site-logo-wrap">
                             <div class="site-logo">
-                                <img src="{{ asset('FO/img/logo.png') }}" alt="Logo">
+                               <img src="{{ asset('FO/img/logo.png') }}" alt="Logo" width="150" height="auto">
 
                             </div>
                         </div>
@@ -98,21 +98,9 @@
                                         <li><a href="#">About</a> </li>
                                         <li><a href="#">Produit</a> </li>
                                         <li><a href="#">Commande</a> </li>
-<<<<<<< HEAD
-                                        <li><a href="#">Réclamation({{ nbReclamations }})</a> 
-                                       
-
-    <ul class="sub-menu">
-        <li><a href="{{ path('reclamation_ajoutRec') }}">Passer Réclamation</a></li>
-        <li><a href="{{ path('reclamation_Afficher') }}">Liste des Réclamations</a></li>
-    </ul>
-</li>
-                                        <li><a href="#">Evenement</a> </li>
-=======
-                                        <li><a href="#">Réclamation</a> </li>
                                         <li><a href="{{ path('client_affiche_evenements') }}">Evenement</a></li>
-
->>>>>>> f06b6bc (Ajout EventClientController et corrections)
+                                        <li><a href="{{ path('reclamation_ajoutRec') }}">Passer Réclamation</a></li>
+                                        <li><a href="{{ path('reclamation_Afficher') }}">Liste des Réclamations</a></li>
                                     </ul>
                                 </div>
                             </nav>
@@ -142,7 +130,7 @@
                                 <li>
                                     <a href="#"><i class="icon-user"></i></a>
                                     <ul>
-                                        <li><a href="#">My Account</a></li>
+                                        <li><a href="{{path('profil_client')}}">My Account</a></li>
                                         <li><a href="{{path('app_logout')}}">Déconnexion</a></li>
                                     </ul>
                                 </li>
@@ -201,6 +189,20 @@
     <!-- FOOTER AREA START -->
     <footer class="ltn__footer-area  ">
         {% block footer %}
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <script>
+                    Swal.fire({
+                        icon: '{{ label == "success" ? "success" : (label == "warning" ? "warning" : "info") }}',
+                        title: '{{ message }}',
+                        showConfirmButton: false,
+                        timer: 2000
+                            });
+                    </script>
+                {% endfor %}
+            {% endfor %}
         
         <div class="ltn__copyright-area ltn__copyright-2 section-bg-2  ltn__border-top-2--- plr--5">
             <div class="container-fluid">
