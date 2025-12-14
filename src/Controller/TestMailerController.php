@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
-
+//Methode pour tester l'envoi d'email via Symfony Mailer ou non 
 class TestMailerController extends AbstractController
 {
     #[Route('/test-email', name: 'test_email')]
