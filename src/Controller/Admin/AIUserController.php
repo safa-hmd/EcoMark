@@ -39,7 +39,7 @@ class AIUserController extends AbstractController
             'admin' => $admin,
         ]);
     }
-
+//notification 
     #[Route('/send-notifications', name: 'admin_ia_send_notifications')]
     public function sendNotifications(UserActivityService $activityService, Security $security): Response
     {
