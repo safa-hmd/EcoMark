@@ -1,13 +1,10 @@
 <?php
-
 namespace App\Security;
-
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 use KnpU\OAuth2ClientBundle\Security\Authenticator\OAuth2Authenticator;
 use League\OAuth2\Client\Provider\GoogleUser;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,20 +20,13 @@ class GoogleAuthenticator extends OAuth2Authenticator
     private ClientRegistry $clientRegistry;
     private EntityManagerInterface $em;
     private RouterInterface $router;
-    private LoggerInterface $logger;
     private UserPasswordHasherInterface $passwordHasher;
 
-    public function __construct(
-        ClientRegistry $clientRegistry,
-        EntityManagerInterface $em,
-        RouterInterface $router,
-        LoggerInterface $logger,
-        UserPasswordHasherInterface $passwordHasher
+    public function __construct(ClientRegistry $clientRegistry,EntityManagerInterface $em,RouterInterface $router,UserPasswordHasherInterface $passwordHasher
     ) {
         $this->clientRegistry = $clientRegistry;
         $this->em = $em;
         $this->router = $router;
-        $this->logger = $logger;
         $this->passwordHasher = $passwordHasher;
     }
 
@@ -45,25 +35,26 @@ class GoogleAuthenticator extends OAuth2Authenticator
         return $request->attributes->get('_route') === 'connect_google_check';
     }
 
+
+
     public function authenticate(Request $request): SelfValidatingPassport
     {
-        // 1 - Récupérer le token Google
+        //Récupérer le token Google
         $accessToken = $this->fetchAccessToken($this->getGoogleClient());
 
-        // 2 - Récupérer l'utilisateur Google
+        // Récupération des infos utilisateur depuis Google
         /** @var GoogleUser $googleUser */
         $googleUser = $this->getGoogleClient()->fetchUserFromToken($accessToken);
-
         $email = $googleUser->getEmail();
 
         return new SelfValidatingPassport(
             new UserBadge($email, function ($userIdentifier) use ($googleUser, $email) {
-                // 3 - Chercher un User existant
+                // Chercher un User existant
                 $user = $this->em->getRepository(User::class)->findOneBy([
                     'email' => $userIdentifier
                 ]);
 
-                // 4 - Sinon : créer
+                //  Sinon : créer
                 if (!$user) {
                     $user = new User();
                     $user->setEmail($userIdentifier);
@@ -87,8 +78,6 @@ class GoogleAuthenticator extends OAuth2Authenticator
                     if (method_exists($user, 'setPrenom')) {
                         $user->setPrenom($firstName ?? 'Google');
                     }
-
-                    // Ajout du rôle client
                     $user->setRoles(['ROLE_CLIENT']);
 
                     // Définir d'autres champs si nécessaires
@@ -97,11 +86,8 @@ class GoogleAuthenticator extends OAuth2Authenticator
                         $user->$setter(true);
                     }
 
-                    // Enregistrer dans la BD
                     $this->em->persist($user);
                     $this->em->flush();
-                    
-                    $this->logger->info('Nouvel utilisateur Google créé: ' . $email);
                 }
 
                 return $user;
@@ -109,12 +95,13 @@ class GoogleAuthenticator extends OAuth2Authenticator
         );
     }
 
+
+
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         /** @var User $user */
         $user = $token->getUser();
 
-        // Redirection selon rôle
         if (in_array('ROLE_ADMIN', $user->getRoles())) {
             $route = 'profilAdmin';
         } elseif (in_array('ROLE_VENDEUR', $user->getRoles())) {
@@ -128,15 +115,16 @@ class GoogleAuthenticator extends OAuth2Authenticator
         );
     }
 
+
+    //Rôle : définit ce qui se passe si la connexion échoue.
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?RedirectResponse
     {
-        $this->logger->error('Google OAuth error: '.$exception->getMessage());
-
         return new RedirectResponse(
             $this->router->generate('app_login')
         );
     }
 
+    //centralise la récupération du client Google OAuth2.
     private function getGoogleClient()
     {
         return $this->clientRegistry->getClient('google');

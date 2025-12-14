@@ -7,14 +7,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[UniqueEntity(
     fields: ['email'],
-    message: 'Cet email est déjà utilisé. Veuillez en choisir un autre.'
+    message: 'Cet email est déjà utilisé.'
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -48,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 8, nullable: true)]
@@ -69,16 +69,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    // -----------------------------
-    // REQUIRED BY SYMFONY SECURITY
-    // -----------------------------
+
 
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /** Symfony 5 compatibility */
+
     public function getUsername(): string
     {
         return (string) $this->email;
@@ -99,12 +97,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // Ex: $this->plainPassword = null;
+        // Si vous stockez des informations sensibles sur l'utilisateur, effacez-les ici
+        // $this->plainPassword = null;
     }
 
-    // -----------------------------
-    // GETTERS / SETTERS
-    // -----------------------------
+
 
     public function getNom(): ?string
     {
@@ -193,7 +190,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->lastActivity = $lastActivity;
         return $this;
     }
-
-
-    
 }

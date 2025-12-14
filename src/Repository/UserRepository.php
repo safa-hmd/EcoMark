@@ -62,7 +62,7 @@ public function countVendeurs(): int
         ->getSingleScalarResult();
 }
 
-public function findByClientRole(string $role): array
+public function findByClientRole(): array
 {
     return $this->createQueryBuilder('u')
         ->andWhere('u.roles LIKE :role')
@@ -70,7 +70,7 @@ public function findByClientRole(string $role): array
         ->getQuery()
         ->getResult();
 }
-public function findByVendeurRole(string $role): array
+public function findByVendeurRole(): array
 {
     return $this->createQueryBuilder('u')
         ->andWhere('u.roles LIKE :role')
@@ -128,17 +128,17 @@ public function searchVendeurs(string $term = ''): array
 
 
 //Détecter si un utilisateur est actif ou inactif
-public function findInactiveUsers(int $minutes = 10): array
-{
-    $date = new \DateTime();
-    $date->modify("-{$minutes} minutes");
+    public function findInactiveUsers(int $minutes = 10): array
+    {
+        $date = new \DateTime();
+        $date->modify("-{$minutes} minutes");
 
-    return $this->createQueryBuilder('u')
-        ->where('u.lastActivity IS NULL OR u.lastActivity < :date')
-        ->setParameter('date', $date)
-        ->getQuery()
-        ->getResult();
-}
+        return $this->createQueryBuilder('u')
+            ->where('u.lastActivity IS NULL OR u.lastActivity < :date')
+            ->setParameter('date', $date)
+            ->getQuery()
+            ->getResult();
+    }
 
 
 
@@ -157,9 +157,10 @@ public function getSimpleStatistics(): array
         'by_role' => $this->getUsersByRole()
     ];
 }
-/**
- * Distribution des utilisateurs par rôle
- */
+
+
+
+ // Distribution des utilisateurs par rôle
 public function getUsersByRole(): array
 {
     $results = $this->createQueryBuilder('u')
@@ -181,9 +182,9 @@ public function getUsersByRole(): array
     ];
 }
 
-/**
- * Compte les utilisateurs actifs
- */
+
+ // Compte les utilisateurs actifs
+
 public function getActiveUsersCount(\DateTimeInterface $since): int
 {
     return (int) $this->createQueryBuilder('u')
@@ -193,4 +194,18 @@ public function getActiveUsersCount(\DateTimeInterface $since): int
         ->getQuery()
         ->getSingleScalarResult();
 }
+
+
+ //Vérifie si un email existe déjà dans la base de données
+   public function emailExists(string $email): bool
+    {
+        $count = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $count > 0;
+    }
 }

@@ -142,7 +142,7 @@
     <a class="sidebar-link" href="{{ path('admin_ia_users_index') }}">
         <svg class="stroke-icon">
         </svg>
-        <h6 class="f-w-600"> Dashboard IA</h6>
+        <h6 class="f-w-600"> Dashboard</h6>
     </a>
 </li>
 
@@ -161,19 +161,19 @@
                   <h6 class="f-w-600">Users</h6></a>
                 <ul class="sidebar-submenu">
                   <li><a href="{{ path('profilAdmin') }}">Users Profile</a></li>
-                  <li><a href="{{ path('profilAdmin_edit', {id: admin.id}) }}">Modifier Profil</a></li>
+                  <li><a href="{{ path('profilAdmin_edit')}}">Modifier Profil</a></li>
                 
                 </ul>
               </li>
 
               <li class="sidebar-list">
-                 <a class="sidebar-link" href="{{path('admin_mes_clients', {id: admin.id})}}">
+                 <a class="sidebar-link" href="{{path('admin_mes_clients')}}">
                   <svg class="stroke-icon">
                   </svg>
                   <h6 class="f-w-600">Consulter Clients </h6></a>
               </li>
 
-              <li class="sidebar-list"> <a class="sidebar-link" href="{{path('admin_mes_vendeurs', {id: admin.id})}}"
+              <li class="sidebar-list"> <a class="sidebar-link" href="{{path('admin_mes_vendeurs')}}"
                 >
                   <svg class="stroke-icon">
                   </svg>

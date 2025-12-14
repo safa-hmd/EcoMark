@@ -19,6 +19,7 @@ class PasswordResetService
     
     public function generateResetToken(User $user): string
     {
+        //bin2hex() transforme en chaîne hexadécimale
         $token = bin2hex(random_bytes(32));
         
         $cacheItem = $this->cache->getItem('reset_password_' . $token);

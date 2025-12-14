@@ -1,8 +1,5 @@
 <?php
-// src/Controller/Admin/PhotoIAController.php
-
 namespace App\Controller\Admin;
-
 use App\Service\GeminiPhotoService;
 use App\Service\PollinationsImageService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,23 +10,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
 #[Route('/photoAdmin')]
 class PhotoIAController extends AbstractController
 {
     private EntityManagerInterface $em;
     private GeminiPhotoService $gemini;
     private PollinationsImageService $pollinations;
-
-    public function __construct(
-        EntityManagerInterface $em,
-        GeminiPhotoService $gemini,
-        PollinationsImageService $pollinations
-    ) {
+    public function __construct(EntityManagerInterface $em,GeminiPhotoService $gemini,PollinationsImageService $pollinations) {
         $this->em = $em;
         $this->gemini = $gemini;
         $this->pollinations = $pollinations;
     }
+
 
     #[Route('/dashboard', name: 'admin_photo_test')]
     public function dashboard(): Response
@@ -40,6 +32,7 @@ class PhotoIAController extends AbstractController
             'admin' => $this->getUser()
         ]);
     }
+
 
     #[Route('/upload', name: 'admin_photo_upload', methods: ['POST'])]
     public function upload(Request $request): JsonResponse
@@ -80,7 +73,7 @@ class PhotoIAController extends AbstractController
                 error_log('Modération échouée, continuation: ' . $e->getMessage());
             }
 
-            // Analyse
+           
             $analysis = $this->gemini->analyzePhoto($base64Image, $mimeType);
 
             if (($analysis['quality']['score'] ?? 0) < 4) {
@@ -109,11 +102,9 @@ class PhotoIAController extends AbstractController
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0777, true);
             }
-            
             $file->move($uploadDir, $filename);
 
             /** @var \App\Entity\User $user */
-            // Mettre à jour
             $user->setPhoto($filename);
             $this->em->flush();
 
@@ -143,6 +134,7 @@ class PhotoIAController extends AbstractController
             ], 500);
         }
     }
+
 
     #[Route('/analyze', name: 'admin_photo_analyze', methods: ['GET'])]
     public function analyze(): JsonResponse
@@ -198,6 +190,7 @@ class PhotoIAController extends AbstractController
             ], 500);
         }
     }
+    
 
     #[Route('/generate-from-description', name: 'admin_photo_generate_from_description', methods: ['POST'])]
     public function generateFromDescription(Request $request): JsonResponse

@@ -220,7 +220,7 @@ class PollinationsImageService
             imagepng($image, null, 9);
             $imageData = ob_get_clean();
             
-            // ✅ PHP 8+: Plus besoin d'imagedestroy(), l'objet GdImage est automatiquement libéré
+            //  Plus besoin d'imagedestroy(), l'objet GdImage est automatiquement libéré
             // L'image sera détruite automatiquement à la fin de la fonction
             
             if ($imageData === false) {

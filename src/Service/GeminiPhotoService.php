@@ -1,6 +1,4 @@
 <?php
-// src/Service/GeminiPhotoService.php
-
 namespace App\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -13,14 +11,10 @@ class GeminiPhotoService
     private string $baseUrl = 'https://generativelanguage.googleapis.com/v1beta';
     private ?LoggerInterface $logger;
 
-    public function __construct(
-        HttpClientInterface $client, 
-        string $geminiApiKey,
-        LoggerInterface $logger = null
-    ) {
+    public function __construct(HttpClientInterface $client, string $geminiApiKey,) {
         $this->client = $client;
         $this->apiKey = $geminiApiKey;
-        $this->logger = $logger;
+       
     }
 
     private function log(string $message): void
@@ -31,22 +25,20 @@ class GeminiPhotoService
         error_log($message);
     }
 
-    /**
-     * Modération rapide avec logs détaillés
-     */
+//elle vérifie si une image est appropriée ou non, et retourne true si elle est SAFE, false si elle est UNSAFE.
     public function quickModeration(string $base64Image, string $mimeType = 'image/jpeg'): bool
     {
-        $this->log("🤖 [GEMINI] Début modération");
-        $this->log("📊 [GEMINI] MimeType: {$mimeType}");
-        $this->log("📊 [GEMINI] Taille base64: " . strlen($base64Image) . " caractères");
+        $this->log(" [GEMINI] Début modération");
+        $this->log(" [GEMINI] MimeType: {$mimeType}");
+        $this->log(" [GEMINI] Taille base64: " . strlen($base64Image) . " caractères");
         
         $prompt = "Cette image est-elle appropriée pour un profil? Réponds SAFE ou UNSAFE.";
 
         try {
             $url = "{$this->baseUrl}/models/gemini-1.5-flash:generateContent?key={$this->apiKey}";
-            $this->log("🌐 [GEMINI] URL: " . $url);
+            $this->log("[GEMINI] URL: " . $url);
             
-            $this->log("⏳ [GEMINI] Envoi requête...");
+            $this->log(" [GEMINI] Envoi requête...");
             
             $response = $this->client->request('POST', $url, [
                 'json' => [
@@ -64,31 +56,31 @@ class GeminiPhotoService
             ]);
 
             $statusCode = $response->getStatusCode();
-            $this->log("📡 [GEMINI] Status: {$statusCode}");
+            $this->log(" [GEMINI] Status: {$statusCode}");
 
             if ($statusCode !== 200) {
-                $this->log("❌ [GEMINI] Erreur HTTP {$statusCode}");
+                $this->log(" [GEMINI] Erreur HTTP {$statusCode}");
                 return false;
             }
 
             $data = $response->toArray();
-            $this->log("📦 [GEMINI] Réponse reçue");
+            $this->log(" [GEMINI] Réponse reçue");
             
             $result = trim($data['candidates'][0]['content']['parts'][0]['text'] ?? 'UNSAFE');
-            $this->log("✅ [GEMINI] Résultat modération: {$result}");
+            $this->log(" [GEMINI] Résultat modération: {$result}");
             
             return strtoupper($result) === 'SAFE';
             
         } catch (\Symfony\Component\HttpClient\Exception\ClientException $e) {
-            $this->log("❌ [GEMINI] ClientException: " . $e->getMessage());
-            $this->log("📄 [GEMINI] Response body: " . $e->getResponse()->getContent(false));
+            $this->log(" [GEMINI] ClientException: " . $e->getMessage());
+            $this->log(" [GEMINI] Response body: " . $e->getResponse()->getContent(false));
             throw $e;
         } catch (\Symfony\Component\HttpClient\Exception\ServerException $e) {
-            $this->log("❌ [GEMINI] ServerException: " . $e->getMessage());
+            $this->log(" [GEMINI] ServerException: " . $e->getMessage());
             throw $e;
         } catch (\Exception $e) {
-            $this->log("❌ [GEMINI] Exception générale: " . $e->getMessage());
-            $this->log("📍 [GEMINI] Trace: " . $e->getTraceAsString());
+            $this->log(" [GEMINI] Exception générale: " . $e->getMessage());
+            $this->log(" [GEMINI] Trace: " . $e->getTraceAsString());
             throw $e;
         }
     }
@@ -98,7 +90,7 @@ class GeminiPhotoService
      */
     public function analyzePhoto(string $base64Image, string $mimeType = 'image/jpeg'): array
     {
-        $this->log("🔍 [GEMINI] Début analyse photo");
+        $this->log(" [GEMINI] Début analyse photo");
         
         $prompt = "Analyse cette photo de profil et réponds en JSON:
 {
@@ -109,7 +101,7 @@ class GeminiPhotoService
 }";
 
         try {
-            $this->log("⏳ [GEMINI] Envoi analyse...");
+            $this->log(" [GEMINI] Envoi analyse...");
             
             $response = $this->client->request('POST', 
                 "{$this->baseUrl}/models/gemini-1.5-flash:generateContent?key={$this->apiKey}",
@@ -130,26 +122,26 @@ class GeminiPhotoService
             );
 
             $statusCode = $response->getStatusCode();
-            $this->log("📡 [GEMINI] Analyse status: {$statusCode}");
+            $this->log(" [GEMINI] Analyse status: {$statusCode}");
 
             $data = $response->toArray();
             $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '{}';
             
-            $this->log("📝 [GEMINI] Texte reçu: " . substr($text, 0, 200) . "...");
+            $this->log(" [GEMINI] Texte reçu: " . substr($text, 0, 200) . "...");
             
             $text = preg_replace('/```json\s*|\s*```/', '', trim($text));
             $analysis = json_decode($text, true);
             
             if (!$analysis) {
-                $this->log("⚠️ [GEMINI] JSON invalide, utilisation valeurs par défaut");
+                $this->log(" [GEMINI] JSON invalide, utilisation valeurs par défaut");
                 return $this->getDefaultAnalysis();
             }
             
-            $this->log("✅ [GEMINI] Analyse terminée");
+            $this->log(" [GEMINI] Analyse terminée");
             return $analysis;
             
         } catch (\Exception $e) {
-            $this->log("❌ [GEMINI] Erreur analyse: " . $e->getMessage());
+            $this->log(" [GEMINI] Erreur analyse: " . $e->getMessage());
             return $this->getDefaultAnalysis();
         }
     }
@@ -159,7 +151,7 @@ class GeminiPhotoService
      */
     public function generateAvatarPrompt(string $userDescription): string
     {
-        $this->log("🎨 [GEMINI] Génération prompt pour: {$userDescription}");
+        $this->log(" [GEMINI] Génération prompt pour: {$userDescription}");
         
         $prompt = "Transforme cette description simple en un prompt détaillé pour générer un avatar professionnel.
 
@@ -190,11 +182,11 @@ Réponds UNIQUEMENT avec le prompt optimisé en anglais, sans explication.";
             $data = $response->toArray();
             $optimizedPrompt = trim($data['candidates'][0]['content']['parts'][0]['text'] ?? $userDescription);
             
-            $this->log("✅ [GEMINI] Prompt généré: {$optimizedPrompt}");
+            $this->log(" [GEMINI] Prompt généré: {$optimizedPrompt}");
             
             return $optimizedPrompt;
         } catch (\Exception $e) {
-            $this->log("❌ [GEMINI] Erreur génération prompt: " . $e->getMessage());
+            $this->log(" [GEMINI] Erreur génération prompt: " . $e->getMessage());
             return "professional headshot portrait of {$userDescription}, high quality, detailed, studio lighting, clean background";
         }
     }
@@ -204,7 +196,7 @@ Réponds UNIQUEMENT avec le prompt optimisé en anglais, sans explication.";
      */
     public function enhanceImageDescription(string $base64Image, string $mimeType = 'image/jpeg'): string
     {
-        $this->log("✨ [GEMINI] Enhancement description image");
+        $this->log(" [GEMINI] Enhancement description image");
         
         $prompt = "Analyse cette photo et génère une description détaillée pour recréer une version améliorée.
 
@@ -238,11 +230,11 @@ Réponds avec un prompt en anglais pour générer une version améliorée et pro
             $data = $response->toArray();
             $enhanced = trim($data['candidates'][0]['content']['parts'][0]['text'] ?? 'professional portrait photo, high quality');
             
-            $this->log("✅ [GEMINI] Description améliorée");
+            $this->log(" [GEMINI] Description améliorée");
             
             return $enhanced;
         } catch (\Exception $e) {
-            $this->log("❌ [GEMINI] Erreur enhancement: " . $e->getMessage());
+            $this->log(" [GEMINI] Erreur enhancement: " . $e->getMessage());
             return 'professional portrait photo, high quality, detailed';
         }
     }

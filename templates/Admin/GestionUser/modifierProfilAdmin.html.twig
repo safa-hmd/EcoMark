@@ -3,6 +3,110 @@
 {% block body %}
 {{ parent() }}
 
+<div class="page-body">
+  <div class="container-fluid">
+
+    <!-- Titre -->
+    <div class="page-title mb-3">
+      <h2 class="edit-title">Modifier Profil</h2>
+      <hr>
+    </div>
+
+    <div class="edit-profile">
+      <div class="row justify-content-center">
+        <div class="col-xl-10">
+
+{{ form_start(form, {
+  'attr': {
+    'class': 'card p-4 shadow edit-card',
+    'novalidate':'novalidate',
+    'autocomplete':'off'
+  }
+}) }}
+
+          <div class="card-body">
+
+            <div class="row g-4">
+
+              <!-- Nom -->
+              <div class="col-md-6">
+                <label class="label-required">{{ form_label(form.nom) }}<span>*</span></label>
+                {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+                <div class="text-danger form-error-msg">{{ form_errors(form.nom) }}</div>
+              </div>
+
+              <!-- Prénom -->
+              <div class="col-md-6">
+                <label class="label-required">{{ form_label(form.prenom) }}<span>*</span></label>
+                {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+                <div class="text-danger form-error-msg">{{ form_errors(form.prenom) }}</div>
+              </div>
+
+              <!-- Email -->
+              <div class="col-md-6">
+                <label class="label-required">{{ form_label(form.email) }}<span>*</span></label>
+                {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
+                <div class="text-danger form-error-msg">{{ form_errors(form.email) }}</div>
+              </div>
+
+              <!-- Téléphone -->
+              <div class="col-md-6">
+                <label class="label-required">{{ form_label(form.telephone) }}</label>
+                {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Téléphone'}}) }}
+                <div class="text-danger form-error-msg">{{ form_errors(form.telephone) }}</div>
+              </div>
+
+              <!-- Adresse -->
+              <div class="col-md-6">
+                <label>{{ form_label(form.adresse) }}</label>
+                {{ form_widget(form.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
+                <div class="text-danger form-error-msg">{{ form_errors(form.adresse) }}</div>
+              </div>
+
+              <!-- Mot de passe -->
+              <div class="col-md-6">
+                <label class="label-required">{{ form_label(form.password) }}<span>*</span></label>
+                {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe (optionnel)'}}) }}
+                <div class="text-danger form-error-msg">{{ form_errors(form.password) }}</div>
+              </div>
+
+              <!-- Photo -->
+              <div class="col-md-8">
+                <label>{{ form_label(form.photo) }}</label>
+                {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+                <div class="text-danger form-error-msg">{{ form_errors(form.photo) }}</div>
+
+                <small class="form-text text-muted">Image actuelle :</small><br>
+                <img 
+                  src="{{ admin.photo ? asset('uploads/photos/' ~ admin.photo) : asset('uploads/default.jpg') }}"
+                  width="120"
+                  class="mt-2 photo-preview"
+                  alt="Photo Admin"
+                >
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Bouton -->
+          <div class="card-footer text-end bg-white border-0 mt-3">
+            <button class="btn btn-primary" type="submit">Mettre à jour</button>
+          </div>
+
+          {{ form_end(form) }}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
 <style>
     .edit-card {
         border-radius: 20px;
@@ -59,98 +163,42 @@
     }
 </style>
 
-<div class="page-body">
-  <div class="container-fluid">
 
-    <!-- Titre -->
-    <div class="page-title mb-3">
-      <h2 class="edit-title">Modifier Profil</h2>
-      <hr>
-    </div>
+<!-- JavaScript pour éviter les problèmes de session -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (!form) return;
+    
+    const submitBtn = form.querySelector('button[type="submit"]');
+    let isSubmitting = false;
+    
+    form.addEventListener('submit', function(e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
+        isSubmitting = true;
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Traitement...';
+        }
+    });
+});
 
-    <div class="edit-profile">
-      <div class="row justify-content-center">
-        <div class="col-xl-10">
+</script>
 
-          {{ form_start(form, {'attr': {'class': 'card p-4 shadow edit-card','novalidate':'novalidate'}}) }}
-
-          <div class="card-body">
-
-            <div class="row g-4">
-
-              <!-- Nom -->
-              <div class="col-md-6">
-                <label class="label-required">{{ form_label(form.nom) }}<span>*</span></label>
-                {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
-                <div class="text-danger form-error-msg">{{ form_errors(form.nom) }}</div>
-              </div>
-
-              <!-- Prénom -->
-              <div class="col-md-6">
-                <label class="label-required">{{ form_label(form.prenom) }}<span>*</span></label>
-                {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
-                <div class="text-danger form-error-msg">{{ form_errors(form.prenom) }}</div>
-              </div>
-
-              <!-- Email -->
-              <div class="col-md-6">
-                <label class="label-required">{{ form_label(form.email) }}</label> <span class="text-danger">*</span>
-                {{ form_widget(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email'}}) }}
-                <div class="text-danger form-error-msg">{{ form_errors(form.email) }}</div>
-              </div>
-
-              <!-- Téléphone -->
-              <div class="col-md-6">
-                <label class="label-required">{{ form_label(form.telephone) }}
-                {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Téléphone'}}) }}
-                <div class="text-danger form-error-msg">{{ form_errors(form.telephone) }}</div>
-              </div>
-
-              <!-- Adresse -->
-              <div class="col-md-6">
-                {{ form_label(form.adresse) }}
-                {{ form_widget(form.adresse, {'attr': {'class': 'form-control', 'placeholder': 'Adresse'}}) }}
-                <div class="text-danger form-error-msg">{{ form_errors(form.adresse) }}</div>
-              </div>
-
-              <!-- Mot de passe -->
-              <div class="col-md-6">
-                {{ form_label(form.password) }}<span>*</span></label>
-                {{ form_widget(form.password, {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe (optionnel)'}}) }}
-                <div class="text-danger form-error-msg">{{ form_errors(form.password) }}</div>
-              </div>
-
-              <!-- Photo -->
-              <div class="col-md-8">
-                {{ form_label(form.photo) }}
-                {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
-                <div class="text-danger form-error-msg">{{ form_errors(form.photo) }}</div>
-
-                <small class="form-text text-muted">Image actuelle :</small><br>
-                <img 
-                  src="{{ admin.photo ? asset('uploads/photos/' ~ admin.photo) : asset('uploads/default.jpg') }}"
-                  width="120"
-                  class="mt-2 photo-preview"
-                  alt="Photo Admin"
-                >
-              </div>
-
-            </div>
-
-          </div>
-
-          <!-- Bouton -->
-          <div class="card-footer text-end bg-white border-0 mt-3">
-            <button class="btn btn-primary" type="submit">Mettre à jour</button>
-          </div>
-
-          {{ form_end(form) }}
-
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
+<style>
+    /* Vos styles existants */
+    .edit-card {
+        border-radius: 20px;
+        background: #ffffff;
+        border: none;
+    }
+    
+    .spinner-border {
+        margin-right: 8px;
+    }
+</style>
 
 {% endblock %}

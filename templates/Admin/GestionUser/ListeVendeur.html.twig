@@ -46,7 +46,9 @@
                             <th>Adresse</th>
                         </tr>
                     </thead>
-                    {% include 'Admin/GestionUser/_vendeurs_results.html.twig' %}
+                    <tbody id="resultsVendeurs">
+                         {% include 'Admin/GestionUser/_vendeurs_results.html.twig' %}
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -64,11 +66,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const searchTerm = this.value;
             const adminId = {{ admin.id }};
             
-            fetch(`/profilAdmin/${adminId}/mes-vendeurs?search=${encodeURIComponent(searchTerm)}`, {
+            fetch(`/profilAdmin/mes-vendeurs?search=${encodeURIComponent(searchTerm)}`, {
                 headers: { 
                     'X-Requested-With': 'XMLHttpRequest'
                 }
             })
+
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Erreur réseau');

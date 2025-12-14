@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-//use Symfony\Component\Security\Core\Security;
 use Symfony\Bundle\SecurityBundle\Security;
 
 #[Route('/admin/ia-users')]
@@ -16,15 +15,10 @@ use Symfony\Bundle\SecurityBundle\Security;
 class AIUserController extends AbstractController
 {
     #[Route('/', name: 'admin_ia_users_index')]
-    public function index(
-        UserRepository $userRepository, 
-        UserActivityService $activityService,
-        Security $security
-    ): Response
+    public function index(UserRepository $userRepository, UserActivityService $activityService, Security $security): Response
     {
-        // Récupère l'utilisateur connecté (admin)
         $admin = $security->getUser();
-        
+
         $allUsers = $userRepository->findAll();
         $inactiveUsers = [];
         $activeUsers = [];
@@ -42,23 +36,18 @@ class AIUserController extends AbstractController
             'activeUsers' => $activeUsers,
             'inactiveCount' => count($inactiveUsers),
             'activeCount' => count($activeUsers),
-            'admin' => $admin, // Ajoute l'admin ici
+            'admin' => $admin,
         ]);
     }
 
     #[Route('/send-notifications', name: 'admin_ia_send_notifications')]
-    public function sendNotifications(
-        UserActivityService $activityService,
-        Security $security
-    ): Response
+    public function sendNotifications(UserActivityService $activityService, Security $security): Response
     {
         $admin = $security->getUser();
-        
-        // Envoie des emails aux utilisateurs inactifs
         $activityService->checkInactiveUsers(15);
-        
-        $this->addFlash('success', 'Notifications envoyées aux utilisateurs inactifs !');
-        
+
+        $this->addFlash('success', 'Les notifications ont été envoyées aux utilisateurs inactifs.');
+
         return $this->redirectToRoute('admin_ia_users_index', [
             'admin' => $admin,
         ]);

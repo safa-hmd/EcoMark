@@ -1,10 +1,6 @@
 <?php
-// src/Service/HuggingFaceImageService.php
-
 namespace App\Service;
-
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-
 class HuggingFaceImageService
 {
     private HttpClientInterface $client;

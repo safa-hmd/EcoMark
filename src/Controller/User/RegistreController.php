@@ -4,7 +4,6 @@ namespace App\Controller\User;
 
 use App\Entity\User;
 use App\Form\UserType;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +16,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class RegistreController extends AbstractController
 {
     #[Route('/inscription', name: 'insc')]
-    public function index(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, UserRepository $userRepository)
+    public function index(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher)
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
@@ -42,18 +41,12 @@ class RegistreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
-                        if ($userRepository->emailExists($user->getEmail())) {
-                $this->addFlash('error', 'Cet email est déjà utilisé. Veuillez en choisir un autre.');
-                return $this->render('user/registre.html.twig', ['form' => $form->createView()]);
-            }
-
-            // --- Hashage du mot de passe ---
+            // Hashage du mot de passe 
             $plainPassword = $form->get('password')->getData();
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
 
-            // --- Upload photo ---
+            // Upload photo 
             $photoFile = $form->get('photo')->getData();
             if ($photoFile) {
                 $newFilename = uniqid().'.'.$photoFile->guessExtension();
@@ -65,16 +58,14 @@ class RegistreController extends AbstractController
                 $user->setPhoto($newFilename);
             }
 
-            // --- Role ---
+            // Role 
             $role = $form->get('role')->getData();
             $user->setRoles([$role]);
 
-            // --- Persister ---
             $em->persist($user);
             $em->flush();
 
-            $this->addFlash('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');
-
+        
             return $this->redirectToRoute('app_login');
         }
 
