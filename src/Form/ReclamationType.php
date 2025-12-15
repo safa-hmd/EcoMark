@@ -18,13 +18,13 @@ class ReclamationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('Objet', TextType::class, [
+            ->add('objet', TextType::class, [
                 'label' => 'Objet',
-                'attr' => ['placeholder' => 'Ex: Problème de livraison']
+             
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
-                'attr' => ['placeholder' => 'Décrivez votre problème...', 'rows' => 4]
+                
             ]);
     //                 $builder
     // ->add('recaptcha', EWZRecaptchaType::class, [

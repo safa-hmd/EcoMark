@@ -25,7 +25,7 @@
 
             <div class="col-md-12 position-relative">
     <label class="form-label">Objet <strong class="text-danger">*</strong></label>
-    {{ form_widget(form.Objet, {
+    {{ form_widget(form.objet, {
         'attr': {
             'class': 'form-control',
             'placeholder': 'Ex: Problème de livraison',
@@ -34,8 +34,7 @@
             'maxlength': 10
         }
     }) }}
-    <div class="text-danger">{{ form_errors(form.Objet) }}</div>
-    <div class="invalid-tooltip">L’objet doit contenir entre 5 et 10 caractères.</div>
+    <div class="text-danger">{{ form_errors(form.objet) }}</div>
 </div>
 
 <div class="col-md-12 position-relative">
@@ -51,7 +50,6 @@
         }
     }) }}
     <div class="text-danger">{{ form_errors(form.description) }}</div>
-    <div class="invalid-tooltip">La description doit contenir au minimum 10 caractères.</div>
 </div>
 
 

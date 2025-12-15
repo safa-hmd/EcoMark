@@ -21,7 +21,11 @@
 <div class="body-wrapper">
 
     <!-- HEADER AREA START (header-5) -->
-    <header class="ltn__header-area ltn__header-5 ltn__header-transparent gradient-color-4---">
+  <header class="ltn__header-area ltn__header-5"
+        style="position: fixed; top: 0; left:0; width:100%; 
+               background: #F5F5DC; 
+               z-index: 999; 
+               box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
         {% block header%}
         <!-- ltn__header-top-area start -->
         <div class="ltn__header-top-area">
@@ -98,35 +102,138 @@
                                         <li><a href="#">About</a> </li>
                                         <li><a href="#">Produit</a> </li>
                                         <li><a href="#">Commande</a> </li>
-<<<<<<< HEAD
-                                        <li><a href="#">Réclamation({{ nbReclamations }})</a> 
+
+                                        <li><a href="{{ path('reclamation_Afficher') }}">Réclamation({{ nbReclamations }})</a> 
                                        
 
-    <ul class="sub-menu">
-        <li><a href="{{ path('reclamation_ajoutRec') }}">Passer Réclamation</a></li>
-        <li><a href="{{ path('reclamation_Afficher') }}">Liste des Réclamations</a></li>
-    </ul>
 </li>
                                         <li><a href="#">Evenement</a> </li>
-=======
-                                        <li><a href="#">Réclamation</a> </li>
-                                        <li><a href="{{ path('client_affiche_evenements') }}">Evenement</a></li>
 
->>>>>>> f06b6bc (Ajout EventClientController et corrections)
+
                                     </ul>
                                 </div>
                             </nav>
                         </div>
                     </div>
                     <div class="ltn__header-options ltn__header-options-2">
+                    
                         <!-- header-search-1 -->
-                        <div class="header-search-wrap">
-                            <div class="header-search-1">
-                                <div class="search-icon">
-                                    <i class="icon-search for-search-show"></i>
-                                    <i class="icon-cancel  for-search-close"></i>
+                     <!-- Notification Bell avec Dropdown -->
+<div class="header-search-wrap">
+    <div class="header-search-1">
+        <div class="notification-icon dropdown">
+            <a href="#" 
+               class="position-relative" 
+               data-bs-toggle="dropdown" 
+               aria-expanded="false"
+               style="text-decoration: none; color: inherit;">
+                <i class="fa fa-bell" style="font-size: 24px;"></i>
+                
+                {% if notifNonLues() > 0 %}
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle rounded-pill"
+                          style="font-size: 10px; padding: 3px 6px;">
+                        {{ notifNonLues() }}
+                    </span>
+                {% endif %}
+            </a>
+
+            <!-- Dropdown Menu des Notifications -->
+            <ul class="dropdown-menu dropdown-menu-end" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+                {% set notifs = notifications() %}
+                
+                {% if notifs is empty %}
+                    <li>
+                        <span class="dropdown-item-text text-center text-muted">
+                            <i class="fa fa-inbox"></i><br>
+                            Aucune notification
+                        </span>
+                    </li>
+                {% else %}
+                    <li class="dropdown-header bg-light">
+                        <strong>Notifications</strong>
+                        <span class="float-end badge bg-danger">{{ notifNonLues() }}</span>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    
+                    {% for n in notifs %}
+                        <li>
+                            <a class="dropdown-item {{ n.isRead ? '' : 'bg-light' }}" 
+                               href="{{ path('notif_redirect', {id: n.id}) }}"
+                               style="white-space: normal; padding: 10px 15px; border-bottom: 1px solid #f0f0f0;">
+                                <div>
+                                    <strong style="color: #333;">
+                                        {% if not n.isRead %}
+                                            <i class="fa fa-circle" style="font-size: 6px; color: #dc3545; margin-right: 5px;"></i>
+                                        {% endif %}
+                                        {{ n.message }}
+                                    </strong>
                                 </div>
-                            </div>
+                                <small class="text-muted" style="font-size: 11px;">
+                                    <i class="fa fa-clock"></i> {{ n.createdAt|date('d/m/Y à H:i') }}
+                                </small>
+                            </a>
+                        </li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Style pour la cloche */
+    .notification-icon {
+        position: relative;
+        cursor: pointer;
+        padding: 8px;
+    }
+    
+    .notification-icon:hover i {
+        color: #71cd14;
+        transition: color 0.3s ease;
+    }
+    
+    /* Badge notification */
+    .notification-icon .badge {
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    /* Dropdown personnalisé */
+    .notification-icon .dropdown-menu {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-radius: 8px;
+        border: 1px solid #e0e0e0;
+    }
+    
+    .notification-icon .dropdown-item {
+        transition: background-color 0.2s ease;
+    }
+    
+    .notification-icon .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    /* Notification non lue */
+    .notification-icon .dropdown-item.bg-light {
+        background-color: #e3f2fd !important;
+        border-left: 3px solid #2196F3;
+    }
+    
+    /* Header du dropdown */
+    .notification-icon .dropdown-header {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+</style>
+
+                        <div class="header-search-wrap">
+      
+
                             <div class="header-search-1-form">
                                 <form id="#" method="get"  action="#">
                                     <input type="text" name="search" value="" placeholder="Search here..."/>
@@ -136,6 +243,10 @@
                                 </form>
                             </div>
                         </div>
+                        
+
+
+
                         <!-- user-menu -->
                         <div class="ltn__drop-menu user-menu">
                             <ul>
@@ -180,9 +291,9 @@
         
         
           
-            <div class="ltn__slide-item ltn__slide-item-1 ltn__slide-item-3">
-               
-            </div>
+           <div class="ltn__slide-item ltn__slide-item-1 ltn__slide-item-3"
+     style="height: 250px; background: #ffffff;">
+</div>
         
         
     </div>
@@ -232,6 +343,10 @@
 
     <script src={{asset('FO/js/plugins.js')}}"></script>
     <script src="{{asset('FO/js/main.js')}}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    
+
   
 </body>
 

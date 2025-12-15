@@ -8,23 +8,37 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/photos'
-<<<<<<< HEAD
+
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
-=======
+
     uploads_directory: '%kernel.project_dir%/public/uploads'
     openweather_api_key: '%env(OPENWEATHER_API_KEY)%'
->>>>>>> f06b6bc (Ajout EventClientController et corrections)
+
 
 services:
+    App\Twig\NotificationExtension:
+        arguments:
+            $notifService: '@App\Service\NotificationService'
+        tags:
+            - { name: twig.extension }
     # default configuration for services in *this* file
+   
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
+    App\Service\BadWordDetectorService:
+        public: true
+        autowire: true
+        arguments:
+            $huggingfaceApiKey: '%env(string:HUGGINGFACE_API_KEY)%'
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

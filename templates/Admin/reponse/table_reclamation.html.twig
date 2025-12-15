@@ -1,3 +1,4 @@
+{# templates/Admin/reponse/table_reclamation.html.twig #}
 <table class="table table-striped table-bordered">
     <thead class="table-dark">
         <tr>
@@ -9,53 +10,136 @@
             <th>Réponse</th>
             <th>Date Réponse</th>
             <th>Actions</th>
+            <th>Réactions</th> {# Nouvelle colonne #}
         </tr>
     </thead>
     <tbody>
        {% for reclamation in reclamations %}
 <tr>
-    <td>{{ reclamation.Objet }}</td>
-    <td>{{ reclamation.description }}</td>
+    <td>
+        {% if search is defined and search is not empty %}
+            {{ reclamation.objet|default('')|highlight(search) }}
+        {% else %}
+            {{ reclamation.objet|default('') }}
+        {% endif %}
+    </td>
+    <td>
+        {% if search is defined and search is not empty %}
+            {{ reclamation.description|default('')|highlight(search) }}
+        {% else %}
+            {{ reclamation.description|default('') }}
+        {% endif %}
+    </td>
     <td>{{ reclamation.dateCreation ? reclamation.dateCreation|date('d/m/Y H:i') : 'Non défini' }}</td>
-    <td>{{ reclamation.statut }}</td>
-    <td>{{ reclamation.client ? reclamation.client.email : 'Anonyme' }}</td>
+    <td>
+        {% if search is defined and search is not empty %}
+            {{ reclamation.statut|default('')|highlight(search) }}
+        {% else %}
+            {{ reclamation.statut|default('') }}
+        {% endif %}
+    </td>
+    <td>
+        {% if search is defined and search is not empty %}
+            {% set clientEmail = reclamation.client ? reclamation.client.email : 'Anonyme' %}
+            {{ clientEmail|default('')|highlight(search) }}
+        {% else %}
+            {{ reclamation.client ? reclamation.client.email : 'Anonyme' }}
+        {% endif %}
+    </td>
     <td>
         {% if reclamation.yes %}
-            {{ reclamation.yes.Contenu }}
-
+            {% if search is defined and search is not empty %}
+                {{ reclamation.yes.Contenu|default('')|highlight(search) }}
+            {% else %}
+                {{ reclamation.yes.Contenu|default('') }}
+            {% endif %}
         {% else %}
             <span class="text-warning">Pas encore de réponse</span>
         {% endif %}
     </td>
     <td>
-    {% if reclamation.yes %}
-        {{ reclamation.yes.dateCreation ? reclamation.yes.dateCreation|date('d/m/Y H:i') : 'Non défini' }}
-    {% else %}
-        <span class="text-muted">--</span>
-    {% endif %}
-</td>
+        {% if reclamation.yes %}
+            {{ reclamation.yes.dateCreation ? reclamation.yes.dateCreation|date('d/m/Y H:i') : 'Non défini' }}
+        {% else %}
+            <span class="text-muted">--</span>
+        {% endif %}
+    </td>
     <td>
-    {% if not reclamation.yes %}
-       <a href="{{ path('reponseajouterRep', {'id': reclamation.id}) }}" 
-           class="btn btn-sm btn-info">Répondre</a>
-    {% endif %}
+        {% if not reclamation.yes %}
+           <a href="{{ path('reponseajouterRep', {'id': reclamation.id}) }}" 
+               class="btn btn-sm btn-info">Répondre</a>
+               
+        {% endif %}
 
-    {% if reclamation.yes %}
-       <a href="{{ path('reponsereponsemodifierRep', {'id': reclamation.yes.id}) }}" 
-           class="btn btn-warning btn-sm">Modifier</a>
+        {% if reclamation.yes %}
+           <a href="{{ path('reponsereponsemodifierRep', {'id': reclamation.yes.id}) }}" 
+               class="btn btn-warning btn-sm">Modifier</a>
 
-        <a href="{{ path('reponsesupprimerReponse', {'ii': reclamation.yes.id}) }}" 
-           class="btn btn-danger btn-sm"
-           onclick="return confirm('Voulez-vous vraiment supprimer cette réponse ?');">
-           Supprimer
-        </a>
-    {% endif %}
-</td>
+            <a href="{{ path('reponsesupprimerReponse', {'ii': reclamation.yes.id}) }}" 
+               class="btn btn-danger btn-sm"
+               onclick="return confirm('Voulez-vous vraiment supprimer cette réponse ?');">
+               Supprimer
+            </a><br><br>
+             <a href="{{ path('reponsedet', {'ii': reclamation.yes.id}) }}" 
+       class="btn btn-success btn-sm">Détails</a>
+        {% endif %}
+     
+    </td>
+
+    {# Nouvelle colonne Réactions #}
+    <td>
+        {% if reclamation.yes and reclamation.yes.reactions|length > 0 %}
+            <ul class="mb-0">
+                {% for reaction in reclamation.yes.reactions %}
+                    <li>
+                        {{ reaction.user.nom }} :
+                        {% if reaction.type == 'like' %} 👍 {% else %} 👎 {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <span class="text-muted">Aucune réaction</span>
+        {% endif %}
+    </td>
+
 </tr>
 {% else %}
 <tr>
-    <td colspan="8" class="text-center">Aucun résultat</td>
+    <td colspan="9" class="text-center">Aucun résultat</td>
 </tr>
 {% endfor %}
     </tbody>
 </table>
+
+<style>
+    /* Style pour le highlighting */
+    mark {
+        background-color: #ffc107 !important;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .bg-warning {
+        background-color: #ffc107 !important;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-weight: bold;
+    }
+
+    /* Style pour les réactions */
+    td ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    td ul li {
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+    }
+
+    td ul li span.like { color: #007bff; font-weight: bold; }
+    td ul li span.dislike { color: #dc3545; font-weight: bold; }
+</style>
