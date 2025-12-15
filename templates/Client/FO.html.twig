@@ -9,7 +9,6 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-
     <link rel="shortcut icon" href="{{asset('FO/img/favicon.png')}}" type="image/x-icon" />
     <link rel="stylesheet" href="{{asset('FO/css/font-icons.css')}}">
     <link rel="stylesheet" href="{{asset('FO/css/plugins.css')}}">
@@ -27,6 +26,8 @@
                z-index: 999; 
                box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
         {% block header%}
+
+        
         <!-- ltn__header-top-area start -->
         <div class="ltn__header-top-area">
             <div class="container">
@@ -34,8 +35,8 @@
                     <div class="col-md-7">
                         <div class="ltn__top-bar-menu">
                             <ul>
-                                <li><a href="locations.html"><i class="icon-placeholder"></i> 15/A, Nest Tower, NYC</a></li>
-                                <li><a href="mailto:info@webmail.com?Subject=Flower%20greetings%20to%20you"><i class="icon-mail"></i> EcoMarket@gmail.com</a></li>
+                                <li><a href="#"><i class="icon-placeholder"></i> 15/A, Nest Tower, NYC</a></li>
+                                <li><a href="mailto:EcoMarket@gmail.com"><i class="icon-mail"></i> EcoMarket@gmail.com</a></li>
                             </ul>
                         </div>
                     </div>
@@ -44,10 +45,12 @@
                             <div class="ltn__top-bar-menu">
                                 <ul>
                                     <li>
-                                        <!-- ltn__language-menu -->
                                         <div class="ltn__drop-menu ltn__currency-menu ltn__language-menu">
                                             <ul>
-                                                <li><a href="#" class="dropdown-toggle"><span class="active-currency">English</span></a>
+                                                <li>
+                                                    <a href="#" class="dropdown-toggle">
+                                                        <span class="active-currency">English</span>
+                                                    </a>
                                                     <ul>
                                                         <li><a href="#">Arabic</a></li>
                                                         <li><a href="#">Bengali</a></li>
@@ -60,18 +63,18 @@
                                             </ul>
                                         </div>
                                     </li>
+
                                     <li>
-                                        <!-- ltn__social-media -->
                                         <div class="ltn__social-media">
                                             <ul>
                                                 <li><a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
                                                 <li><a href="#" title="Twitter"><i class="fab fa-twitter"></i></a></li>
-                                                
                                                 <li><a href="#" title="Instagram"><i class="fab fa-instagram"></i></a></li>
                                                 <li><a href="#" title="Dribbble"><i class="fab fa-dribbble"></i></a></li>
                                             </ul>
                                         </div>
                                     </li>
+
                                 </ul>
                             </div>
                         </div>
@@ -81,18 +84,21 @@
         </div>
         <!-- ltn__header-top-area end -->
 
+
+
         <!-- ltn__header-middle-area start -->
-        <div class="ltn__header-middle-area ltn__header-sticky ltn__sticky-bg-white ltn__logo-right-menu-option sticky-active-into-mobile--- plr--9---">
+        <div class="ltn__header-middle-area ltn__header-sticky ltn__sticky-bg-white ltn__logo-right-menu-option plr--9---">
             <div class="container">
                 <div class="row">
                     <div class="col">
                         <div class="site-logo-wrap">
                             <div class="site-logo">
-                                <img src="{{ asset('FO/img/logo.png') }}" alt="Logo">
+                               <img src="{{ asset('FO/img/logo.png') }}" alt="Logo" width="150" height="auto">
 
                             </div>
                         </div>
                     </div>
+
                     <div class="col header-menu-column menu-color-white---">
                         <div class="header-menu d-none d-xl-block">
                             <nav>
@@ -107,14 +113,16 @@
                                        
 
 </li>
-                                        <li><a href="#">Evenement</a> </li>
 
+
+                                        <li><a href="{{ path('client_affiche_evenements') }}">Evenement</a></li>
 
                                     </ul>
                                 </div>
                             </nav>
                         </div>
                     </div>
+
                     <div class="ltn__header-options ltn__header-options-2">
                     
                         <!-- header-search-1 -->
@@ -167,6 +175,13 @@
                                         {% endif %}
                                         {{ n.message }}
                                     </strong>
+                        
+                        <!-- search -->
+                        <div class="header-search-wrap">
+                            <div class="header-search-1">
+                                <div class="search-icon">
+                                    <i class="icon-search for-search-show"></i>
+                                    <i class="icon-cancel for-search-close"></i>
                                 </div>
                                 <small class="text-muted" style="font-size: 11px;">
                                     <i class="fa fa-clock"></i> {{ n.createdAt|date('d/m/Y à H:i') }}
@@ -235,11 +250,9 @@
       
 
                             <div class="header-search-1-form">
-                                <form id="#" method="get"  action="#">
-                                    <input type="text" name="search" value="" placeholder="Search here..."/>
-                                    <button type="submit">
-                                        <span><i class="icon-search"></i></span>
-                                    </button>
+                                <form method="get" action="#">
+                                    <input type="text" name="search" placeholder="Search here...">
+                                    <button type="submit"><i class="icon-search"></i></button>
                                 </form>
                             </div>
                         </div>
@@ -248,79 +261,90 @@
 
 
                         <!-- user-menu -->
+
                         <div class="ltn__drop-menu user-menu">
                             <ul>
                                 <li>
                                     <a href="#"><i class="icon-user"></i></a>
                                     <ul>
-                                        <li><a href="#">My Account</a></li>
+                                        <li><a href="{{path('profil_client')}}">My Account</a></li>
                                         <li><a href="{{path('app_logout')}}">Déconnexion</a></li>
                                     </ul>
                                 </li>
                             </ul>
                         </div>
-                        <!-- mini-cart -->
+
+                        <!-- mini cart -->
                         <div class="mini-cart-icon">
                             <a href="#ltn__utilize-cart-menu" class="ltn__utilize-toggle">
                                 <i class="icon-shopping-cart"></i>
                                 <sup>2</sup>
                             </a>
                         </div>
-                        <!-- mini-cart -->
-                        <!-- Mobile Menu Button -->
+
+                        <!-- mobile menu -->
                         <div class="mobile-menu-toggle d-xl-none">
                             <a href="#ltn__utilize-mobile-menu" class="ltn__utilize-toggle">
                                 <svg viewBox="0 0 800 600">
                                     <path d="M300,220 C300,220 520,220 540,220 C740,220 640,540 520,420 C440,340 300,200 300,200" id="top"></path>
                                     <path d="M300,320 L540,320" id="middle"></path>
-                                    <path d="M300,210 C300,210 520,210 540,210 C740,210 640,530 520,410 C440,330 300,190 300,190" id="bottom" transform="translate(480, 320) scale(1, -1) translate(-480, -318) "></path>
+                                    <path d="M300,210 C300,210 520,210 540,210 C740,210 640,530 520,410 C440,330 300,190 300,190" id="bottom" transform="translate(480, 320) scale(1, -1) translate(-480, -318)"></path>
                                 </svg>
                             </a>
                         </div>
+
                     </div>
+
                 </div>
             </div>
         </div>
         <!-- ltn__header-middle-area end -->
-        {%endblock%}
+
+        {% endblock %}
     </header>
-    
-    <div class="page-body-wrapper">  
-    <!-- SLIDER AREA START (slider-3) -->
-    <div class="ltn__slider-area ltn__slider-3  section-bg-1">
-        
-        
-          
-           <div class="ltn__slide-item ltn__slide-item-1 ltn__slide-item-3"
-     style="height: 250px; background: #ffffff;">
-</div>
-        
-        
+
+
+    <div class="page-body-wrapper">
+
+        <!-- SLIDER AREA -->
+        <div class="ltn__slider-area ltn__slider-3 section-bg-1">
+            <div class="ltn__slide-item ltn__slide-item-1 ltn__slide-item-3"></div>
+        </div>
+
+        {% block body %}
+        {% endblock %}
+
     </div>
-     {% block body %}
-     {% endblock %}
 
-    <!-- SLIDER AREA END -->
 
-       <!-- BLOQUE BODY POUR LES PAGES FILLE -->
-    
-   
-    
- </div>
-  
-
-    <!-- FOOTER AREA START -->
-    <footer class="ltn__footer-area  ">
+    <!-- FOOTER AREA -->
+    <footer class="ltn__footer-area">
         {% block footer %}
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <script>
+                    Swal.fire({
+                        icon: '{{ label == "success" ? "success" : (label == "warning" ? "warning" : "info") }}',
+                        title: '{{ message }}',
+                        showConfirmButton: false,
+                        timer: 2000
+                            });
+                    </script>
+                {% endfor %}
+            {% endfor %}
         
-        <div class="ltn__copyright-area ltn__copyright-2 section-bg-2  ltn__border-top-2--- plr--5">
+        <div class="ltn__copyright-area section-bg-2 ltn__border-top-2--- plr--5">
             <div class="container-fluid">
                 <div class="row">
+                    
                     <div class="col-md-6 col-12">
                         <div class="ltn__copyright-design clearfix">
                             <p>All Rights Reserved @ Company <span class="current-year"></span></p>
                         </div>
                     </div>
+
                     <div class="col-md-6 col-12 align-self-center">
                         <div class="ltn__copyright-menu text-end">
                             <ul>
@@ -330,16 +354,16 @@
                             </ul>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
+
         {% endblock %}
     </footer>
-    <!-- FOOTER AREA END -->
 
 
 </div>
-<!-- Body main wrapper end -->
 
     <script src={{asset('FO/js/plugins.js')}}"></script>
     <script src="{{asset('FO/js/main.js')}}"></script>
@@ -348,7 +372,7 @@
     
 
   
+
+
 </body>
-
 </html>
-

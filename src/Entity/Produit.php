@@ -4,8 +4,14 @@ namespace App\Entity;
 
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
+#[UniqueEntity( 
+    fields: ['nomProduit'],
+    message: 'Un produit avec ce nom existe déjà.',
+    errorPath: 'nomProduit'
+)]
 class Produit
 {
     #[ORM\Id]
@@ -13,82 +19,142 @@ class Produit
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $nom = null;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom du produit est obligatoire.")]
+    #[Assert\Length(
+        min: 2,
+        max: 100,
+        minMessage: "Le nom du produit doit contenir au moins {{ limit }} caractères.",
+        maxMessage: "Le nom du produit ne peut pas dépasser {{ limit }} caractères."
+    )]
+    private ?string $nomProduit = null;
 
-    #[ORM\Column(length: 100)]
-    private ?string $typeProduit = null;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[Assert\Length(
+        min: 10,
+        max: 500,
+        minMessage: "La description doit contenir au moins {{ limit }} caractères.",
+        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
+    )]
+    private ?string $description = null;
 
     #[ORM\Column]
-    private ?float $quantite = null;
+    #[Assert\NotBlank(message: "Le prix est obligatoire.")]
+    #[Assert\Positive(message: "Le prix doit être un nombre positif.")]
+    #[Assert\Range(
+        min: 0.01,
+        max: 10000,
+        notInRangeMessage: "Le prix doit être entre {{ min }}€ et {{ max }}€."
+    )]
+    private ?float $prix = null;
 
-    #[ORM\Column(type: 'datetime')]
-    private ?\DateTimeInterface $dateAjout = null;
+    #[ORM\Column]
+    #[Assert\NotBlank(message: "La quantité en stock est obligatoire.")]
+    #[Assert\PositiveOrZero(message: "La quantité en stock ne peut pas être négative.")]
+    #[Assert\Range(
+        min: 0,
+        max: 10000,
+        notInRangeMessage: "La quantité doit être entre {{ min }} et {{ max }}."
+    )]
+    private ?int $quantiteStock = null;
 
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "L'état du produit est obligatoire.")]
+    #[Assert\Choice(
+        choices: ['Disponible', 'En rupture', 'Bientôt disponible', 'Vendu'],
+        message: "L'état du produit doit être l'une des valeurs suivantes: Disponible, En rupture, Bientôt disponible, Vendu."
+    )]
+    private ?string $etatProduit = null;
+
+    #[ORM\Column]
+    //#[Assert\NotNull(message: "La date d'ajout est obligatoire.")]
+    //#[Assert\LessThanOrEqual(
+      //  value: "now",
+        //message: "La date d'ajout ne peut pas être dans le futur."
+    //)]
+    private ?\DateTime $dateAjout = null;
+
+    #[ORM\ManyToOne]
+    private ?PointRecyclage $pointRecyclage = null;
+    
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
-
-    #[ORM\ManyToOne(inversedBy: 'produits')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?PointRecyclage $pointRecyclage = null;
-
+   
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNom(): ?string
+    public function getNomProduit(): ?string
     {
-        return $this->nom;
+        return $this->nomProduit;
     }
 
-    public function setNom(string $nom): static
+    public function setNomProduit(string $nomProduit): static
     {
-        $this->nom = $nom;
+        $this->nomProduit = $nomProduit;
+
         return $this;
     }
 
-    public function getTypeProduit(): ?string
+    public function getDescription(): ?string
     {
-        return $this->typeProduit;
+        return $this->description;
     }
 
-    public function setTypeProduit(string $typeProduit): static
+    public function setDescription(string $description): static
     {
-        $this->typeProduit = $typeProduit;
+        $this->description = $description;
+
         return $this;
     }
 
-    public function getQuantite(): ?float
+    public function getPrix(): ?float
     {
-        return $this->quantite;
+        return $this->prix;
     }
 
-    public function setQuantite(float $quantite): static
+    public function setPrix(float $prix): static
     {
-        $this->quantite = $quantite;
+        $this->prix = $prix;
+
         return $this;
     }
 
-    public function getDateAjout(): ?\DateTimeInterface
+    public function getQuantiteStock(): ?int
+    {
+        return $this->quantiteStock;
+    }
+
+    public function setQuantiteStock(int $quantiteStock): static
+    {
+        $this->quantiteStock = $quantiteStock;
+
+        return $this;
+    }
+
+    public function getEtatProduit(): ?string
+    {
+        return $this->etatProduit;
+    }
+
+    public function setEtatProduit(string $etatProduit): static
+    {
+        $this->etatProduit = $etatProduit;
+
+        return $this;
+    }
+
+    public function getDateAjout(): ?\DateTime
     {
         return $this->dateAjout;
     }
 
-    public function setDateAjout(\DateTimeInterface $dateAjout): static
+    public function setDateAjout(\DateTime $dateAjout): static
     {
         $this->dateAjout = $dateAjout;
-        return $this;
-    }
 
-    public function getPhoto(): ?string
-    {
-        return $this->photo;
-    }
-
-    public function setPhoto(?string $photo): static
-    {
-        $this->photo = $photo;
         return $this;
     }
 
@@ -100,6 +166,20 @@ class Produit
     public function setPointRecyclage(?PointRecyclage $pointRecyclage): static
     {
         $this->pointRecyclage = $pointRecyclage;
+
         return $this;
     }
+
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+
+    public function setPhoto(?string $photo): static
+    {
+        $this->photo = $photo;
+
+        return $this;
+    }
+    
 }

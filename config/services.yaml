@@ -9,10 +9,6 @@
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/photos'
 
-    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
-
-    uploads_directory: '%kernel.project_dir%/public/uploads'
-    openweather_api_key: '%env(OPENWEATHER_API_KEY)%'
 
 
 services:
@@ -21,6 +17,15 @@ services:
             $notifService: '@App\Service\NotificationService'
         tags:
             - { name: twig.extension }
+
+    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    uploads_directory: '%kernel.project_dir%/public/uploads'
+    openweather_api_key: '%env(OPENWEATHER_API_KEY)%'
+
+services:
+
+    Symfony\Contracts\HttpClient\HttpClientInterface: '@http_client'
+
     # default configuration for services in *this* file
    
     _defaults:
@@ -46,3 +51,7 @@ services:
     App\Service\WeatherService:
         arguments:
             $apiKey: '%openweather_api_key%'
+
+    App\Service\HuggingFaceImageService:
+        arguments:
+            $client: '@http_client'

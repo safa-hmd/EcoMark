@@ -1,0 +1,50 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <h3>Détails du Point de Recyclage</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th>Nom:</th>
+                                <td>{{ point_recyclage.nomPoint }}</td>
+                            </tr>
+                            <tr>
+                                <th>Adresse:</th>
+                                <td>{{ point_recyclage.adresse }}</td>
+                            </tr>
+                            <tr>
+                                <th>Type de matière acceptée:</th>
+                                <td>{{ point_recyclage.typeMatiereAcceptee }}</td>
+                            </tr>
+                            <tr>
+                                <th>Capacité maximale:</th>
+                                <td>{{ point_recyclage.capaciteMax }}</td>
+                            </tr>
+                            <tr>
+                                <th>Responsable:</th>
+                                <td>{{ point_recyclage.responsable }}</td>
+                            </tr>
+                        </table>
+                        <div class="mt-3">
+                            <a href="{{ path('app_admin_point_recyclage_edit', {'id': point_recyclage.id}) }}" class="btn btn-warning">Modifier</a>
+                            <a href="{{ path('app_admin_point_recyclage_index') }}" class="btn btn-secondary">Retour à la liste</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1558,6 +1558,10 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     convert_exception?: bool, // Default: false
  *     remove_first_page_param?: bool, // Default: false
  * }
+ * @psalm-type CmenGoogleChartsConfig = array{
+ *     version?: scalar|null, // Default: "current"
+ *     language?: scalar|null, // Default: ""
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1573,6 +1577,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     monolog?: MonologConfig,
  *     ewz_recaptcha?: EwzRecaptchaConfig,
  *     knp_paginator?: KnpPaginatorConfig,
+ *     cmen_google_charts?: CmenGoogleChartsConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1591,6 +1596,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         maker?: MakerConfig,
  *         ewz_recaptcha?: EwzRecaptchaConfig,
  *         knp_paginator?: KnpPaginatorConfig,
+ *         cmen_google_charts?: CmenGoogleChartsConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1607,6 +1613,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         monolog?: MonologConfig,
  *         ewz_recaptcha?: EwzRecaptchaConfig,
  *         knp_paginator?: KnpPaginatorConfig,
+ *         cmen_google_charts?: CmenGoogleChartsConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1624,6 +1631,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         monolog?: MonologConfig,
  *         ewz_recaptcha?: EwzRecaptchaConfig,
  *         knp_paginator?: KnpPaginatorConfig,
+ *         cmen_google_charts?: CmenGoogleChartsConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

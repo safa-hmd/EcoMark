@@ -1,0 +1,180 @@
+{# templates/vendeur/stats/etat.html.twig #}
+{% extends 'VendeurT/BO.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function() {
+    'use strict';
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initChart);
+    } else {
+        initChart();
+    }
+    
+    function initChart() {
+        try {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js non chargé');
+                return;
+            }
+            
+            const canvas = document.getElementById('etatChart');
+            if (!canvas) {
+                console.error('Canvas etatChart non trouvé');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            
+            const etats = {{ produitsParEtat|keys|json_encode|raw }};
+            const etatData = [
+                {% for etat, count in produitsParEtat %}
+                    {{ count }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ];
+            
+            console.log('États:', etats, 'Data:', etatData);
+            
+            if (!etats || etats.length === 0) {
+                ctx.fillStyle = '#f8f9fa';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#6c757d';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font = '16px Arial';
+                ctx.fillText('Aucune donnée disponible', canvas.width / 2, canvas.height / 2);
+                return;
+            }
+            
+            const etatColors = ['#4CAF50', '#FF5252', '#2196F3', '#9C27B0', '#FF9800', '#795548'];
+            
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: etats,
+                    datasets: [{
+                        data: etatData,
+                        backgroundColor: etatColors.slice(0, etats.length),
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Répartition par état',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = {{ totalProduits }};
+                                    const value = context.raw;
+                                    const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                    return `${context.label}: ${value} produits (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            console.log('✓ Graphique créé avec succès');
+            
+        } catch (error) {
+            console.error('❌ Erreur:', error);
+        }
+    }
+})();
+</script>
+
+{{ parent() }}
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1>📊 Statistiques par État des Produits</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>📊 Répartition des produits par état</h5>
+        </div>
+        <div class="card-body">
+            <div class="chart-container">
+                <canvas id="etatChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Détails par état -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>📋 Détail par état</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for etat, count in produitsParEtat %}
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3>{{ count }}</h3>
+                            <p class="mb-0">
+                                {% if etat == 'Disponible' %}
+                                    <span class="badge bg-success">{{ etat }}</span>
+                                {% elseif etat == 'En rupture' %}
+                                    <span class="badge bg-danger">{{ etat }}</span>
+                                {% elseif etat == 'Bientôt disponible' %}
+                                    <span class="badge bg-info">{{ etat }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ etat }}</span>
+                                {% endif %}
+                            </p>
+                            <small class="text-muted">
+                                {{ (count / totalProduits * 100)|number_format(1) }}% du total
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-3">
+        <a href="{{ path('app_vendeur_stats') }}" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Retour au tableau de bord
+        </a>
+        <a href="{{ path('app_vendeur_produit_index') }}" class="btn btn-secondary">
+            <i class="fas fa-box"></i> Voir tous les produits
+        </a>
+    </div>
+</div>
+{% endblock %}

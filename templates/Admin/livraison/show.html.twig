@@ -1,0 +1,603 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block title %}Détails de la Livraison{% endblock %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="form-container">
+    <div class="form-header">
+        <h1>📦 Détails de la livraison #{{ livraison.id }}</h1>
+        <p>Informations complètes de la livraison</p>
+    </div>
+
+    {# ✅ Affichage des messages flash #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="form-grid">
+                <div class="form-section">
+                    <h3>📋 Informations principales</h3>
+                    
+                    <div class="info-field">
+                        <label class="info-label">Statut</label>
+                        <div class="info-value">
+                            <span class="badge 
+                                {% if livraison.statut == 'en_preparation' %}bg-warning
+                                {% elseif livraison.statut == 'expediee' %}bg-primary
+                                {% elseif livraison.statut == 'livree' %}bg-success
+                                {% else %}bg-secondary{% endif %}">
+                                {% if livraison.statut == 'en_preparation' %}
+                                    <i class="bi bi-hourglass-split"></i> En préparation
+                                {% elseif livraison.statut == 'expediee' %}
+                                    <i class="bi bi-truck"></i> Expédiée
+                                {% elseif livraison.statut == 'livree' %}
+                                    <i class="bi bi-check-circle"></i> Livrée
+                                {% else %}{{ livraison.statut }}{% endif %}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="info-field">
+                        <label class="info-label">Date de livraison prévue</label>
+                        <div class="info-value">
+                            📅 {{ livraison.dateLivraison ? livraison.dateLivraison|date('d/m/Y à H:i') : 'Non définie' }}
+                        </div>
+                    </div>
+
+                    <div class="info-field">
+                        <label class="info-label">Commande associée</label>
+                        <div class="info-value">
+                            {% if livraison.commande %}
+                                <a href="{{ path('app_commande_show', {'id': livraison.commande.id}) }}" class="link-commande">
+                                    <i class="bi bi-file-earmark-text"></i> Commande #{{ livraison.commande.id }}
+                                </a>
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        Montant: <strong>{{ livraison.commande.montantTotal|number_format(2, ',', ' ') }} €</strong> | 
+                                        Date: {{ livraison.commande.dateCommande|date('d/m/Y') }}
+                                    </small>
+                                </div>
+                            {% else %}
+                                <span class="text-muted">Aucune commande associée</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {# ✅ NOUVEAU : Section Client #}
+                <div class="form-section">
+                    <h3>👤 Informations Client</h3>
+                    
+                    {% if livraison.commande and livraison.commande.user %}
+                        <div class="info-field">
+                            <label class="info-label">Client</label>
+                            <div class="info-value">
+                                <div class="d-flex align-items-center">
+                                    <div class="customer-avatar me-3">
+                                        {{ livraison.commande.user.nom|first|upper }}{{ livraison.commande.user.prenom|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">
+                                            {{ livraison.commande.user.nom }} {{ livraison.commande.user.prenom }}
+                                        </div>
+                                        <small class="text-muted">
+                                            <i class="bi bi-envelope"></i> {{ livraison.commande.user.email }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if livraison.commande.user.telephone %}
+                        <div class="info-field">
+                            <label class="info-label">Téléphone</label>
+                            <div class="info-value">
+                                <i class="bi bi-telephone-fill"></i> {{ livraison.commande.user.telephone }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if livraison.commande.user.adresse %}
+                        <div class="info-field">
+                            <label class="info-label">Adresse du client</label>
+                            <div class="info-value">
+                                <i class="bi bi-house-fill"></i> {{ livraison.commande.user.adresse }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-warning mb-0">
+                            <i class="bi bi-exclamation-triangle"></i> Aucune information client disponible
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-section">
+                    <h3>🚚 Informations de Transport</h3>
+                    
+                    <div class="info-field">
+                        <label class="info-label">Transporteur</label>
+                        <div class="info-value">
+                            <span class="transporteur-badge">
+                                🚛 {{ livraison.transporteur }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="info-field">
+                        <label class="info-label">Numéro de suivi</label>
+                        <div class="info-value tracking-number">
+                            <i class="bi bi-upc-scan"></i> {{ livraison.numeroSuivi }}
+                            <button class="btn-copy" onclick="copyTracking('{{ livraison.numeroSuivi }}')" title="Copier">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="info-field">
+                        <label class="info-label">Frais de livraison</label>
+                        <div class="info-value fw-bold text-success">
+                            💰 {{ livraison.fraisLivraison|number_format(2, ',', ' ') }} €
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>📦 Détails de la Commande</h3>
+                    
+                    {% if livraison.commande %}
+                        <div class="info-field">
+                            <label class="info-label">Statut de la commande</label>
+                            <div class="info-value">
+                                <span class="badge 
+                                    {% if livraison.commande.statut == 'en_attente' %}bg-warning
+                                    {% elseif livraison.commande.statut == 'en_cours' %}bg-info
+                                    {% elseif livraison.commande.statut == 'expediee' %}bg-primary
+                                    {% elseif livraison.commande.statut == 'livree' %}bg-success
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ livraison.commande.statut|replace({'_': ' '})|title }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="info-field">
+                            <label class="info-label">Méthode de paiement</label>
+                            <div class="info-value">
+                                {% if livraison.commande.methodePaiement == 'carte_bancaire' %}💳 Carte Bancaire
+                                {% elseif livraison.commande.methodePaiement == 'paypal' %}🔵 PayPal
+                                {% elseif livraison.commande.methodePaiement == 'carte_postale' %}📮 Carte Postale
+                                {% else %}{{ livraison.commande.methodePaiement|replace({'_': ' '})|title }}{% endif %}
+                            </div>
+                        </div>
+
+                        {% if livraison.commande.produits %}
+                        <div class="info-field">
+                            <label class="info-label">Produits</label>
+                            <div class="info-value">
+                                {{ livraison.commande.produits|nl2br }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <div class="form-section full-width">
+                    <h3>📍 Adresse de Livraison</h3>
+                    
+                    <div class="info-field">
+                        <label class="info-label">Adresse complète</label>
+                        <div class="info-value address-box">
+                            <i class="bi bi-geo-alt-fill text-danger"></i>
+                            {{ livraison.adresse|nl2br }}
+                        </div>
+                    </div>
+
+                    {# ✅ Afficher aussi ville et code postal de la commande si disponibles #}
+                    {% if livraison.commande %}
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="info-field">
+                                <label class="info-label">Ville</label>
+                                <div class="info-value">
+                                    📍 {{ livraison.commande.ville }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-field">
+                                <label class="info-label">Code Postal</label>
+                                <div class="info-value">
+                                    🔢 {{ livraison.commande.codePostal }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ path('app_livraison_edit', {'id': livraison.id}) }}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Modifier
+                </a>
+                <a href="{{ path('app_livraison_index') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Retour à la liste
+                </a>
+                
+                <form method="post" action="{{ path('app_livraison_delete', {'id': livraison.id}) }}" 
+                      onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette livraison ? Cette action est irréversible.');"
+                      class="delete-form">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ livraison.id) }}">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Supprimer
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-header h1 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.form-header p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+/* ✅ Messages flash */
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: none;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.form-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.form-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-section h3 {
+    color: #34495e;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
+}
+
+.form-section.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-field {
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    border-radius: 5px;
+    background: #f8f9fa;
+}
+
+.info-field:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    word-break: break-word;
+}
+
+.fw-bold {
+    font-weight: 700;
+}
+
+.text-success {
+    color: #27ae60;
+}
+
+.text-muted {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.text-danger {
+    color: #e74c3c;
+}
+
+/* ✅ Avatar client */
+.customer-avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.me-3 {
+    margin-right: 1rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.badge {
+    font-size: 0.85rem;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.bg-warning {
+    background-color: #f39c12;
+    color: white;
+}
+
+.bg-info {
+    background-color: #3498db;
+    color: white;
+}
+
+.bg-primary {
+    background-color: #2980b9;
+    color: white;
+}
+
+.bg-success {
+    background-color: #27ae60;
+    color: white;
+}
+
+.bg-secondary {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.transporteur-badge {
+    background: #ecf0f1;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.tracking-number {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+    letter-spacing: 1px;
+    background: #ecf0f1;
+    padding: 0.75rem;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-copy {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-copy:hover {
+    background: #2980b9;
+}
+
+.address-box {
+    background: #fff;
+    border-left: 4px solid #e74c3c;
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.link-commande {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.link-commande:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.col-md-6 {
+    width: 100%;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #ecf0f1;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.btn {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-warning {
+    background: #f39c12;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: #e67e22;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+}
+
+.delete-form {
+    margin: 0;
+}
+
+.card {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.border-0 {
+    border: 0;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+@media (max-width: 991px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 768px) {
+    .form-actions {
+        flex-wrap: nowrap;
+    }
+}
+</style>
+
+<script>
+function copyTracking(numero) {
+    navigator.clipboard.writeText(numero).then(function() {
+        alert('✅ Numéro de suivi copié: ' + numero);
+    }, function() {
+        alert('❌ Erreur lors de la copie');
+    });
+}
+</script>
+{% endblock %}

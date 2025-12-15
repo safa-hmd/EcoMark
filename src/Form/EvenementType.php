@@ -11,6 +11,9 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
 
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+
 use App\Controller\Admin\EventAdminController;
 
 
@@ -24,8 +27,8 @@ class EvenementType extends AbstractType
             ->add('description')
             ->add('dateEvent')
             ->add('lieu')
-            ->add('image', FileType::class, [
-        'label' => 'Image (PNG, JPG)',
+           /* ->add('image', FileType::class, [
+       / 'label' => 'Image (PNG, JPG)',
         'mapped' => false, // Important : ne pas lier directement à l’entité
         'required' => false,
         'constraints' => [
@@ -36,6 +39,18 @@ class EvenementType extends AbstractType
                     'image/png',
                 ],
                 'mimeTypesMessage' => 'Veuillez uploader une image JPEG ou PNG valide',])],])
+                */
+
+                ->add('promptIA', TextType::class, [
+            'mapped' => false,
+            'required' => false,
+            'label' => 'Description pour générer l’image (IA)'
+        ])
+
+
+
+
+
             ->add('capacite')
             ->add('createdAt')
             

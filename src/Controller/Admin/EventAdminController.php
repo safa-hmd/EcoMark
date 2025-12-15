@@ -15,6 +15,8 @@ use App\Entity\Participation;
 use App\Repository\ParticipationRepository;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
+use App\Service\HuggingFaceImageService;
+
 
 #[Route('/event-admin')]
 final class EventAdminController extends AbstractController
@@ -62,7 +64,7 @@ public function searchAjax(Request $request, EvenementRepository $repo): Respons
 
 
     #[Route('/admin/ajout', name: 'admin_evenement_ajout')]
-public function ajout(Request $request, EntityManagerInterface $em): Response
+public function ajout(Request $request, EntityManagerInterface $em , HuggingFaceImageService $hfService): Response
 {
     $evenement = new Evenement();
 
@@ -77,12 +79,25 @@ public function ajout(Request $request, EntityManagerInterface $em): Response
     if ($form->isSubmitted() && $form->isValid()) {
 
         // Gestion de l'image (mazelt ma3raftech kifech bedhabt )
-        $file = $form->get('image')->getData();
+       /* $file = $form->get('image')->getData();
         if ($file) {
             $fileName = uniqid() . '.' . $file->guessExtension();
             $file->move($this->getParameter('uploads_directory'), $fileName);
             $evenement->setImage($fileName);
+        }*/
+
+        //Gestion image par huggungFace
+
+       // nrécupèriw le prompt IA
+        $prompt = $form->get('promptIA')->getData();
+
+        // Génération de l'image
+        if ($prompt) {
+            $generatedFileName = $hfService->generateImage($prompt);
+            $evenement->setImage($generatedFileName);
         }
+
+
 
         $em->persist($evenement);
         $em->flush();
@@ -100,7 +115,7 @@ public function ajout(Request $request, EntityManagerInterface $em): Response
 }
 
  #[Route('/admin/update/{ii}', name: 'admin_evenement_update')]
-public function update($ii,Request $request, EntityManagerInterface $em,EvenementRepository $repo): Response
+public function update($ii,Request $request, EntityManagerInterface $em,EvenementRepository $repo, HuggingFaceImageService $hfService): Response
 {
     $evenement = $repo->find($ii);
     $admin = $this->getUser();
@@ -112,12 +127,23 @@ public function update($ii,Request $request, EntityManagerInterface $em,Evenemen
 
     if ($form->isSubmitted() && $form->isValid()) {
 
-        // Gestion de l'image (mazelt ma3raftech kifech bedhabt )
+       /* // Gestion de l'image (mazelt ma3raftech kifech bedhabt )
         $file = $form->get('image')->getData();
         if ($file) {
             $fileName = uniqid() . '.' . $file->guessExtension();
             $file->move($this->getParameter('uploads_directory'), $fileName);
             $evenement->setImage($fileName);
+        }*/
+
+         //Gestion image par huggungFace
+
+       // nrécupèriw le prompt IA
+        $prompt = $form->get('promptIA')->getData();
+
+        // Génération de l'image
+        if ($prompt) {
+            $generatedFileName = $hfService->generateImage($prompt);
+            $evenement->setImage($generatedFileName);
         }
 
         

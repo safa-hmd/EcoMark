@@ -1,0 +1,398 @@
+{# templates/vendeur/produit/alertes/index.html.twig #}
+{% extends 'VendeurT/BO.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="page-header">
+        <h1>📊 Analyse Intelligente du Stock</h1>
+        <p class="text-muted">Dernière mise à jour : {{ rapport.date_generation|date('d/m/Y H:i') }}</p>
+    </div>
+
+    {# Cartes de synthèse #}
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h1 class="display-4">{{ rapport.statistiques.total_produits|default(0) }}</h1>
+                    <p>Produits en vente</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body text-center">
+                    <h1 class="display-4">{{ rapport.statistiques.alertes_urgentes|default(0) }}</h1>
+                    <p>Alertes urgentes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body text-center">
+                    <h1 class="display-4">{{ rapport.statistiques.alertes_moyennes|default(0) }}</h1>
+                    <p>Alertes moyennes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h1 class="display-4">{{ rapport.indicateurs_performance.taux_service|default(0) }}%</h1>
+                    <p>Taux de service</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Alertes urgentes - CORRIGÉ #}
+    {% if rapport.produits_par_categorie.urgent|default([])|length > 0 %}
+    <div class="alert alert-danger">
+        <h4><i class="fas fa-exclamation-triangle"></i> {{ rapport.produits_par_categorie.urgent|length }} ALERTES URGENTES</h4>
+        <ul class="mb-0">
+            {% for alerte in rapport.produits_par_categorie.urgent %}
+            <li>
+                <a href="{{ path('app_vendeur_produit_analyse', {'id': alerte.produit_id}) }}">
+                    {{ alerte.produit_nom }}
+                </a> - {{ alerte.message_alerte }}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {# Tableau des produits #}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Analyse détaillée par produit</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Produit</th>
+                            <th>Stock</th>
+                            <th>Niveau d'alerte</th>
+                            <th>Rupture prévue</th>
+                            <th>Confiance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {# Urgent #}
+                        {% for analyse in rapport.produits_par_categorie.urgent|default([]) %}
+                        <tr class="table-danger">
+                            <td>
+                                <strong>{{ analyse.produit_nom }}</strong>
+                                <br><small class="text-muted">{{ analyse.tendance_stock|default('') }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-danger">
+                                    {{ analyse.stock_actuel|default(0) }} unités
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-danger">
+                                    {{ analyse.icone_alerte|default('🚨') }} {{ (analyse.niveau_alerte|default('urgent'))|upper }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if analyse.date_rupture_predite|default %}
+                                {{ analyse.date_rupture_predite|date('d/m/Y') }}
+                                <br><small>({{ analyse.jours_avant_rupture|default(0)|round }} jours)</small>
+                                {% else %}
+                                <span class="text-danger">Imminente</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="progress" style="height: 20px; width: 100px;">
+                                    <div class="progress-bar bg-info" 
+                                         style="width: {{ analyse.score_confiance|default(0) }}%">
+                                        {{ analyse.score_confiance|default(0) }}%
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{{ path('app_vendeur_produit_analyse', {'id': analyse.produit_id}) }}" 
+                                   class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-chart-bar"></i> Analyser
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        {# Moyen #}
+                        {% for analyse in rapport.produits_par_categorie.moyen|default([]) %}
+                        <tr class="table-warning">
+                            <td>
+                                <strong>{{ analyse.produit_nom }}</strong>
+                                <br><small class="text-muted">{{ analyse.tendance_stock|default('') }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning">
+                                    {{ analyse.stock_actuel|default(0) }} unités
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-warning">
+                                    {{ analyse.icone_alerte|default('⚠️') }} {{ (analyse.niveau_alerte|default('moyen'))|upper }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if analyse.date_rupture_predite|default %}
+                                {{ analyse.date_rupture_predite|date('d/m/Y') }}
+                                <br><small>({{ analyse.jours_avant_rupture|default(0)|round }} jours)</small>
+                                {% else %}
+                                <span class="text-warning">À surveiller</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="progress" style="height: 20px; width: 100px;">
+                                    <div class="progress-bar bg-info" 
+                                         style="width: {{ analyse.score_confiance|default(0) }}%">
+                                        {{ analyse.score_confiance|default(0) }}%
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{{ path('app_vendeur_produit_analyse', {'id': analyse.produit_id}) }}" 
+                                   class="btn btn-sm btn-outline-warning">
+                                    <i class="fas fa-chart-bar"></i> Analyser
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        {# Faible #}
+                        {% for analyse in rapport.produits_par_categorie.faible|default([]) %}
+                        <tr class="table-info">
+                            <td>
+                                <strong>{{ analyse.produit_nom }}</strong>
+                                <br><small class="text-muted">{{ analyse.tendance_stock|default('') }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">
+                                    {{ analyse.stock_actuel|default(0) }} unités
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">
+                                    {{ analyse.icone_alerte|default('📉') }} {{ (analyse.niveau_alerte|default('faible'))|upper }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if analyse.date_rupture_predite|default %}
+                                {{ analyse.date_rupture_predite|date('d/m/Y') }}
+                                <br><small>({{ analyse.jours_avant_rupture|default(0)|round }} jours)</small>
+                                {% else %}
+                                <span class="text-info">Stable</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="progress" style="height: 20px; width: 100px;">
+                                    <div class="progress-bar bg-info" 
+                                         style="width: {{ analyse.score_confiance|default(0) }}%">
+                                        {{ analyse.score_confiance|default(0) }}%
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{{ path('app_vendeur_produit_analyse', {'id': analyse.produit_id}) }}" 
+                                   class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-chart-bar"></i> Analyser
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                        {# Bon #}
+                        {% for analyse in rapport.produits_par_categorie.bon|default([]) %}
+                        <tr class="table-success">
+                            <td>
+                                <strong>{{ analyse.produit_nom }}</strong>
+                                <br><small class="text-muted">{{ analyse.tendance_stock|default('') }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
+                                    {{ analyse.stock_actuel|default(0) }} unités
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-success">
+                                    {{ analyse.icone_alerte|default('✅') }} {{ (analyse.niveau_alerte|default('bon'))|upper }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-success">Stable</span>
+                            </td>
+                            <td>
+                                <div class="progress" style="height: 20px; width: 100px;">
+                                    <div class="progress-bar bg-info" 
+                                         style="width: {{ analyse.score_confiance|default(0) }}%">
+                                        {{ analyse.score_confiance|default(0) }}%
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="{{ path('app_vendeur_produit_analyse', {'id': analyse.produit_id}) }}" 
+                                   class="btn btn-sm btn-outline-success">
+                                    <i class="fas fa-chart-bar"></i> Analyser
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                        {# Si aucun produit #}
+                        {% if rapport.produits_par_categorie is not defined or 
+                              (rapport.produits_par_categorie.urgent|default([])|length == 0 and
+                               rapport.produits_par_categorie.moyen|default([])|length == 0 and
+                               rapport.produits_par_categorie.faible|default([])|length == 0 and
+                               rapport.produits_par_categorie.bon|default([])|length == 0) %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                <p>Aucun produit à analyser</p>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {# Recommandations #}
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">📋 Priorités d'action</h5>
+                </div>
+                <div class="card-body">
+                    {% if rapport.priorites_action|default([])|length > 0 %}
+                    <ul class="list-group list-group-flush">
+                        {% for priorite in rapport.priorites_action %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ priorite.produit|default('') }}
+                            <span class="badge bg-{{ priorite.impact|default('Moyen') == 'Élevé' ? 'danger' : 'warning' }}">
+                                {{ priorite.action|default('') }}
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted mb-0">Aucune priorité d'action définie</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">💡 Recommandations stratégiques</h5>
+                </div>
+                <div class="card-body">
+                    {% if rapport.recommandations_strategiques|default([])|length > 0 %}
+                    {% for reco in rapport.recommandations_strategiques %}
+                    <div class="alert alert-{{ reco.type|default('general') == 'urgence' ? 'danger' : 'info' }} mb-2">
+                        <h6>{{ reco.titre|default('') }}</h6>
+                        <p class="mb-0">{{ reco.description|default('') }}</p>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-muted mb-0">Aucune recommandation stratégique</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Indicateurs de performance #}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">📈 Indicateurs de Performance</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 text-center">
+                    <div class="p-3 bg-light rounded">
+                        <h3>{{ rapport.indicateurs_performance.taux_service|default(0) }}%</h3>
+                        <small>Taux de service</small>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="p-3 bg-light rounded">
+                        <h3>{{ rapport.indicateurs_performance.efficacite_gestion|default(0) }}%</h3>
+                        <small>Efficacité gestion</small>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="p-3 bg-light rounded">
+                        <h3>{{ rapport.indicateurs_performance.niveau_securite|default(0) }}%</h3>
+                        <small>Niveau de sécurité</small>
+                    </div>
+                </div>
+                <div class="col-md-3 text-center">
+                    <div class="p-3 bg-light rounded">
+                        <h3>{{ rapport.estimation_couts.reappro_urgent|default(0)|number_format(2) }}€</h3>
+                        <small>Coût réappro urgent</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Mise à jour automatique des données
+function actualiserDonnees() {
+    fetch('{{ path("app_vendeur_alertes_api") }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success' && data.alertes_urgentes > 0) {
+                // Mettre à jour le compteur d'alertes dans le titre
+                document.title = `(${data.alertes_urgentes}) Alertes Stock - EcoMarket`;
+                
+                // Afficher une notification
+                if (data.alertes_urgentes > 0 && !document.querySelector('.alert-floating')) {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger alert-floating position-fixed top-0 end-0 m-3';
+                    alertDiv.style.zIndex = '9999';
+                    alertDiv.innerHTML = `
+                        <strong>${data.alertes_urgentes} nouvelle(s) alerte(s) urgente(s)</strong>
+                        <button type="button" class="btn-close float-end" onclick="this.parentElement.remove()"></button>
+                    `;
+                    document.body.appendChild(alertDiv);
+                    
+                    // Auto-dismiss après 5 secondes
+                    setTimeout(() => alertDiv.remove(), 5000);
+                }
+            }
+        })
+        .catch(error => console.error('Erreur mise à jour:', error));
+}
+
+// Actualiser toutes les 2 minutes
+setInterval(actualiserDonnees, 120000);
+
+// Initialiser
+actualiserDonnees();
+</script>
+
+<style>
+.table-danger td { background-color: #f8d7da !important; }
+.table-warning td { background-color: #fff3cd !important; }
+.table-info td { background-color: #d1ecf1 !important; }
+.table-success td { background-color: #d4edda !important; }
+
+.alert-floating {
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3>Points de Recyclage</h3>
+                </div>
+                <div class="col-sm-6 text-end">
+                    <a href="{{ path('app_admin_point_recyclage_new') }}" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Nouveau Point
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        {% for message in app.flashes('success') %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Adresse</th>
+                                        <th>Type Matière</th>
+                                        <th>Capacité Max</th>
+                                        <th>Responsable</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for point_recyclage in point_recyclages %}
+                                    <tr>
+                                        <td>{{ point_recyclage.nomPoint }}</td>
+                                        <td>{{ point_recyclage.adresse }}</td>
+                                        <td>{{ point_recyclage.typeMatiereAcceptee }}</td>
+                                        <td>{{ point_recyclage.capaciteMax }}</td>
+                                        <td>{{ point_recyclage.responsable }}</td>
+                                        <td>
+                                            <a href="{{ path('app_admin_point_recyclage_show', {'id': point_recyclage.id}) }}" 
+                                               class="btn btn-info btn-sm">Voir</a>
+                                            <a href="{{ path('app_admin_point_recyclage_edit', {'id': point_recyclage.id}) }}" 
+                                               class="btn btn-warning btn-sm">Modifier</a>
+                                            <form method="post" action="{{ path('app_admin_point_recyclage_delete', {'id': point_recyclage.id}) }}" 
+                                                  style="display: inline-block;" 
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce point de recyclage?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ point_recyclage.id) }}">
+                                                <button class="btn btn-danger btn-sm">Supprimer</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">Aucun point de recyclage trouvé</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

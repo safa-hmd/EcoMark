@@ -18,7 +18,8 @@ use App\Repository\ParticipationRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use App\Service\WeatherService;
-
+use App\Service\QrCodeService;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Symfony\Bundle\SecurityBundle\Security;
 
@@ -33,28 +34,56 @@ final class EventClientController extends AbstractController
         ]);
     }
     //affichage de des evenements bech ne5tar we7id nparticipi fih 
+    //hani j ai ajouter el qr code hnee
     
-    #[Route('/client/evenements', name: 'client_affiche_evenements')] 
-    public function afficherEvenements(EvenementRepository $repo) {
-        $evenements = $repo->findAll();
-        return $this->render('Client/event_client/afficheEvenements.html.twig',
-           [ 'evenements' => $evenements, ]);
+    #[Route('/client/evenements', name: 'client_affiche_evenements')]
+public function afficherEvenements(
+    EvenementRepository $repo,
+    UrlGeneratorInterface $urlGenerator,
+    QRCodeService $qrService) {
+    $evenements = $repo->findAll();
+    $qrCodes = [];
+
+    foreach ($evenements as $ev) {
+        $participationUrl = $urlGenerator->generate(
+            'client_participer',
+            ['ii' => $ev->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        // Utilisation du service pour générer le QR
+        $qrCodes[$ev->getId()] = $qrService->generateQrCode($participationUrl, 60);
+
     }
+    return $this->render('Client/event_client/afficheEvenements.html.twig', [
+        'evenements' => $evenements,
+        'qrCodes' => $qrCodes,
+    ]);
+}
     
     
     
     
     #[Route('/client/participer/{ii}', name:'client_participer')]
-    public function participer(int $ii,Request $request,EntityManagerInterface $em,EvenementRepository $eventRepo,Security $security): Response {
-        
-        // Récupération de l'événement
+    public function participer(int $ii,Request $request,EntityManagerInterface $em,EvenementRepository $eventRepo,ParticipationRepository $participationRepo ,Security $security): Response {
+        $user = $security->getUser(); 
+
+        // Récupérit  l'événement
         $evenement = $eventRepo->find($ii);
         if (!$evenement) {
         throw $this->createNotFoundException("Événement introuvable");
         }
 
+        // zedt ya3mil verification de la participation
+        $existingParticipation = $participationRepo->findOneBy([
+        'user' => $user,
+        'evenement' => $evenement
+        ]);
 
-        $user = $security->getUser(); 
+        if ($existingParticipation) {
+        $this->addFlash('warning', 'Vous avez déjà participé à cet événement.');
+        return $this->redirectToRoute('client_affiche_evenements');
+    }
 
         // Création participation
         $participation = new Participation();
@@ -66,6 +95,7 @@ final class EventClientController extends AbstractController
          $em->persist($participation);
          $em->flush();
 
+
         $this->addFlash('success', 'Votre demande de participation a été envoyée !');
 
         return $this->redirectToRoute('affiche_client');
@@ -75,7 +105,8 @@ final class EventClientController extends AbstractController
         #[Route('/client/affiche', name: 'affiche_client')]
     public function Affiche(ParticipationRepository $repo)
     {
-        $participations = $repo->findAll();
+        $user = $this->getUser();
+        $participations = $repo->findBy(['user' => $user]);
 
         return $this->render('Client/event_client/affiche.html.twig', [
             'participations' => $participations,
@@ -91,6 +122,7 @@ public function cancel($id, ParticipationRepository $repo, EntityManagerInterfac
     if (!$p) {
         throw $this->createNotFoundException("Participation non trouvée");
     }
+    
 
     
     $em->remove($p);

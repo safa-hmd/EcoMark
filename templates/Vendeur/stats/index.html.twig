@@ -1,0 +1,460 @@
+{# templates/vendeur/stats/index.html.twig #}
+{% extends 'VendeurT/BO.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+    }
+    .progress {
+        height: 25px;
+        margin-bottom: 10px;
+    }
+    .progress-bar {
+        line-height: 25px;
+        font-size: 14px;
+    }
+    .badge-etat {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+    .product-name {
+        max-width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Données pour le graphique des stocks
+    const ctx1 = document.getElementById('stockChart').getContext('2d');
+    
+    // Utiliser les données formatées du contrôleur
+    const produits = {{ produitsFormatted|json_encode|raw }};
+    
+    // Si produits est vide, créer des données par défaut
+    if (!produits || produits.length === 0) {
+        console.warn('Aucun produit trouvé pour les graphiques');
+        return;
+    }
+    
+    const labels = produits.map(p => p.nom.length > 15 ? p.nom.substring(0, 15) + '...' : p.nom);
+    const stockData = produits.map(p => p.stock);
+    const colors = produits.map(p => {
+        if (p.stock <= 3) return '#FF5252';      // Rouge pour critique
+        if (p.stock <= 10) return '#FFC107';     // Orange pour faible
+        return '#4CAF50';                        // Vert pour bon stock
+    });
+    
+    const stockChart = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Stock actuel',
+                data: stockData,
+                backgroundColor: colors,
+                borderColor: '#2C3E50',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Stock par produit ({{ produits|length > 15 ? '15 premiers sur ' ~ produits|length : 'Tous les produits' }})'
+                },
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const produit = produits[tooltipItems[0].dataIndex];
+                            return produit.nomComplet || produit.nom;
+                        },
+                        label: function(context) {
+                            const produit = produits[context.dataIndex];
+                            return `Stock: ${context.raw} unités | État: ${produit.etat}`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Quantité en stock'
+                    },
+                    ticks: {
+                        stepSize: 5
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+    
+    // Graphique camembert pour les états
+    const ctx2 = document.getElementById('etatChart').getContext('2d');
+    
+    // Extraire les états et les comptes
+    const etats = {{ produitsParEtat|keys|json_encode|raw }};
+    const etatData = [
+        {% for etat, count in produitsParEtat %}
+            {{ count }}{% if not loop.last %}, {% endif %}
+        {% endfor %}
+    ];
+    
+    const etatColors = ['#4CAF50', '#FF5252', '#2196F3', '#9C27B0', '#FF9800', '#795548'];
+    
+    // Vérifier si on a des données pour le camembert
+    if (etats.length > 0 && etatData.length > 0) {
+        const etatChart = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: etats,
+                datasets: [{
+                    data: etatData,
+                    backgroundColor: etatColors.slice(0, etats.length),
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Répartition par état'
+                    },
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = {{ stats.totalProduits }};
+                                const value = context.raw;
+                                const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                return `${context.label}: ${value} produits (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } else {
+        // Afficher un message si pas de données
+        ctx2.fillStyle = '#f8f9fa';
+        ctx2.fillRect(0, 0, ctx2.canvas.width, ctx2.canvas.height);
+        ctx2.fillStyle = '#6c757d';
+        ctx2.textAlign = 'center';
+        ctx2.textBaseline = 'middle';
+        ctx2.font = '16px Arial';
+        ctx2.fillText('Aucune donnée disponible', ctx2.canvas.width / 2, ctx2.canvas.height / 2);
+    }
+});
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1>📊 Tableau de Bord - Statistiques</h1>
+    
+    <!-- Cartes de statistiques rapides -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h3>{{ stats.totalProduits }}</h3>
+                    <p>Total Produits</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-{{ stats.produitsCritiques > 0 ? 'danger' : 'success' }} text-white">
+                <div class="card-body text-center">
+                    <h3>{{ stats.produitsCritiques }}</h3>
+                    <p>Produits Critiques</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body text-center">
+                    <h3>{{ stats.totalStock }}</h3>
+                    <p>Unités Total Stock</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body text-center">
+                    <h3>{{ stats.moyenneStock }}</h3>
+                    <p>Moyenne Stock/Produit</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Graphique des stocks -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>📈 Stock par produit ({{ produits|length > 15 ? '15 premiers sur ' ~ produits|length : 'Tous les produits' }})</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <span class="badge bg-success">●</span> Stock suffisant (>10) 
+                            <span class="badge bg-warning ms-2">●</span> Stock faible (4-10) 
+                            <span class="badge bg-danger ms-2">●</span> Stock critique (≤3)
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Graphique des états -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>📊 Répartition par état</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="etatChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Le reste du template reste inchangé... -->
+    {% if stats.produitsCritiques > 0 %}
+    <div class="card mb-4">
+        <div class="card-header bg-danger text-white">
+            <h5>🚨 Top {{ top10Critiques|length }} des produits les plus critiques</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Produit</th>
+                            <th>Stock</th>
+                            <th>État</th>
+                            <th>Prix</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produit in top10Critiques %}
+                        <tr class="{{ produit.quantiteStock <= 3 ? 'table-danger' : produit.quantiteStock <= 10 ? 'table-warning' : '' }}">
+                            <td>{{ loop.index }}</td>
+                            <td>
+                                <div class="product-name" title="{{ produit.nomProduit ?? produit.nom ?? 'Produit sans nom' }}">
+                                    <strong>{{ produit.nomProduit ?? produit.nom ?? 'Produit sans nom' }}</strong>
+                                </div>
+                                {% if produit.description %}
+                                <small class="text-muted">{{ produit.description|slice(0, 50) }}{{ produit.description|length > 50 ? '...' : '' }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div style="width: 100px; margin-right: 10px;">
+                                        <div class="progress" style="height: 20px;">
+                                            {% set maxStock = 50 %}
+                                            {% set pourcentage = (produit.quantiteStock / maxStock) * 100 %}
+                                            <div class="progress-bar bg-{{ produit.quantiteStock <= 3 ? 'danger' : produit.quantiteStock <= 10 ? 'warning' : 'success' }}" 
+                                                 role="progressbar" 
+                                                 style="width: {{ pourcentage > 100 ? 100 : pourcentage }}%">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-{{ produit.quantiteStock <= 3 ? 'danger' : produit.quantiteStock <= 10 ? 'warning' : 'success' }}">
+                                        {{ produit.quantiteStock }} unités
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                {% set etatProduit = produit.etatProduit ?? 'Non défini' %}
+                                {% if etatProduit == 'Disponible' %}
+                                    <span class="badge bg-success">{{ etatProduit }}</span>
+                                {% elseif etatProduit == 'En rupture' %}
+                                    <span class="badge bg-danger">{{ etatProduit }}</span>
+                                {% elseif etatProduit == 'Bientôt disponible' %}
+                                    <span class="badge bg-info">{{ etatProduit }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ etatProduit }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ produit.prix|number_format(2, ',', ' ') }} €</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ path('app_vendeur_produit_show', {'id': produit.id}) }}" 
+                                       class="btn btn-outline-info" title="Voir détails">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ path('app_vendeur_produit_edit', {'id': produit.id}) }}" 
+                                       class="btn btn-outline-primary" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ path('app_vendeur_sms_alertes') }}" 
+                                       class="btn btn-outline-danger" title="Envoyer une alerte SMS">
+                                        <i class="fas fa-bell"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-success">
+        <i class="fas fa-check-circle"></i> Excellente nouvelle ! Aucun produit en stock critique.
+    </div>
+    {% endif %}
+    
+    <!-- Répartition détaillée par état -->
+    {% if produitsParEtat is not empty %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>📋 Détail par état des produits</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for etat, count in produitsParEtat %}
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3>{{ count }}</h3>
+                            <p class="mb-0">
+                                {% if etat == 'Disponible' %}
+                                    <span class="badge bg-success">{{ etat }}</span>
+                                {% elseif etat == 'En rupture' %}
+                                    <span class="badge bg-danger">{{ etat }}</span>
+                                {% elseif etat == 'Bientôt disponible' %}
+                                    <span class="badge bg-info">{{ etat }}</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ etat }}</span>
+                                {% endif %}
+                            </p>
+                            <small class="text-muted">
+                                {% if stats.totalProduits > 0 %}
+                                    {{ (count / stats.totalProduits * 100)|number_format(1) }}% du total
+                                {% else %}
+                                    0% du total
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Menu des statistiques -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Autres Statistiques</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-2">
+                    <a href="{{ path('app_vendeur_sms_alertes') }}" class="btn btn-outline-warning w-100">
+                        <i class="fas fa-sms"></i> Historique des alertes SMS
+                    </a>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <a href="{{ path('app_vendeur_produit_index') }}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-box"></i> Liste complète des produits
+                    </a>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <a href="{{ path('app_vendeur_produit_new') }}" class="btn btn-outline-success w-100">
+                        <i class="fas fa-plus"></i> Ajouter un produit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistiques complémentaires -->
+    <div class="card">
+        <div class="card-header">
+            <h5>📈 Résumé des statistiques</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Répartition des stocks :</h6>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Produits avec stock suffisant (> 10 unités)
+                            <span class="badge bg-success rounded-pill">
+                                {{ stats.produitsSuffisants }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Produits avec stock faible (4-10 unités)
+                            <span class="badge bg-warning rounded-pill">
+                                {{ stats.produitsFaibles }}
+                            </span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Produits en stock critique (≤ 3 unités)
+                            <span class="badge bg-danger rounded-pill">{{ stats.produitsCritiques }}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>Valeur totale du stock :</h6>
+                    <div class="alert alert-info">
+                        <h4 class="text-center">
+                            {{ stats.valeurTotaleStock|number_format(2, ',', ' ') }} €
+                        </h4>
+                        <p class="text-center mb-0">Valeur totale estimée du stock</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

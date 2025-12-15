@@ -1,0 +1,109 @@
+{% extends 'Vendeur/BO.html.twig' %}
+
+{% block body %}
+
+{{ parent() }}
+
+<div class="page-body">
+  <div class="container-fluid">
+    <div class="page-title">
+      <div class="row">
+        <div class="col-sm-6 col-12">
+          <h2>Profil vendeuristrateur</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="user-profile">
+      <div class="row">
+
+        <div class="col-sm-12">
+          <div class="card hovercard text-center">
+            
+
+            <div class="user-image">
+              <div class="avatar">
+                <img alt="Photo" 
+     src="{{ vendeur.photo ? asset('uploads/photos/' ~ vendeur.photo) : asset('uploads/default.jpg') }}" 
+     width="100" class="mt-2 rounded">
+
+              </div>
+            </div>
+
+            <div class="info">
+              <div class="row">
+
+                <!-- Email & Adresse -->
+                <div class="col-sm-6 col-lg-4">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="ttl-info text-start">
+                        <h6><i class="fa-solid fa-envelope"></i>   Email</h6>
+                        <span>{{ vendeur.email }}</span>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="ttl-info text-start">
+                        <h6>  Adresse</h6>
+                        <span>{{ vendeur.adresse }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Nom / Prénom / Rôle -->
+                <div class="col-sm-12 col-lg-4">
+                  <div class="user-designation">
+                    <div class="title">
+                      <a href="#">
+                        {{ vendeur.nom }} {{ vendeur.prenom }}
+                      </a>
+                    </div>
+
+                    <div class="desc">
+                      {% for role in vendeur.roles %}
+                        {{ role }}{% if not loop.last %}, {% endif %}
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Téléphone -->
+                <div class="col-sm-6 col-lg-4">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="ttl-info text-start">
+                        <h6>Téléphone</h6>
+                        <span>{{ vendeur.telephone }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                
+              </div>
+
+              <hr>
+
+           <div class="mt-3">
+
+            <form method="post" action="{{ path('profilVendeur_delete', {'id': vendeur.id}) }}"
+          onsubmit="return confirm('Voulez-vous vraiment supprimer ce profil ?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete-profil' ~ vendeur.id) }}">
+        <button class="btn btn-danger">Supprimer le profil</button>
+    </form>
+</div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
