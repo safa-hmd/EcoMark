@@ -1,0 +1,47 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block body %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('BO/styleadmin.css') }}">
+{% endblock %}
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{{ parent() }}
+
+<div class="admin-form-container">
+    <h1>{{ is_edit ? "Modifier l'événement" : "Ajouter un événement" }}</h1>
+
+    <div class="mt-4 mb-3">
+        <a href="{{ path('affiche_admin') }}" class="btn btn-secondary">
+            ← Retour à la liste des événements
+        </a>
+    </div>
+
+    {{ form_start(form) }}
+
+        {{ form_row(form.titre, {'label': "Titre de l'événement", 'attr': {'class': 'form-control'}}) }}
+
+        {{ form_row(form.description, {'label': "Description", 'attr': {'class': 'form-control', 'rows': 4}}) }}
+
+        {{ form_row(form.dateEvent, {'label': "Date de l'événement", 'attr': {'class': 'form-control'}}) }}
+
+        {{ form_row(form.lieu, {'label': "Lieu", 'attr': {'class': 'form-control'}}) }}
+
+        
+
+        {{ form_row(form.capacite, {'label': "Capacité", 'attr': {'class': 'form-control'}}) }}
+
+        {#{{ form_row(form.image, {'label': "Image", 'attr': {'class': 'form-control'}}) }}#} 
+       {{ form_row(form.promptIA) }}
+
+        {{ form_row(form.createdAt, {'label': "Date de création", 'attr': {'class': 'form-control'}}) }}
+
+        <button class="btn mt-3">
+        {{ is_edit ? "Modifier l'événement" : "Ajouter l'événement" }}
+        </button>
+
+    {{ form_end(form) }}
+</div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block title %}EcoMarket - Réponse{% endblock %}
+
+{% block body %}
+{{parent()}}
+<h1 class="mb-4">Liste des réclamations</h1>
+
+<input type="text" id="search" class="form-control mb-3" placeholder="Rechercher...">
+
+<div id="reclamation-table">
+    {% include 'Admin/reponse/table_reclamation.html.twig' with {'reclamations': reclamations} %}
+</div>
+
+{#<script>
+    const searchInput = document.getElementById('search');
+
+    searchInput.addEventListener('keyup', function() {
+        let query = this.value;
+
+        fetch('{{ path("reponsereponse_search") }}?q=' + encodeURIComponent(query))
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('reclamation-table').innerHTML = html;
+            });
+    });
+</script>#}
+{% endblock %}

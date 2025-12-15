@@ -1,0 +1,52 @@
+{% extends 'Vendeur/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <h3>{% block title %}Nouveau Produit{% endblock %}</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        {{ form_start(form) }}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {{ form_row(form.nomProduit, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-6">
+                                    {{ form_row(form.prix, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-12">
+                                    {{ form_row(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(form.quantiteStock, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(form.etatProduit, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ form_row(form.pointRecyclage, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-primary" type="submit">
+                                    {% block button_label %}Créer{% endblock %}
+                                </button>
+                                <a href="{{ path('app_vendeur_produit_index') }}" class="btn btn-secondary">Retour à la liste</a>
+                            </div>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

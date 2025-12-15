@@ -1,0 +1,210 @@
+{% extends 'VendeurT/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <h3>Ajouter un Nouveau Produit</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        {# Désactive la validation HTML5 pour voir les messages Symfony #}
+                        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+                        
+                        {# Affiche les erreurs globales du formulaire #}
+                        {% if not form.vars.valid %}
+                            <div class="alert alert-danger mb-4">
+                                <h5 class="alert-heading">⚠️ Des erreurs empêchent la soumission :</h5>
+                                {{ form_errors(form) }}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            {# CHAMP NOM PRODUIT #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.nomProduit, 'Nom du produit *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.nomProduit, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.nomProduit.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                        'placeholder': 'Ex: T-shirt recyclé'
+                                    }
+                                }) }}
+                                {% if form.nomProduit.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.nomProduit.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">2 à 100 caractères</div>
+                            </div>
+                            
+                            {# CHAMP PRIX #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.prix, 'Prix (€) *', {'label_attr': {'class': 'form-label'}}) }}
+                                <div class="input-group">
+                                    {{ form_widget(form.prix, {
+                                        'attr': {
+                                            'class': 'form-control' ~ (form.prix.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                            'placeholder': 'Ex: 19.99',
+                                            'step': '0.01'
+                                        }
+                                    }) }}
+                                    <span class="input-group-text">€</span>
+                                </div>
+                                {% if form.prix.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.prix.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Entre 0.01€ et 10 000€</div>
+                            </div>
+                            
+                            {# CHAMP DESCRIPTION #}
+                            <div class="col-md-12 mb-3">
+                                {{ form_label(form.description, 'Description *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.description, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.description.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                        'rows': 4,
+                                        'placeholder': 'Décrivez votre produit en détail...'
+                                    }
+                                }) }}
+                                {% if form.description.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.description.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">10 à 500 caractères</div>
+                            </div>
+                            
+                            {# CHAMP QUANTITÉ #}
+                            <div class="col-md-4 mb-3">
+                                {{ form_label(form.quantiteStock, 'Quantité en stock *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.quantiteStock, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.quantiteStock.vars.errors|length > 0 ? ' is-invalid' : ''),
+                                        'placeholder': 'Ex: 50'
+                                    }
+                                }) }}
+                                {% if form.quantiteStock.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.quantiteStock.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">0 à 10 000 unités</div>
+                            </div>
+                            
+                            {# CHAMP ÉTAT #}
+                            <div class="col-md-4 mb-3">
+                                {{ form_label(form.etatProduit, 'État du produit *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.etatProduit, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.etatProduit.vars.errors|length > 0 ? ' is-invalid' : '')
+                                    }
+                                }) }}
+                                {% if form.etatProduit.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.etatProduit.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            {# CHAMP POINT DE RECYCLAGE #}
+                            <div class="col-md-4 mb-3">
+                                {{ form_label(form.pointRecyclage, 'Point de recyclage', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.pointRecyclage, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.pointRecyclage.vars.errors|length > 0 ? ' is-invalid' : '')
+                                    }
+                                }) }}
+                                {% if form.pointRecyclage.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.pointRecyclage.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Optionnel</div>
+                            </div>
+                            
+                            {# CHAMP PHOTO #}
+                            <div class="col-md-12 mb-3">
+                                {{ form_label(form.photo, 'Photo du produit', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.photo, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.photo.vars.errors|length > 0 ? ' is-invalid' : '')
+                                    }
+                                }) }}
+                                {% if form.photo.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.photo.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">
+                                    Formats acceptés: JPG, PNG, GIF, JPEG. Taille maximale: 1MB
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-plus"></i> Créer le produit
+                            </button>
+                            <a href="{{ path('app_vendeur_produit_index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour à la liste
+                            </a>
+                        </div>
+                        
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+/* Style pour les champs invalides */
+.is-invalid {
+    border-color: #dc3545 !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* Style pour les messages d'erreur */
+.text-danger.small {
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}
+
+/* Astérisque pour les champs obligatoires */
+.form-label:after {
+    content: " *";
+    color: #dc3545;
+}
+</style>
+{% endblock %}

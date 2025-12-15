@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Entity;
-use App\Entity\User;
-use Symfony\Component\Validator\Constraints as Assert;
+
 use App\Repository\ReclamationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReclamationRepository::class)]
 class Reclamation
@@ -45,8 +45,17 @@ class Reclamation
     #[ORM\JoinColumn(nullable: true)]
     private ?User $client = null;
 
-    #[ORM\OneToOne(mappedBy: 'reclamation', cascade: ['persist','remove'],orphanRemoval: true)]
-    private ?Reponse $yes = null;
+    #[ORM\ManyToOne(inversedBy: 'reclamationsAdmin')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $admin = null;
+
+    #[ORM\OneToOne(mappedBy: 'reclamation', targetEntity: Reponse::class)]
+    private ?Reponse $reponse = null;
+
+    public function __construct()
+    {
+        $this->dateCreation = new \DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -61,7 +70,6 @@ class Reclamation
     public function setObjet(string $Objet): static
     {
         $this->Objet = $Objet;
-
         return $this;
     }
 
@@ -73,7 +81,6 @@ class Reclamation
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -85,7 +92,6 @@ class Reclamation
     public function setDateCreation(\DateTime $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
-
         return $this;
     }
 
@@ -97,11 +103,10 @@ class Reclamation
     public function setStatut(string $statut): static
     {
         $this->statut = $statut;
-
         return $this;
     }
 
-    public function getClient(): User
+    public function getClient(): ?User
     {
         return $this->client;
     }
@@ -109,27 +114,38 @@ class Reclamation
     public function setClient(?User $client): static
     {
         $this->client = $client;
-
         return $this;
     }
 
-    public function getYes(): ?Reponse
+    public function getAdmin(): ?User
     {
-        return $this->yes;
+        return $this->admin;
     }
 
-    public function setYes(Reponse $yes): static
+    public function setAdmin(?User $admin): static
     {
-        if ($yes->getReclamation() !== $this) {
-            $yes->setReclamation($this);
+        $this->admin = $admin;
+        return $this;
+    }
+
+    public function getReponse(): ?Reponse
+    {
+        return $this->reponse;
+    }
+
+    public function setReponse(?Reponse $reponse): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($reponse === null && $this->reponse !== null) {
+            $this->reponse->setReclamation(null);
         }
 
-        $this->yes = $yes;
+        // set the owning side of the relation if necessary
+        if ($reponse !== null && $reponse->getReclamation() !== $this) {
+            $reponse->setReclamation($this);
+        }
 
+        $this->reponse = $reponse;
         return $this;
     }
-    public function __construct()
-{
-    $this->dateCreation = new \DateTime(); 
-}
 }

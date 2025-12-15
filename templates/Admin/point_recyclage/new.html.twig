@@ -1,0 +1,159 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <h3>Nouveau Point de Recyclage</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        {# AVEC novalidate - désactive validation HTML5 #}
+                        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                        
+                        {# Affiche les erreurs globales #}
+                        {% if not form.vars.valid %}
+                            <div class="alert alert-danger mb-4">
+                                <h5 class="alert-heading">⚠️ Des erreurs empêchent la soumission :</h5>
+                                {{ form_errors(form) }}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            {# CHAMP NOM DU POINT #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.nomPoint, 'Nom du point *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.nomPoint, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Ex: Point recyclage centre-ville'
+                                    }
+                                }) }}
+                                {% if form.nomPoint.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.nomPoint.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">2 à 100 caractères</div>
+                            </div>
+                            
+                            {# CHAMP ADRESSE #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.adresse, 'Adresse *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.adresse, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Ex: 123 Rue de la Recyclerie, 75001 Paris'
+                                    }
+                                }) }}
+                                {% if form.adresse.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.adresse.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">5 à 255 caractères</div>
+                            </div>
+                            
+                            {# CHAMP TYPE DE MATIÈRE #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.typeMatiereAcceptee, 'Type de matière acceptée *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.typeMatiereAcceptee, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Ex: Plastique, Verre, Papier, Métal'
+                                    }
+                                }) }}
+                                {% if form.typeMatiereAcceptee.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.typeMatiereAcceptee.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Ex: Plastique, Verre, Papier</div>
+                            </div>
+                            
+                            {# CHAMP CAPACITÉ MAX #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.capaciteMax, 'Capacité maximale *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.capaciteMax, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Ex: 1000'
+                                    }
+                                }) }}
+                                {% if form.capaciteMax.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.capaciteMax.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Entre 1 et 100 000 unités</div>
+                            </div>
+                            
+                            {# CHAMP RESPONSABLE #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.responsable, 'Responsable *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.responsable, {
+                                    'attr': {
+                                        'class': 'form-control',
+                                        'placeholder': 'Ex: Houssem'
+                                    }
+                                }) }}
+                                {% if form.responsable.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.responsable.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="form-text">Lettres, espaces, tirets et apostrophes uniquement</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-plus"></i> Créer le point de recyclage
+                            </button>
+                            <a href="{{ path('app_admin_point_recyclage_index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour à la liste
+                            </a>
+                        </div>
+                        
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+/* Style pour les messages d'erreur */
+.text-danger.small {
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}
+
+/* Astérisque pour les champs obligatoires */
+.form-label:after {
+    content: " *";
+    color: #dc3545;
+}
+</style>
+{% endblock %}

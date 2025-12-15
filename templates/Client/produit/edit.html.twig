@@ -1,0 +1,83 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block body %}
+<!-- PAGE TITLE AREA START -->
+<div class="ltn__page-title-area text-center bg-overlay-white-30 bg-image" data-bg="img/bg/14.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title-inner">
+                    <h1 class="page-title">Modifier le Produit</h1>
+                    <div class="ltn__breadcrumb-list">
+                        <ul>
+                            <li><a href="{{ path('client_home') }}">Accueil</a></li>
+                            <li><a href="{{ path('app_client_produit_index') }}">Produits</a></li>
+                            <li>Modifier</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- PAGE TITLE AREA END -->
+
+<!-- CONTACT MESSAGE AREA START -->
+<div class="ltn__contact-message-area mb-120">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="ltn__form-box">
+                    <form method="post" class="ltn__form-box">
+                        {{ form_start(form) }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-item">
+                                    {{ form_label(form.nomProduit) }}
+                                    {{ form_widget(form.nomProduit, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-item">
+                                    {{ form_label(form.prix) }}
+                                    {{ form_widget(form.prix, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="input-item">
+                                    {{ form_label(form.description) }}
+                                    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-item">
+                                    {{ form_label(form.quantiteStock) }}
+                                    {{ form_widget(form.quantiteStock, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="input-item">
+                                    {{ form_label(form.etatProduit) }}
+                                    {{ form_widget(form.etatProduit, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="input-item">
+                                    {{ form_label(form.pointRecyclage) }}
+                                    {{ form_widget(form.pointRecyclage, {'attr': {'class': 'form-control'}}) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn-wrapper mt-4">
+                            <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit">Modifier le produit</button>
+                            <a href="{{ path('app_client_produit_index') }}" class="btn theme-btn-2 btn-effect-2 text-uppercase">Annuler</a>
+                        </div>
+                        {{ form_end(form) }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- CONTACT MESSAGE AREA END -->
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'VendeurT/BO.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="page-header">
+        <h1>🧪 Test du Service d'Alertes</h1>
+        <p class="text-muted">Vérification du fonctionnement du système d'alertes</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Produits dans la base</h5>
+                </div>
+                <div class="card-body">
+                    {% if produits|length > 0 %}
+                        <ul class="list-group">
+                            {% for produit in produits|slice(0, 5) %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ produit.nomProduit }}
+                                <span class="badge bg-{{ produit.quantiteStock < 10 ? 'danger' : 'success' }}">
+                                    {{ produit.quantiteStock }} unités
+                                </span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% if produits|length > 5 %}
+                        <p class="text-muted mt-2">... et {{ produits|length - 5 }} autres produits</p>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-warning">
+                            Aucun produit trouvé dans la base de données.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Résultats des tests</h5>
+                </div>
+                <div class="card-body">
+                    {% for test in tests %}
+                    <div class="alert alert-{{ test.statut == 'success' ? 'success' : 'danger' }} mb-2">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ test.nom }}</strong>
+                                <span class="badge bg-{{ test.statut == 'success' ? 'success' : 'danger' }} ms-2">
+                                    {{ test.statut }}
+                                </span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-{{ test.statut == 'success' ? 'success' : 'danger' }}" 
+                                    type="button" onclick="toggleDetails('test-{{ loop.index }}')">
+                                Détails
+                            </button>
+                        </div>
+                        
+                        {% if test.message is defined %}
+                        <p class="mb-0 mt-2">{{ test.message }}</p>
+                        {% endif %}
+                        
+                        <div id="test-{{ loop.index }}" class="collapse mt-2">
+                            <pre class="bg-dark text-light p-2 rounded small">{{ test.resultat|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="{{ path('app_vendeur_alertes_index') }}" class="btn btn-primary">
+            <i class="fas fa-chart-bar"></i> Voir le dashboard complet
+        </a>
+        <a href="{{ path('app_vendeur_produit_analyse', {'id': produit_test.id}) }}" class="btn btn-info">
+            <i class="fas fa-search"></i> Analyser ce produit
+        </a>
+    </div>
+</div>
+
+<script>
+function toggleDetails(id) {
+    const element = document.getElementById(id);
+    element.classList.toggle('show');
+}
+</script>
+{% endblock %}

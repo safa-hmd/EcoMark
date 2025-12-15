@@ -1,0 +1,37 @@
+{# templates/vendeur/_widget_alertes.html.twig #}
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">🚨 Alertes Stock</h5>
+    </div>
+    <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+            {% for analyse in alertes_urgentes|slice(0, 3) %}
+            <li class="list-group-item list-group-item-danger">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ analyse.produit_nom }}</strong>
+                        <br><small>{{ analyse.message_alerte }}</small>
+                    </div>
+                    <a href="{{ path('app_vendeur_produit_analyse', {'id': analyse.produit_id}) }}" 
+                       class="btn btn-sm btn-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </a>
+                </div>
+            </li>
+            {% endfor %}
+            
+            {% if alertes_urgentes|length == 0 %}
+            <li class="list-group-item text-center text-success">
+                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                <p class="mb-0">Aucune alerte urgente</p>
+            </li>
+            {% elseif alertes_urgentes|length > 3 %}
+            <li class="list-group-item text-center">
+                <a href="{{ path('app_vendeur_alertes_index') }}" class="text-primary">
+                    Voir les {{ alertes_urgentes|length - 3 }} autres alertes...
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

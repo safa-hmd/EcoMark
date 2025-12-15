@@ -1,0 +1,150 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <h3>Modifier le Point de Recyclage</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        {# AJOUT: novalidate pour voir les messages Symfony #}
+                        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+                        
+                        {# AJOUT: Affichage des erreurs globales #}
+                        {% if not form.vars.valid %}
+                            <div class="alert alert-danger mb-4">
+                                <h5 class="alert-heading">⚠️ Des erreurs empêchent la soumission :</h5>
+                                {{ form_errors(form) }}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            {# CHAMP NOM DU POINT #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.nomPoint, 'Nom du point *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.nomPoint, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.nomPoint.vars.errors|length > 0 ? ' is-invalid' : '')
+                                    }
+                                }) }}
+                                {# AJOUT: Affichage des erreurs sous le champ #}
+                                {% if form.nomPoint.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.nomPoint.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            {# CHAMP ADRESSE #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.adresse, 'Adresse *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.adresse, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.adresse.vars.errors|length > 0 ? ' is-invalid' : '')
+                                    }
+                                }) }}
+                                {% if form.adresse.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.adresse.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            {# CHAMP TYPE DE MATIÈRE #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.typeMatiereAcceptee, 'Type de matière acceptée *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.typeMatiereAcceptee, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.typeMatiereAcceptee.vars.errors|length > 0 ? ' is-invalid' : '')
+                                    }
+                                }) }}
+                                {% if form.typeMatiereAcceptee.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.typeMatiereAcceptee.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            {# CHAMP CAPACITÉ MAX #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.capaciteMax, 'Capacité maximale *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.capaciteMax, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.capaciteMax.vars.errors|length > 0 ? ' is-invalid' : '')
+                                    }
+                                }) }}
+                                {% if form.capaciteMax.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.capaciteMax.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            {# CHAMP RESPONSABLE #}
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.responsable, 'Responsable *', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.responsable, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.responsable.vars.errors|length > 0 ? ' is-invalid' : '')
+                                    }
+                                }) }}
+                                {% if form.responsable.vars.errors|length > 0 %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.responsable.vars.errors %}
+                                            <div class="text-danger small">❌ {{ error.message }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-save"></i> Enregistrer les modifications
+                            </button>
+                            <a href="{{ path('app_admin_point_recyclage_index') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour à la liste
+                            </a>
+                        </div>
+                        
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+.text-danger.small {
+    font-size: 0.875em;
+    margin-top: 0.25rem;
+}
+.form-label:after {
+    content: " *";
+    color: #dc3545;
+}
+</style>
+{% endblock %}

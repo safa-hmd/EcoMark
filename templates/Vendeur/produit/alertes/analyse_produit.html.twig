@@ -1,0 +1,198 @@
+{# templates/vendeur/alertes/analyse_produit.html.twig #}
+{% extends 'VendeurT/BO.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>🔍 Analyse détaillée du produit</h1>
+                <p class="text-muted">{{ produit.nomProduit }}</p>
+            </div>
+            <a href="{{ path('app_vendeur_alertes_index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour au dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        {# Côté gauche : Analyse #}
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-{{ analyse.couleur_alerte }} text-white">
+                    <h5 class="mb-0">📊 Analyse du stock</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-4">
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <h3>{{ analyse.stock_actuel }}</h3>
+                                <small>Unités en stock</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <h3>{{ analyse.jours_avant_rupture|round }}</h3>
+                                <small>Jours avant rupture</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <h3>{{ analyse.score_confiance }}%</h3>
+                                <small>Score de confiance</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-{{ analyse.couleur_alerte }}">
+                        <h5 class="alert-heading">{{ analyse.icone_alerte }} {{ analyse.message_alerte }}</h5>
+                        <p class="mb-0"><strong>Date de rupture prévue :</strong> {{ analyse.date_rupture_predite|date('d/m/Y') }}</p>
+                        <p class="mb-0"><strong>Tendance :</strong> {{ analyse.tendance_stock }}</p>
+                        <p class="mb-0"><strong>Taux de consommation estimé :</strong> {{ analyse.taux_consommation_estime }} unités/jour</p>
+                    </div>
+
+                    <div class="mt-3">
+                        <h6>Analyse détaillée</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Points forts :</strong>
+                                <ul class="small">
+                                    {% for point in analyse.analyse_detaille.points_forts %}
+                                    <li>{{ point }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Points faibles :</strong>
+                                <ul class="small">
+                                    {% for point in analyse.analyse_detaille.points_faibles %}
+                                    <li>{{ point }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Côté droit : Recommandations #}
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">💡 Recommandations de réapprovisionnement</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <h2 class="text-primary">{{ recommandation.quantite_recommandee }} unités</h2>
+                        <p class="text-muted">Quantité recommandée à commander</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong>Détails de la recommandation :</strong>
+                        <ul class="mt-2">
+                            <li><strong>Stock de sécurité :</strong> {{ recommandation.stock_securite }} unités</li>
+                            <li><strong>Jours de couverture :</strong> {{ recommandation.jours_couverture }} jours</li>
+                            <li><strong>Date de commande optimale :</strong> {{ recommandation.date_commande_optimale|date('d/m/Y') }}</li>
+                            <li><strong>Délai de réapprovisionnement :</strong> {{ recommandation.delai_reappro }} jours</li>
+                            <li><strong>Investissement estimé :</strong> {{ recommandation.investissement_estime }} €</li>
+                            <li><strong>Économie potentielle :</strong> {{ recommandation.economie_potentielle }} €</li>
+                            <li><strong>Ratio stock de sécurité :</strong> {{ recommandation.ratio_stock_securite }}%</li>
+                        </ul>
+                    </div>
+
+                    {% if recommandation.conseils|length > 0 %}
+                    <div class="alert alert-info">
+                        <h6>Conseils supplémentaires :</h6>
+                        <ul class="mb-0">
+                            {% for conseil in recommandation.conseils %}
+                            <li>{{ conseil }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-success btn-lg" onclick="commanderProduit({{ produit.id }}, {{ recommandation.quantite_recommandee }})">
+                            <i class="fas fa-shopping-cart"></i> Commander maintenant
+                        </button>
+                        <button class="btn btn-outline-primary btn-lg" onclick="planifierCommande({{ produit.id }}, '{{ recommandation.date_commande_optimale|date('Y-m-d') }}')">
+                            <i class="fas fa-calendar-alt"></i> Planifier pour {{ recommandation.date_commande_optimale|date('d/m') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Informations produit #}
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">📋 Informations du produit</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>Nom :</strong><br>
+                    {{ produit.nomProduit }}
+                </div>
+                <div class="col-md-3">
+                    <strong>Prix unitaire :</strong><br>
+                    {{ produit.prix }} €
+                </div>
+                <div class="col-md-3">
+                    <strong>État :</strong><br>
+                    <span class="badge bg-{{ produit.etatProduit == 'Disponible' ? 'success' : 'warning' }}">
+                        {{ produit.etatProduit }}
+                    </span>
+                </div>
+                <div class="col-md-3">
+                    <strong>Date d'ajout :</strong><br>
+                    {{ produit.dateAjout|date('d/m/Y') }}
+                </div>
+            </div>
+            {% if produit.description %}
+            <div class="mt-3">
+                <strong>Description :</strong><br>
+                <p class="mb-0">{{ produit.description }}</p>
+            </div>
+            {% endif %}
+            {% if produit.pointRecyclage %}
+            <div class="mt-3">
+                <strong>Point de recyclage associé :</strong><br>
+                {{ produit.pointRecyclage.nomPoint }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function commanderProduit(produitId, quantite) {
+    if (confirm(`Confirmez-vous la commande de ${quantite} unités ?`)) {
+        // Simulation d'une commande
+        alert('Commande enregistrée ! Redirection vers le module de commande...');
+        // window.location.href = `/commande/nouvelle?produit=${produitId}&quantite=${quantite}`;
+    }
+}
+
+function planifierCommande(produitId, date) {
+    if (confirm(`Planifier la commande pour le ${date} ?`)) {
+        // Simulation de planification
+        alert('Commande planifiée ! Vous recevrez un rappel.');
+        // API call pour planifier
+    }
+}
+
+// Mettre à jour l'analyse toutes les 5 minutes
+setInterval(() => {
+    window.location.reload();
+}, 300000);
+</script>
+
+<style>
+.card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

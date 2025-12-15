@@ -1,0 +1,90 @@
+{% extends 'VendeurT/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <h3>Détails du Produit</h3>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Photo du produit</h5>
+                                {% if produit.photo %}
+                                    <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" 
+                                         alt="{{ produit.nomProduit }}" 
+                                         class="img-fluid rounded" 
+                                         style="max-width: 300px;">
+                                {% else %}
+                                    <img src="{{ asset('BO/images/default-product.png') }}" 
+                                         alt="Image par défaut" 
+                                         class="img-fluid rounded" 
+                                         style="max-width: 300px;">
+                                    <p class="text-muted mt-2">Aucune photo disponible</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8">
+                                <h5>Informations du produit</h5>
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <th>Nom:</th>
+                                        <td>{{ produit.nomProduit }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Description:</th>
+                                        <td>{{ produit.description }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Prix:</th>
+                                        <td>{{ produit.prix }} €</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Quantité en stock:</th>
+                                        <td>{{ produit.quantiteStock }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>État:</th>
+                                        <td>
+                                            <span class="badge bg-{{ produit.etatProduit == 'Disponible' ? 'success' : 'warning' }}">
+                                                {{ produit.etatProduit }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Date d'ajout:</th>
+                                        <td>{{ produit.dateAjout ? produit.dateAjout|date('d/m/Y H:i') : '' }}</td>
+                                    </tr>
+                                    {% if produit.pointRecyclage %}
+                                    <tr>
+                                        <th>Point de recyclage:</th>
+                                        <td>{{ produit.pointRecyclage.nomPoint }}</td>
+                                    </tr>
+                                    {% endif %}
+                                    {% if produit.photo %}
+                                    <tr>
+                                        <th>Photo:</th>
+                                        <td>{{ produit.photo }}</td>
+                                    </tr>
+                                    {% endif %}
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <a href="{{ path('app_vendeur_produit_edit', {'id': produit.id}) }}" class="btn btn-warning">Modifier</a>
+                            <a href="{{ path('app_vendeur_produit_index') }}" class="btn btn-secondary">Retour à la liste</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

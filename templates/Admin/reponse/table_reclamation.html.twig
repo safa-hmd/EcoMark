@@ -1,0 +1,61 @@
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Objet</th>
+            <th>Description</th>
+            <th>Date Reclamation</th>
+            <th>Statut</th>
+            <th>Client</th>
+            <th>Réponse</th>
+            <th>Date Réponse</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+       {% for reclamation in reclamations %}
+<tr>
+    <td>{{ reclamation.Objet }}</td>
+    <td>{{ reclamation.description }}</td>
+    <td>{{ reclamation.dateCreation ? reclamation.dateCreation|date('d/m/Y H:i') : 'Non défini' }}</td>
+    <td>{{ reclamation.statut }}</td>
+    <td>{{ reclamation.client ? reclamation.client.email : 'Anonyme' }}</td>
+    <td>
+        {% if reclamation.yes %}
+            {{ reclamation.yes.Contenu }}
+
+        {% else %}
+            <span class="text-warning">Pas encore de réponse</span>
+        {% endif %}
+    </td>
+    <td>
+    {% if reclamation.yes %}
+        {{ reclamation.yes.dateCreation ? reclamation.yes.dateCreation|date('d/m/Y H:i') : 'Non défini' }}
+    {% else %}
+        <span class="text-muted">--</span>
+    {% endif %}
+</td>
+    <td>
+    {% if not reclamation.yes %}
+       <a href="{{ path('reponseajouterRep', {'id': reclamation.id}) }}" 
+           class="btn btn-sm btn-info">Répondre</a>
+    {% endif %}
+
+    {% if reclamation.yes %}
+       <a href="{{ path('reponsereponsemodifierRep', {'id': reclamation.yes.id}) }}" 
+           class="btn btn-warning btn-sm">Modifier</a>
+
+        <a href="{{ path('reponsesupprimerReponse', {'ii': reclamation.yes.id}) }}" 
+           class="btn btn-danger btn-sm"
+           onclick="return confirm('Voulez-vous vraiment supprimer cette réponse ?');">
+           Supprimer
+        </a>
+    {% endif %}
+</td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="8" class="text-center">Aucun résultat</td>
+</tr>
+{% endfor %}
+    </tbody>
+</table>
