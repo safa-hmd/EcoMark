@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: DejaVu Sans, sans-serif; }
+        .title { font-size: 24px; margin-bottom: 20px; }
+        .section { margin-bottom: 15px; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { border: 1px solid #444; padding: 8px; }
+    </style>
+</head>
+
+<body>
+
+<h1 class="title">Facture Commande N° {{ commande.id }}</h1>
+
+<div class="section">
+    <strong>Client :</strong> {{ commande.user.nom }} {{ commande.user.prenom }} <br>
+    <strong>Email :</strong> {{ commande.user.email }}
+</div>
+
+<div class="section">
+    <strong>Date commande :</strong> {{ commande.date|date('d/m/Y') }} <br>
+    <strong>Statut :</strong> {{ commande.statut }}
+</div>
+
+<div class="section">
+    <table>
+        <tr>
+            <th>Produit</th>
+            <th>Prix</th>
+            <th>Quantité</th>
+        </tr>
+
+        {% for item in commande.items %}
+        <tr>
+            <td>{{ item.produit.nom }}</td>
+            <td>{{ item.produit.prix }} €</td>
+            <td>{{ item.quantite }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<h3>Total : {{ commande.total }} €</h3>
+
+</body>
+</html>

@@ -234,7 +234,12 @@
                 </a>
                 <a href="{{ path('app_livraison_index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Retour à la liste
+                    
                 </a>
+                <a href="{{ path('livraison_pdf', { id: livraison.id }) }}" class="btn btn-primary">
+                <i class="bi bi-file-earmark-pdf"></i> Télécharger PDF
+                </a>
+
                 
                 <form method="post" action="{{ path('app_livraison_delete', {'id': livraison.id}) }}" 
                       onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette livraison ? Cette action est irréversible.');"

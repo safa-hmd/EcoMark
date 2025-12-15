@@ -43,7 +43,7 @@ $form->handleRequest($request);
 
 if ($form->isSubmitted() && $form->isValid()) {
 
-    // --- TRAITEMENT DE LA PHOTO ---
+    // PHOTO 
     $file = $form->get('photo')->getData();
     if ($file) {
         $newFilename = uniqid().'.'.$file->guessExtension();
@@ -54,7 +54,7 @@ if ($form->isSubmitted() && $form->isValid()) {
         $user->setPhoto($newFilename);
     }
 
-    // --- TRAITEMENT DU MOT DE PASSE ---
+    // mdp
     $password = $form->get('password')->getData();
     if ($password) {
         $hashedPassword = $passwordHasher->hashPassword($user, $password);
@@ -68,7 +68,7 @@ if ($form->isSubmitted() && $form->isValid()) {
     return $this->redirectToRoute('profilVendeur', ['id' => $user->getId()]);
 }
 
-return $this->render('Vendeur/modifierProfilVendeur.html.twig', [
+return $this->render('Vendeur/GestionUser/modifierProfilVendeur.html.twig', [
     'form' => $form->createView(),
     'vendeur' => $user,
 ]);
@@ -96,7 +96,6 @@ public function delete(User $user, Request $request, EntityManagerInterface $em,
             $request->getSession()->invalidate();
         }
 
-        // Supprime l'utilisateur
         $em->remove($user);
         $em->flush();
 

@@ -41,12 +41,12 @@ class RegistreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // --- Hashage du mot de passe ---
+            // Hashage du mot de passe 
             $plainPassword = $form->get('password')->getData();
             $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
             $user->setPassword($hashedPassword);
 
-            // --- Upload photo ---
+            // Upload photo 
             $photoFile = $form->get('photo')->getData();
             if ($photoFile) {
                 $newFilename = uniqid().'.'.$photoFile->guessExtension();
@@ -58,16 +58,14 @@ class RegistreController extends AbstractController
                 $user->setPhoto($newFilename);
             }
 
-            // --- Role ---
+            // Role 
             $role = $form->get('role')->getData();
             $user->setRoles([$role]);
 
-            // --- Persister ---
             $em->persist($user);
             $em->flush();
 
-            $this->addFlash('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');
-
+        
             return $this->redirectToRoute('app_login');
         }
 

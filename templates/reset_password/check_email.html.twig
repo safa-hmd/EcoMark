@@ -1,0 +1,285 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Email envoyé - Réinitialisation du mot de passe{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .reset-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #d4d9d9ff 0%, #eaececff 100%);
+            padding: 20px;
+        }
+
+        .reset-card {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #2d8b8b 0%, #1a6b6b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s ease-out 0.2s both;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .success-icon svg {
+            width: 50px;
+            height: 50px;
+            stroke: white;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .checkmark {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawCheck 0.5s ease-out 0.5s forwards;
+        }
+
+        @keyframes drawCheck {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .reset-card h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .reset-card .subtitle {
+            font-size: 16px;
+            color: #718096;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: #f7fafc;
+            border-left: 4px solid #2d8b8b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #4a5568;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .info-box strong {
+            color: #2d3748;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .expiration-badge {
+            display: inline-block;
+            background: #fef5e7;
+            color: #d68910;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 20px 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2d8b8b 0%, #1a6b6b 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(45, 139, 139, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2d8b8b;
+            border: 2px solid #2d8b8b;
+        }
+
+        .btn-secondary:hover {
+            background: #f7fafc;
+            transform: translateY(-2px);
+        }
+
+        .tips {
+            background: #edf2f7;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .tips h3 {
+            font-size: 18px;
+            color: #2d3748;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tips ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tips li {
+            padding: 8px 0;
+            color: #4a5568;
+            font-size: 14px;
+            display: flex;
+            align-items: start;
+            gap: 10px;
+        }
+
+        .tips li:before {
+            content: "✓";
+            color: #2d8b8b;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .reset-card {
+                padding: 40px 25px;
+            }
+
+            .reset-card h1 {
+                font-size: 24px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="reset-container">
+        <div class="reset-card">
+            <div class="success-icon">
+                <svg viewBox="0 0 52 52">
+                    <circle cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark" d="M14,27 L22,35 L38,19" fill="none"/>
+                </svg>
+            </div>
+
+            <h1>Email envoyé avec succès !</h1>
+            <p class="subtitle">
+                Vérifiez votre boîte de réception
+            </p>
+
+            <div class="info-box">
+                <strong>📧 Que faire maintenant ?</strong>
+                <p>
+                    Si un compte correspond à votre adresse email, vous recevrez un message contenant un lien pour réinitialiser votre mot de passe.
+                </p>
+            </div>
+
+            <div class="expiration-badge">
+                ⏱️ Lien valable {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}
+            </div>
+
+            <div class="tips">
+                <h3>💡 Conseils utiles</h3>
+                <ul>
+                    <li>Vérifiez votre dossier spam ou courrier indésirable</li>
+                    <li>L'email peut prendre quelques minutes à arriver</li>
+                    <li>Assurez-vous d'avoir saisi la bonne adresse email</li>
+                    <li>Le lien expire après la durée indiquée ci-dessus</li>
+                </ul>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{{ path('app_login') }}" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/>
+                    </svg>
+                    Retour à la connexion
+                </a>
+                <a href="{{ path('app_forgot_password_request') }}" class="btn btn-secondary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    Renvoyer l'email
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

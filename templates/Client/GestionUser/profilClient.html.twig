@@ -75,12 +75,12 @@
 
                     <div class="d-flex">
                      <!-- Bouton Modifier -->
-                     <a href="{{ path('profilClient_edit', {'id': client.id}) }}" 
+                     <a href="{{ path('profilClient_edit') }}" 
                      class="btn btn-warning px-4 me-2">Modifier</a>
 
                      <!-- Bouton Supprimer -->
-                     <form method="post" action="{{ path('profilClient_delete', {'id': client.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce compte ?');">
-                       <input type="hidden" name="_token" value="{{ csrf_token('delete-profil' ~ client.id) }}">
+                     <form method="post" action="{{ path('profilClient_delete') }}" >
+                       <input type="hidden" name="_token" value="{{ csrf_token('delete-profil') }}">
                        <button class="btn btn-danger px-4">Supprimer</button>
                      </form>
                 </div>

@@ -2,9 +2,7 @@
 
 namespace App\Controller\User;
 
-use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route; 
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -43,15 +41,14 @@ class LoginController extends AbstractController
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
-        
-        /** @var \App\Entity\User $user */
-        if (in_array('ROLE_ADMIN', $user->getRoles())) {
-            return $this->redirectToRoute('profilAdmin');
-        } elseif (in_array('ROLE_VENDEUR', $user->getRoles())) {
-            return $this->redirectToRoute('profilVendeur');
-        } elseif (in_array('ROLE_CLIENT', $user->getRoles())) {
-            return $this->redirectToRoute('profil_client');
-        }
+  
+       if (in_array('ROLE_ADMIN', $user->getRoles())) {
+        return $this->redirectToRoute('profilAdmin');
+    } elseif (in_array('ROLE_VENDEUR', $user->getRoles())) {
+        return $this->redirectToRoute('profilVendeur');
+    } elseif (in_array('ROLE_CLIENT', $user->getRoles())) {
+        return $this->redirectToRoute('profil_client');
+    }
         
         // Redirection par défaut
         return $this->redirectToRoute('app_login');

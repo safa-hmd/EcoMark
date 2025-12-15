@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Bon de Livraison #{{ livraison.id }}</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        color: #333;
+        padding: 20px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid #28a745;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    .logo img {
+        height: 60px;
+    }
+
+    h1 {
+        color: #28a745;
+        margin: 0;
+        font-size: 28px;
+    }
+
+    .info-box {
+        margin-top: 15px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        background: #fafafa;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    table th, table td {
+        padding: 10px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    table th {
+        background: #28a745;
+        color: white;
+    }
+
+    .footer {
+        text-align: center;
+        margin-top: 40px;
+        font-size: 12px;
+        color: #777;
+        border-top: 1px solid #ccc;
+        padding-top: 10px;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">
+<img src="file:///{{ logoPath }}" alt="Logo" style="height:80px;">
+    </div>
+
+    <div>
+        <h1>Bon de Livraison</h1>
+        <strong>N° :</strong> {{ livraison.id }} <br>
+        <strong>Date :</strong> {{ livraison.dateLivraison|date('d/m/Y') }}
+    </div>
+</div>
+
+<div class="info-box">
+    <strong>Client :</strong> {{ livraison.commande.user.nom }} {{ livraison.commande.user.prenom }} <br>
+    <strong>Email :</strong> {{ livraison.commande.user.email }} <br>
+    <strong>Adresse de Livraison :</strong> {{ livraison.adresse }} <br>
+</div>
+
+<table>
+    <tr>
+        <th>Champ</th>
+        <th>Valeur</th>
+    </tr>
+    <tr>
+        <td>Statut</td>
+        <td>{{ livraison.statut }}</td>
+    </tr>
+    <tr>
+        <td>Transporteur</td>
+        <td>{{ livraison.transporteur }}</td>
+    </tr>
+    <tr>
+        <td>Numéro de Suivi</td>
+        <td>{{ livraison.numeroSuivi }}</td>
+    </tr>
+    <tr>
+        <td>Frais de Livraison</td>
+        <td>{{ livraison.fraisLivraison }} €</td>
+    </tr>
+</table>
+
+<div class="footer">
+    EcoMarket © 2026 — Achetez Vert, Vivez Mieux. <br>
+    Merci pour votre confiance.
+</div>
+
+</body>
+</html>

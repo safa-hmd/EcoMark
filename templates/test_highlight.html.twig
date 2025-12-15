@@ -1,0 +1,27 @@
+{# templates/test_highlight.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Test du filtre highlight</h1>
+    
+    <h3>Test 1 : Texte simple</h3>
+    <p>{{ "Bonjour le monde"|highlight("monde")|raw }}</p>
+    
+    <h3>Test 2 : Texte avec plusieurs occurrences</h3>
+    <p>{{ "Le chat aime les chats et les chatons"|highlight("chat")|raw }}</p>
+    
+    <h3>Test 3 : Insensible à la casse</h3>
+    <p>{{ "Test de Recherche avec recherche"|highlight("recherche")|raw }}</p>
+    
+    <h3>Test 4 : Avec caractères spéciaux</h3>
+    <p>{{ "Test avec (parenthèses) et [crochets]"|highlight("(parenthèses)")|raw }}</p>
+    
+    <style>
+        .bg-warning {
+            background-color: #ffc107 !important;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}

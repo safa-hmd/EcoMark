@@ -1,0 +1,8 @@
+knp_snappy:
+    pdf:
+        enabled: true
+        binary: "C:\\wkhtmltopdf\\bin\\wkhtmltopdf.exe"
+        options:
+            enable-local-file-access: true
+            page-size: A4
+            encoding: UTF-8

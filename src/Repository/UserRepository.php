@@ -62,7 +62,7 @@ public function countVendeurs(): int
         ->getSingleScalarResult();
 }
 
-public function findByClientRole(string $role): array
+public function findByClientRole(): array
 {
     return $this->createQueryBuilder('u')
         ->andWhere('u.roles LIKE :role')
@@ -70,7 +70,7 @@ public function findByClientRole(string $role): array
         ->getQuery()
         ->getResult();
 }
-public function findByVendeurRole(string $role): array
+public function findByVendeurRole(): array
 {
     return $this->createQueryBuilder('u')
         ->andWhere('u.roles LIKE :role')
@@ -128,15 +128,84 @@ public function searchVendeurs(string $term = ''): array
 
 
 //Détecter si un utilisateur est actif ou inactif
-public function findInactiveUsers(int $minutes = 10): array
-{
-    $date = new \DateTime();
-    $date->modify("-{$minutes} minutes");
+    public function findInactiveUsers(int $minutes = 10): array
+    {
+        $date = new \DateTime();
+        $date->modify("-{$minutes} minutes");
 
-    return $this->createQueryBuilder('u')
-        ->where('u.lastActivity IS NULL OR u.lastActivity < :date')
-        ->setParameter('date', $date)
-        ->getQuery()
-        ->getResult();
+        return $this->createQueryBuilder('u')
+            ->where('u.lastActivity IS NULL OR u.lastActivity < :date')
+            ->setParameter('date', $date)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
+
+
+/**
+ * Statistiques 
+ */
+
+public function getSimpleStatistics(): array
+{
+    return [
+        'total_users' => $this->count([]),
+        'clients' => $this->countClients(),
+        'vendeurs' => $this->countVendeurs(),
+        'by_role' => $this->getUsersByRole()
+    ];
 }
+
+
+
+ // Distribution des utilisateurs par rôle
+public function getUsersByRole(): array
+{
+    $results = $this->createQueryBuilder('u')
+        ->select('
+            SUM(CASE WHEN u.roles LIKE :roleClient THEN 1 ELSE 0 END) as clients,
+            SUM(CASE WHEN u.roles LIKE :roleVendeur THEN 1 ELSE 0 END) as vendeurs,
+            SUM(CASE WHEN u.roles LIKE :roleAdmin THEN 1 ELSE 0 END) as admins
+        ')
+        ->setParameter('roleClient', '%ROLE_CLIENT%')
+        ->setParameter('roleVendeur', '%ROLE_VENDEUR%')
+        ->setParameter('roleAdmin', '%ROLE_ADMIN%')
+        ->getQuery()
+        ->getSingleResult();
+        
+    return [
+        'clients' => (int) ($results['clients'] ?? 0),
+        'vendeurs' => (int) ($results['vendeurs'] ?? 0),
+        'admins' => (int) ($results['admins'] ?? 0)
+    ];
+}
+
+
+ // Compte les utilisateurs actifs
+
+public function getActiveUsersCount(\DateTimeInterface $since): int
+{
+    return (int) $this->createQueryBuilder('u')
+        ->select('COUNT(u.id)')
+        ->where('u.lastActivity >= :since')
+        ->setParameter('since', $since)
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+
+
+ //Vérifie si un email existe déjà dans la base de données
+   public function emailExists(string $email): bool
+    {
+        $count = $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $count > 0;
+    }
 }

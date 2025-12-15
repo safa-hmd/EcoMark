@@ -16,6 +16,50 @@ class ReclamationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reclamation::class);
     }
 
+      public function searchByAllAttributes(string $search = '', string $date = '')
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->leftJoin('r.client', 'c')
+            ->addSelect('c')
+            ->leftJoin('r.yes', 'rep')   // si tu as une entité Reponse
+            ->addSelect('rep');
+
+        if (!empty($search)) {
+            $qb->andWhere(
+                $qb->expr()->orX(
+                    $qb->expr()->like('r.objet', ':search'),
+                    $qb->expr()->like('r.description', ':search'),
+                    $qb->expr()->like('r.statut', ':search'),
+                    $qb->expr()->like('c.email', ':search'),
+                    $qb->expr()->like('rep.contenu', ':search')
+                )
+            )
+            ->setParameter('search', '%' . $search . '%');
+        }
+
+          if (!empty($date)) {
+        $dateStart = new \DateTime($date . ' 00:00:00');
+        $dateEnd   = new \DateTime($date . ' 23:59:59');
+
+        $qb->andWhere('r.dateCreation BETWEEN :start AND :end')
+           ->setParameter('start', $dateStart)
+           ->setParameter('end', $dateEnd);
+    }
+
+    $qb->orderBy('r.dateCreation', 'DESC');
+
+    return $qb->getQuery()->getResult();
+}
+public function findByClientQuery($user)
+{
+    return $this->createQueryBuilder('r')
+                ->where('r.client = :user')
+                ->setParameter('user', $user)
+                ->orderBy('r.dateCreation', 'DESC')
+                ->getQuery();
+}
+}
+
 //    /**
 //     * @return Reclamation[] Returns an array of Reclamation objects
 //     */
@@ -40,4 +84,4 @@ class ReclamationRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-}
+
