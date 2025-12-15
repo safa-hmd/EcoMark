@@ -1,5 +1,5 @@
 {# templates/vendeur/stats/etat.html.twig #}
-{% extends 'VendeurT/BO.html.twig' %}
+{% extends 'Vendeur/BO.html.twig' %}
 
 {% block stylesheets %}
 {{ parent() }}
@@ -120,6 +120,8 @@
 {% endblock %}
 
 {% block body %}
+{{ parent() }}
+
 <div class="container-fluid">
     <h1>📊 Statistiques par État des Produits</h1>
     

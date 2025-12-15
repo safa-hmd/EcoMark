@@ -4,11 +4,12 @@
 namespace App\Controller\Client;
 
 use App\Entity\Produit;
+use App\Entity\User;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/client/achat')]
 class AchatController extends AbstractController
@@ -22,6 +23,7 @@ class AchatController extends AbstractController
             return $this->redirectToRoute('app_client_produit_index');
         }
 
+        /** @var User $user */
         $user = $this->getUser();
 
         // Vérifier si le produit est disponible
@@ -58,6 +60,7 @@ class AchatController extends AbstractController
             ]);
         }
         
+        /** @var User $user */
         $user = $this->getUser();
         
         // Récupérer les produits achetés par cet utilisateur
@@ -82,6 +85,7 @@ class AchatController extends AbstractController
             return $this->redirectToRoute('app_client_produit_index');
         }
         
+        /** @var User $user */
         $user = $this->getUser();
         
         // Vérifier si l'utilisateur a bien acheté ce produit

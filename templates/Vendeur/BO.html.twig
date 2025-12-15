@@ -136,18 +136,24 @@
                 </ul>
               </li>
 
-              
-              <li class="sidebar-list"> <a class="sidebar-link" href="file-manager.html">
+                           
+              <li class="sidebar-list"> <a class="sidebar-link" href="{{ path('app_vendeur_produit_new') }}">
                   <svg class="stroke-icon">
                   </svg>
                   <h6 class="f-w-600">Ajouter Produit </h6></a>
               </li>
 
                 
-              <li class="sidebar-list"> <a class="sidebar-link" href="file-manager.html">
+              <li class="sidebar-list"> <a class="sidebar-link" href="{{ path('app_vendeur_produit_index') }}">
                   <svg class="stroke-icon">
                   </svg>
                   <h6 class="f-w-600">Consulter Produits </h6></a>
+                  <li class="sidebar-list">
+    <a class="sidebar-link" href="{{ path('app_vendeur_stats') }}">
+        <svg class="stroke-icon"></svg>
+        <h6 class="f-w-600">📊 Statistiques</h6>
+    </a>
+</li>
               </li>
 
 

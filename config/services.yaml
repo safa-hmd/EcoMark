@@ -1,5 +1,6 @@
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/photos'
+    produits_photos_directory: '%kernel.project_dir%/public/uploads/produits'
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
     uploads_directory: '%kernel.project_dir%/public/uploads'
     openweather_api_key: '%env(OPENWEATHER_API_KEY)%'
