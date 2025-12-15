@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Twig;
 
 use Twig\Extension\AbstractExtension;
@@ -10,6 +9,7 @@ class AppExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
+
             new TwigFilter('ago', [$this, 'formatAgo']),
         ];
     }
@@ -36,5 +36,7 @@ class AppExtension extends AbstractExtension
         }
         
         return 'quelques secondes';
+
+
     }
 }

@@ -1,0 +1,46 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block body %}
+
+<link rel="stylesheet" href="{{ asset('FO/styleclient.css') }}">
+
+<h1 class="meteo-title">Météo pour {{ event.lieu }}</h1>
+
+<div class="weather-card">
+    <div class="weather-left">
+        <img class="weather-icon"
+             src="https://openweathermap.org/img/wn/{{ weather.weather[0].icon }}@4x.png"
+             alt="icon météo">
+    </div>
+
+    <div class="weather-right">
+        <h2 class="temp">{{ weather.main.temp|round }}°C</h2>
+        <p class="condition">{{ weather.weather[0].description|capitalize }}</p>
+
+        <div class="weather-details">
+            <p><strong>Humidité :</strong> {{ weather.main.humidity }}%</p>
+            <p><strong>Vent :</strong> {{ weather.wind.speed }} m/s</p>
+        </div>
+
+        <p class="more-info">
+            <a href="https://openweathermap.org/find?q={{ event.lieu|url_encode }}" target="_blank">
+                Pour plus d'informations sur la météo à {{ event.lieu }}
+            </a>
+        </p>
+
+
+    </div>
+</div>
+
+<div class="back-btn-container">
+    <a href="{{ path('client_affiche_evenements') }}" class="btn-green">↩ Retour</a>
+</div>
+<div class="weather-attribution">
+    Données fournies par <a href="https://openweathermap.org/" target="_blank">OpenWeather</a>
+</div>
+
+
+
+
+{% endblock %}
+

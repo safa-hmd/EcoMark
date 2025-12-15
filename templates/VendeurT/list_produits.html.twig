@@ -1,0 +1,78 @@
+{% extends 'Vendeur/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3>Liste des Produits</h3>
+                </div>
+                <div class="col-sm-6 text-end">
+                    <a href="{{ path('app_vendeur_produit_new') }}" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Nouveau Produit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Prix</th>
+                                        <th>Quantité</th>
+                                        <th>État</th>
+                                        <th>Date Ajout</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for produit in produits %}
+                                    <tr>
+                                        <td>{{ produit.nomProduit }}</td>
+                                        <td>{{ produit.prix }} €</td>
+                                        <td>{{ produit.quantiteStock }}</td>
+                                        <td>
+                                            <span class="badge badge-{{ produit.etatProduit == 'Disponible' ? 'success' : 'warning' }}">
+                                                {{ produit.etatProduit }}
+                                            </span>
+                                        </td>
+                                        <td>{{ produit.dateAjout ? produit.dateAjout|date('d/m/Y') : '' }}</td>
+                                        <td>
+                                            <a href="{{ path('app_vendeur_produit_show', {'id': produit.id}) }}" 
+                                               class="btn btn-info btn-sm">Voir</a>
+                                            <a href="{{ path('app_vendeur_produit_edit', {'id': produit.id}) }}" 
+                                               class="btn btn-warning btn-sm">Modifier</a>
+                                            <form method="post" action="{{ path('app_vendeur_produit_delete', {'id': produit.id}) }}" 
+                                                  style="display: inline-block;" 
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
+                                                <button class="btn btn-danger btn-sm">Supprimer</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">Aucun produit trouvé</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

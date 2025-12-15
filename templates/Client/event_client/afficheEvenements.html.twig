@@ -1,0 +1,68 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block body %}
+<link rel="stylesheet" href="{{ asset('FO/styleclient.css') }}">
+
+<h1 class="page-title">Liste des événements</h1>
+
+<div class="table-container">
+    <table class="eco-table">
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Lieu</th>
+                <th>Capacité</th>
+                <th>Image</th>
+                <th>Météo</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for evenement in evenements %}
+            <tr>
+                <td data-label="Titre">{{ evenement.titre }}</td>
+                <td data-label="Description">{{ evenement.description }}</td>
+                <td data-label="Date">{{ evenement.dateEvent ? evenement.dateEvent|date('Y-m-d') : '' }}</td>
+                <td data-label="Lieu">{{ evenement.lieu }}</td>
+                <td data-label="Capacité">{{ evenement.capacite }}</td>
+
+                <td data-label="Image">
+                    {% if evenement.image %}
+                        <img src="{{ asset('uploads/' ~ evenement.image) }}" alt="" width="80" style="border-radius: 6px;">
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                
+                <td data-label="Météo">
+                    <a href="{{ path('client_meteo_event', { id: evenement.id }) }}" class="btn-blue small-btn">
+                        Consulter
+                    </a>
+                </td>
+
+                <td data-label="Action">
+                    <a href="{{ path('client_participer', {ii: evenement.id}) }}"
+                     class="table-btn btn-green small-btn">
+                         Participer
+                     </a> 
+                     <span title="QR code pour participer">
+                        <img src="{{ qrCodes[evenement.id] }}" 
+                            alt="QR pour participer" 
+                            width="60" 
+                            style="border-radius:6px;">
+                            </span>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="text-center mt-3">
+    <a href="{{ path('affiche_client') }}" class="btn-brown">Mes Participations</a>
+    </div>
+</div>
+
+{% endblock %}

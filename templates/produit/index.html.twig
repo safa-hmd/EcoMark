@@ -1,0 +1,107 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block body %}
+<!-- PAGE TITLE AREA START -->
+<div class="ltn__page-title-area text-center bg-overlay-white-30 bg-image" data-bg="img/bg/14.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title-inner">
+                    <h1 class="page-title">Nos Produits Écologiques</h1>
+                    <div class="ltn__breadcrumb-list">
+                        <ul>
+                            <li><a href="{{ path('client_home') }}">Accueil</a></li>
+                            <li>Produits</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- PAGE TITLE AREA END -->
+
+<!-- PRODUCT AREA START -->
+<div class="ltn__product-area ltn__product-gutter mb-100">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+
+                <div class="row">
+                    {% for produit in produits %}
+                        <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                            <div class="ltn__product-item ltn__product-item-3 text-center">
+                                <div class="product-img">
+                                    {% if produit.photo %}
+                                        <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" 
+                                             alt="{{ produit.nomProduit }}"
+                                             style="width: 100%; height: 200px; object-fit: cover;"
+                                             class="rounded">
+                                    {% else %}
+                                        <div class="no-photo-placeholder rounded" 
+                                             style="width: 100%; height: 200px; 
+                                                    background: linear-gradient(135deg, #38b2ac 0%, #319795 100%); 
+                                                    display: flex; align-items: center; justify-content: center; 
+                                                    color: white; border: 1px solid #e2e8f0;">
+                                            <div class="text-center">
+                                                <i class="fas fa-leaf" style="font-size: 2.5rem; margin-bottom: 10px; opacity: 0.8;"></i>
+                                                <p class="mb-0 fw-bold" style="font-size: 0.9rem;">PRODUIT ÉCOLOGIQUE</p>
+                                                <small style="opacity: 0.8;">Image non disponible</small>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="product-info">
+                                    <h3 class="product-title">{{ produit.nomProduit }}</h3>
+                                    <p class="product-description">{{ produit.description|slice(0, 100) }}...</p>
+                                    <div class="product-price">
+                                        <span class="text-success fw-bold">{{ produit.prix }} €</span>
+                                    </div>
+                                    <div class="product-meta">
+                                        <span>Stock: {{ produit.quantiteStock }}</span>
+                                        <span class="badge bg-{{ produit.etatProduit == 'Disponible' ? 'success' : 'warning' }}">
+                                            {{ produit.etatProduit }}
+                                        </span>
+                                    </div>
+                                  <div class="product-actions mt-3">
+    <a href="{{ path('app_client_produit_show', {'id': produit.id}) }}" 
+       class="btn btn-sm btn-info">Voir détails</a>
+    {% if produit.quantiteStock > 0 and produit.etatProduit == 'Disponible' %}
+        {% if app.user %}
+            <form action="{{ path('app_client_achat_acheter', {'id': produit.id}) }}" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-sm btn-success">
+                    <i class="fas fa-shopping-cart"></i> Acheter
+                </button>
+            </form>
+        {% else %}
+            <a href="{{ path('login') }}" class="btn btn-sm btn-warning">
+                <i class="fas fa-sign-in-alt"></i> Connectez-vous pour acheter
+            </a>
+        {% endif %}
+    {% else %}
+        <button class="btn btn-sm btn-secondary" disabled>Indisponible</button>
+    {% endif %}
+</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                <p>Aucun produit disponible pour le moment.</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- PRODUCT AREA END -->
+{% endblock %}

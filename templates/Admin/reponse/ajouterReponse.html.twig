@@ -1,0 +1,78 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block title %}EcoMarket - Réponse{% endblock %}
+
+{% block body %}
+{{ parent() }}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header card-no-border pb-0">
+            <h3>
+                {% if update is defined and update %}
+                    Modifier la réponse
+                {% else %}
+                    Ajouter une nouvelle réponse
+                {% endif %}
+            </h3>
+            <p class="mt-1 mb-0">Remplissez le formulaire pour {{ update is defined and update ? 'modifier' : 'ajouter' }} une réponse.</p>
+        </div>
+
+        <div class="card-body">
+            <!-- Afficher les messages flash -->
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+            
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">{{ message }}</div>
+            {% endfor %}
+
+            <div class="col-md-12 mb-3">
+                <label class="form-label">Détails de la Réclamation</label>
+                <div class="border rounded p-2">
+                    <strong>Objet :</strong> {{ reclamation.objet }}<br>
+                    <strong>Description :</strong> {{ reclamation.description }}<br>
+                    <strong>Client :</strong> {{ reclamation.client ? reclamation.client.email : 'Anonyme' }}<br>
+                    <strong>Statut :</strong> {{ reclamation.statut }}<br>
+                    <strong>Date :</strong> {{ reclamation.dateCreation ? reclamation.dateCreation|date('d/m/Y H:i') : 'Non défini' }}
+                </div>
+            </div>
+
+            {{ form_start(form, {'attr': {'class': 'row g-3 needs-validation', 'novalidate': 'novalidate'}}) }}
+
+       
+
+       <div class="col-md-12 position-relative">
+    {{ form_label(form.contenu, 'Message', {'label_attr': {'class': 'form-label'}}) }}
+    {{ form_widget(form.contenu, {
+        'attr': {
+            'class': 'form-control',
+            'placeholder': 'Votre message (10 à 200 caractères)',
+            'required': true,
+            'minlength': 10,
+            'maxlength': 200,
+            'rows': 5
+        }
+    }) }}
+    <div class="text-danger">
+        {{ form_errors(form.contenu) }}
+    </div>
+</div>
+
+            <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-primary" id="submit-btn">
+                    {% if update is defined and update %}
+                        Mettre à jour
+                    {% else %}
+                        Ajouter
+                    {% endif %}
+                </button>
+                
+                <a href="{{ path('reponseafficherReponse') }}" class="btn btn-secondary">Retour</a>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

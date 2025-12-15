@@ -1,0 +1,76 @@
+{# templates/Admin/reponse/afficherReponse.html.twig #}
+{% extends 'Admin/BO.html.twig' %}
+
+{% block title %}EcoMarket - Réponse{% endblock %}
+
+{% block body %}
+{{ parent() }}
+<h1 class="mb-4">Liste des réclamations</h1>
+
+<div class="row mb-3">
+    <div class="col-md-8">
+        <input type="text" id="search" value="{{ search|default('') }}" class="form-control" placeholder="Rechercher par objet, description, statut, email client, réponse...">
+    </div>
+    <div class="col-md-4">
+        <input type="date" id="searchDate" value="{{ searchDate|default('') }}" class="form-control">
+    </div>
+</div>
+
+<div id="reclamation-table">
+    {% include 'Admin/reponse/table_reclamation.html.twig' with {
+        'reclamations': reclamations,
+        'search': search|default('')
+    } %}
+</div>
+
+<script>
+const searchInput = document.getElementById('search');
+const searchDate = document.getElementById('searchDate');
+
+let timeout;
+
+function updateTable() {
+    const query = searchInput.value;
+    const date = searchDate.value;
+
+    // Mettre à jour l'URL
+    const url = new URL(window.location);
+    if (query) url.searchParams.set('q', query);
+    else url.searchParams.delete('q');
+    
+    if (date) url.searchParams.set('date', date);
+    else url.searchParams.delete('date');
+    
+    history.replaceState({}, '', url);
+
+    fetch('{{ path("reponsereponse_search") }}?q=' + encodeURIComponent(query) + '&date=' + encodeURIComponent(date))
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('reclamation-table').innerHTML = html;
+        })
+        .catch(error => console.error('Erreur:', error));
+}
+
+// Debounce 300ms
+searchInput.addEventListener('keyup', () => { 
+    clearTimeout(timeout); 
+    timeout = setTimeout(updateTable, 300); 
+});
+
+searchDate.addEventListener('change', updateTable);
+
+// Charger la recherche depuis l'URL au démarrage
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const q = urlParams.get('q');
+    const date = urlParams.get('date');
+    
+    if (q) {
+        searchInput.value = q;
+    }
+    if (date) {
+        searchDate.value = date;
+    }
+});
+</script>
+{% endblock %}

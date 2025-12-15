@@ -474,7 +474,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         max_host_connections?: int, // The maximum number of connections to a single host.
  *         default_options?: array{
  *             headers?: array<string, mixed>,
- *             vars?: list<mixed>,
+ *             vars?: array<string, mixed>,
  *             max_redirects?: int, // The maximum number of redirects to follow.
  *             http_version?: scalar|null, // The default HTTP version, typically 1.1 or 2.0, leave to null for the best version.
  *             resolve?: array<string, scalar|null>,
@@ -497,7 +497,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *                 md5?: mixed,
  *             },
  *             crypto_method?: scalar|null, // The minimum version of TLS to accept; must be one of STREAM_CRYPTO_METHOD_TLSv*_CLIENT constants.
- *             extra?: list<mixed>,
+ *             extra?: array<string, mixed>,
  *             rate_limiter?: scalar|null, // Rate limiter name to use for throttling requests. // Default: null
  *             caching?: bool|array{ // Caching configuration.
  *                 enabled?: bool, // Default: false
@@ -550,7 +550,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *                 md5?: mixed,
  *             },
  *             crypto_method?: scalar|null, // The minimum version of TLS to accept; must be one of STREAM_CRYPTO_METHOD_TLSv*_CLIENT constants.
- *             extra?: list<mixed>,
+ *             extra?: array<string, mixed>,
  *             rate_limiter?: scalar|null, // Rate limiter name to use for throttling requests. // Default: null
  *             caching?: bool|array{ // Caching configuration.
  *                 enabled?: bool, // Default: false
@@ -1524,6 +1524,84 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     throttle_limit?: int, // Another password reset cannot be made faster than this throttle time in seconds. // Default: 3600
  *     enable_garbage_collection?: bool, // Enable/Disable automatic garbage collection. // Default: true
  * }
+ * @psalm-type EwzRecaptchaConfig = array{
+ *     public_key: scalar|null,
+ *     private_key: scalar|null,
+ *     enabled?: bool, // Default: true
+ *     verify_host?: bool, // Default: false
+ *     ajax?: bool, // Default: false
+ *     locale_key?: scalar|null, // Default: "%kernel.default_locale%"
+ *     api_host?: scalar|null, // Default: "www.google.com"
+ *     locale_from_request?: bool, // Default: false
+ *     version?: int, // Default: 2
+ *     hide_badge?: bool, // Default: false
+ *     score_threshold?: float, // Default: 0.5
+ *     timeout?: int, // Default: null
+ *     trusted_roles?: list<scalar|null>,
+ *     http_proxy?: array{
+ *         host?: scalar|null, // Default: null
+ *         port?: scalar|null, // Default: null
+ *         auth?: scalar|null, // Default: null
+ *     },
+ *     service_definition?: list<array{ // Default: []
+ *         service_name: scalar|null,
+ *         options?: array{
+ *             action_name?: scalar|null,
+ *             script_nonce_csp?: scalar|null,
+ *         },
+ *     }>,
+ * }
+ * @psalm-type KnpPaginatorConfig = array{
+ *     default_options?: array{
+ *         sort_field_name?: scalar|null, // Default: "sort"
+ *         sort_direction_name?: scalar|null, // Default: "direction"
+ *         filter_field_name?: scalar|null, // Default: "filterField"
+ *         filter_value_name?: scalar|null, // Default: "filterValue"
+ *         page_name?: scalar|null, // Default: "page"
+ *         distinct?: bool, // Default: true
+ *         page_out_of_range?: scalar|null, // Default: "ignore"
+ *         default_limit?: scalar|null, // Default: 10
+ *     },
+ *     template?: array{
+ *         pagination?: scalar|null, // Default: "@KnpPaginator/Pagination/sliding.html.twig"
+ *         rel_links?: scalar|null, // Default: "@KnpPaginator/Pagination/rel_links.html.twig"
+ *         filtration?: scalar|null, // Default: "@KnpPaginator/Pagination/filtration.html.twig"
+ *         sortable?: scalar|null, // Default: "@KnpPaginator/Pagination/sortable_link.html.twig"
+ *     },
+ *     page_range?: scalar|null, // Default: 5
+ *     page_limit?: scalar|null, // Default: null
+ *     convert_exception?: bool, // Default: false
+ *     remove_first_page_param?: bool, // Default: false
+ * }
+ * @psalm-type KnpSnappyConfig = array{
+ *     temporary_folder?: scalar|null,
+ *     process_timeout?: int, // Generator process timeout in seconds.
+ *     pdf?: array{
+ *         enabled?: bool, // Default: true
+ *         binary?: scalar|null, // Default: "wkhtmltopdf"
+ *         options?: array<string, scalar|null>,
+ *         env?: list<scalar|null>,
+ *     },
+ *     image?: array{
+ *         enabled?: bool, // Default: true
+ *         binary?: scalar|null, // Default: "wkhtmltoimage"
+ *         options?: array<string, scalar|null>,
+ *         env?: list<scalar|null>,
+ *     },
+ * }
+ * @psalm-type CmenGoogleChartsConfig = array{
+ *     version?: scalar|null, // Default: "current"
+ *     language?: scalar|null, // Default: ""
+ * }
+ * @psalm-type TwigComponentConfig = array{
+ *     defaults?: array<string, string|array{ // Default: ["__deprecated__use_old_naming_behavior"]
+ *         template_directory?: scalar|null, // Default: "components"
+ *         name_prefix?: scalar|null, // Default: ""
+ *     }>,
+ *     anonymous_template_directory?: scalar|null, // Defaults to `components`
+ *     profiler?: bool, // Enables the profiler for Twig Component (in debug mode) // Default: "%kernel.debug%"
+ *     controllers_json?: scalar|null, // Deprecated: The "twig_component.controllers_json" config option is deprecated, and will be removed in 3.0. // Default: null
+ * }
  * @psalm-type ConfigType = array{
  *     imports?: ImportsConfig,
  *     parameters?: ParametersConfig,
@@ -1539,6 +1617,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     monolog?: MonologConfig,
  *     knpu_oauth2_client?: KnpuOauth2ClientConfig,
  *     symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
+ *     ewz_recaptcha?: EwzRecaptchaConfig,
+ *     knp_paginator?: KnpPaginatorConfig,
+ *     knp_snappy?: KnpSnappyConfig,
+ *     cmen_google_charts?: CmenGoogleChartsConfig,
+ *     twig_component?: TwigComponentConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1557,6 +1640,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         maker?: MakerConfig,
  *         knpu_oauth2_client?: KnpuOauth2ClientConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
+ *         ewz_recaptcha?: EwzRecaptchaConfig,
+ *         knp_paginator?: KnpPaginatorConfig,
+ *         knp_snappy?: KnpSnappyConfig,
+ *         cmen_google_charts?: CmenGoogleChartsConfig,
+ *         twig_component?: TwigComponentConfig,
  *     },
  *     "when@prod"?: array{
  *         imports?: ImportsConfig,
@@ -1573,6 +1661,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         monolog?: MonologConfig,
  *         knpu_oauth2_client?: KnpuOauth2ClientConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
+ *         ewz_recaptcha?: EwzRecaptchaConfig,
+ *         knp_paginator?: KnpPaginatorConfig,
+ *         knp_snappy?: KnpSnappyConfig,
+ *         cmen_google_charts?: CmenGoogleChartsConfig,
+ *         twig_component?: TwigComponentConfig,
  *     },
  *     "when@test"?: array{
  *         imports?: ImportsConfig,
@@ -1590,6 +1683,11 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         monolog?: MonologConfig,
  *         knpu_oauth2_client?: KnpuOauth2ClientConfig,
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
+ *         ewz_recaptcha?: EwzRecaptchaConfig,
+ *         knp_paginator?: KnpPaginatorConfig,
+ *         knp_snappy?: KnpSnappyConfig,
+ *         cmen_google_charts?: CmenGoogleChartsConfig,
+ *         twig_component?: TwigComponentConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,

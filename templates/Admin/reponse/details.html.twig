@@ -1,0 +1,90 @@
+{% extends 'Admin/BO.html.twig' %}
+
+{% block title %}Détails de la réponse{% endblock %}
+
+{% block body %}
+{{ parent() }}
+<div class="container mt-4">
+
+    <h2 class="mb-4">📌 Détails de la réponse</h2>
+
+    <div class="card shadow-sm p-3">
+
+
+        <div class="mb-3">
+            <strong>Contenu :</strong>
+            <p class="border rounded p-2 bg-grey">{{ reponse.contenu }}</p>
+        </div>
+
+        <div class="mb-3">
+            <strong>Date de création :</strong>
+            {{ reponse.dateCreation|date('d/m/Y H:i') }}
+        </div>
+
+        <hr>
+
+        <h4>📄 Informations sur la réclamation liée</h4>
+
+        <div class="mb-3">
+            <strong>ID Réclamation :</strong> {{ reponse.reclamation.id }}
+        </div>
+
+        <div class="mb-3">
+            <strong>Objet :</strong> {{ reponse.reclamation.objet }}
+        </div>
+
+        <div class="mb-3">
+            <strong>Description :</strong> {{ reponse.reclamation.description }}
+        </div>
+
+        <div class="mb-3">
+            <strong>Client :</strong>
+            {% if reponse.reclamation.client %}
+                {{ reponse.reclamation.client.nom }} {{ reponse.reclamation.client.prenom }}
+                ({{ reponse.reclamation.client.email }})
+            {% else %}
+                <span class="text-muted">Anonyme</span>
+            {% endif %}
+        </div>
+
+        <hr>
+
+        <h4>👍 Réactions</h4>
+
+        <div class="mb-3">
+            <strong>Likes :</strong>
+            {{ reponse.reactions|filter(r => r.type == 'like')|length }}
+        </div>
+
+        <div class="mb-3">
+            <strong>Dislikes :</strong>
+            {{ reponse.reactions|filter(r => r.type == 'dislike')|length }}
+        </div>
+
+        <hr>
+
+        <h4>👮 Administrateur</h4>
+
+        <div class="mb-3">
+            <strong>Nom admin :</strong> 
+            {% if reponse.admin %}
+                {{ reponse.admin.nom }} {{ reponse.admin.prenom }}
+            {% else %}
+                <span class="text-muted">Non assigné</span>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <strong>Email admin :</strong> 
+            {% if reponse.admin %}
+                {{ reponse.admin.email }}
+            {% else %}
+                <span class="text-muted">--</span>
+            {% endif %}
+        </div>
+
+        <a href="{{ path('reponseafficherReponse') }}" class="btn btn-secondary mt-3">⬅ Retour</a>
+    </div>
+
+</div>
+{% endblock %}

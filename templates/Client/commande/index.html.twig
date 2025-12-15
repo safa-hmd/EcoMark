@@ -1,0 +1,333 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block title %}Mes Commandes{% endblock %}
+
+{% block body %}
+<style>
+/* 🌿 EcoMarket Theme */
+.eco-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 15px;
+}
+
+.eco-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2e7d32;
+    margin-bottom: 25px;
+}
+
+.eco-card {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.eco-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.eco-table thead {
+    background: #2e7d32;
+    color: white;
+}
+
+.eco-table th, .eco-table td {
+    padding: 14px 12px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.eco-table tbody tr:nth-child(even) {
+    background: #f4f7f5;
+}
+
+.eco-table tbody tr:hover {
+    background: #e8f5e9;
+}
+
+/* 🌱 Status badges */
+.badge-status {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.st-attente { background: #fff3cd; color: #856404; }
+.st-cours   { background: #d1ecf1; color: #0c5460; }
+.st-exp     { background: #cce5ff; color: #004085; }
+.st-livre   { background: #d4edda; color: #155724; }
+.st-annule  { background: #f8d7da; color: #721c24; }
+
+/* 🔘 Buttons */
+.btn-eco {
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.btn-details {
+    background: #26c6da;
+    color: white;
+}
+
+.btn-edit {
+    background: #fbc02d;
+    color: #333;
+}
+
+.btn-new {
+    background: #2e7d32;
+    color: white;
+}
+
+.btn-new:hover {
+    background: #256428;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* 🤖 EcoMarket AI Assistant */
+.eco-ai {
+    margin-top: 40px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.eco-ai-header {
+    background: #2e7d32;
+    color: #fff;
+    padding: 16px 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.eco-ai-messages {
+    height: 280px;
+    overflow-y: auto;
+    padding: 18px;
+    background: #f4f7f5;
+}
+
+.eco-ai-input {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.eco-ai-input input {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.eco-ai-input button {
+    background: #2e7d32;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.eco-msg {
+    margin-bottom: 12px;
+    display: flex;
+}
+
+.eco-msg.user {
+    justify-content: flex-end;
+}
+
+.eco-bubble {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 14px;
+}
+
+.eco-msg.user .eco-bubble {
+    background: #2e7d32;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.eco-msg.ai .eco-bubble {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    color: #333;
+    border-bottom-left-radius: 4px;
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+    .eco-table thead { display: none; }
+    .eco-table, .eco-table tbody, .eco-table tr, .eco-table td {
+        display: block;
+        width: 100%;
+    }
+    .eco-table tr {
+        margin-bottom: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+    .eco-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+    .eco-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        font-weight: bold;
+        color: #2e7d32;
+    }
+}
+</style>
+
+<div class="eco-container">
+    <h1 class="eco-title">🌿 Mes Commandes</h1>
+
+    <!-- TABLE COMMANDES -->
+    <div class="eco-card">
+        <table class="eco-table">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Montant</th>
+                <th>Produits</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for commande in commandes %}
+                <tr>
+                    <td data-label="#">#{{ commande.id }}</td>
+                    <td data-label="Date">{{ commande.dateCommande|date('d/m/Y H:i') }}</td>
+
+                    <td data-label="Statut">
+                        {% set s = commande.statut %}
+                        <span class="badge-status
+                            {% if s == 'en_attente' %}st-attente
+                            {% elseif s == 'en_cours' %}st-cours
+                            {% elseif s == 'expediee' %}st-exp
+                            {% elseif s == 'livree' %}st-livre
+                            {% else %}st-annule{% endif %}">
+                            {{ s|replace({'_':' '})|capitalize }}
+                        </span>
+                    </td>
+
+                    <td data-label="Montant">
+                        <strong>{{ commande.montantTotal|number_format(2, ',', ' ') }} €</strong>
+                    </td>
+
+                    <td data-label="Produits">
+                        {{ commande.produits ? commande.produits|slice(0,30) ~ '…' : '—' }}
+                    </td>
+
+                    <td data-label="Actions">
+                        <div class="actions">
+                            <a href="{{ path('app_commande_show', {id: commande.id}) }}" class="btn-eco btn-details">Détails</a>
+                            <a href="{{ path('app_commande_edit', {id: commande.id}) }}" class="btn-eco btn-edit">Modifier</a>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">Aucune commande trouvée.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a href="{{ path('app_commande_new') }}" class="btn-eco btn-new mt-4">
+        ➕ Nouvelle Commande
+    </a>
+
+    <!-- 🤖 ASSISTANT IA INTEGRÉ -->
+    <div class="eco-ai">
+        <div class="eco-ai-header">
+            🤖 Assistant IA – Suivi des commandes
+        </div>
+
+        <div class="eco-ai-messages" id="ecoAiMessages">
+            <p style="text-align:center;color:#777;">Posez une question sur vos commandes 💬</p>
+        </div>
+
+        <form class="eco-ai-input" id="ecoAiForm">
+            <input type="text" id="ecoAiInput"
+                   placeholder="Ex : Où en est ma commande #12 ?" required>
+            <button type="submit">Envoyer</button>
+        </form>
+    </div>
+</div>
+
+<script>
+const aiForm = document.getElementById('ecoAiForm');
+const aiInput = document.getElementById('ecoAiInput');
+const aiMessages = document.getElementById('ecoAiMessages');
+
+aiForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const question = aiInput.value.trim();
+    if (!question) return;
+
+    addMessage(question, 'user');
+    aiInput.value = '';
+
+    const formData = new FormData();
+    formData.append('question', question);
+
+    try {
+        const response = await fetch('{{ path("client_assistant_ia_ask") }}', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        addMessage(data.response ?? data.message, 'ai');
+
+    } catch {
+        addMessage("Erreur serveur ⚠️", 'ai');
+    }
+});
+
+function addMessage(text, type) {
+    const div = document.createElement('div');
+    div.className = 'eco-msg ' + type;
+
+    const bubble = document.createElement('div');
+    bubble.className = 'eco-bubble';
+    bubble.textContent = text;
+
+    div.appendChild(bubble);
+    aiMessages.appendChild(div);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+}
+</script>
+{% endblock %}

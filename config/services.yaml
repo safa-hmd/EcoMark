@@ -1,23 +1,36 @@
-# config/services.yaml
+
 parameters:
     photos_directory: '%kernel.project_dir%/public/uploads/photos'
+    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    uploads_directory: '%kernel.project_dir%/public/uploads'
+    openweather_api_key: '%env(OPENWEATHER_API_KEY)%'
+    openrouter_api_key: '%env(OPENROUTER_API_KEY)%'
 
 services:
+
     _defaults:
         autowire: true
         autoconfigure: true
         public: false
+    Symfony\Contracts\HttpClient\HttpClientInterface: '@http_client'  
+
+    App\Service\BadWordDetectorService:
+        public: true
+        arguments:
+            $huggingfaceApiKey: '%env(string:HUGGINGFACE_API_KEY)%'
+
  
 
     App\:
         resource: '../src/'
         exclude:
-            - '../src/DependencyInjection/'
+            -'../src/{DependencyInjection,Entity,Kernel.php}'
             - '../src/Entity/'
             - '../src/Migrations/'
             - '../src/Tests/'
             - '../src/Kernel.php'
-
+            - '../src/DependencyInjection/'
+  
     # 🔧 SERVICES IA - CONFIGURATION CORRIGÉE
     App\Service\GeminiPhotoService:
         arguments:
@@ -32,3 +45,26 @@ services:
     App\Security\GoogleAuthenticator:
         arguments:
             $passwordHasher: '@security.user_password_hasher'
+
+
+    App\Service\WeatherService:
+        arguments:
+            $apiKey: '%openweather_api_key%'
+
+
+    App\Service\AIService:
+        arguments:
+            $apiKey: '%openrouter_api_key%'
+            
+
+    App\Command\SendSmsAlertsCommand:
+        arguments:
+            $smsService: '@App\Service\SimpleSmsService'
+        tags: ['console.command']
+
+    App\Twig\NotificationExtension:
+        arguments:
+            $notifService: '@App\Service\NotificationService'
+        tags:
+            - { name: twig.extension }        
+

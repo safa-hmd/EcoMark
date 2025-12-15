@@ -1,0 +1,353 @@
+/* ===============================
+   THEME ECO MARKET - CLIENT SIDE
+   Couleurs : Vert, Blanc, Gris clair
+   Style moderne et naturel
+================================ */
+
+/* -------- GLOBAL -------- */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    background-color: #F7F5EB;
+    color: #333;
+}
+
+/* Liens */
+a {
+    text-decoration: none;
+    color: #2e7d32;
+}
+a:hover {
+    color: #1b5e20;
+}
+
+/* Containers */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* -------- HEADER -------- */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 10px 40px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+header .logo {
+    width: 120px;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+header nav ul li a {
+    font-weight: 600;
+    font-size: 16px;
+    color: #2e7d32;
+}
+
+header nav ul li a:hover {
+    color: #1b5e20;
+}
+
+/* -------- TITLE -------- */
+.page-title {
+    text-align: center;
+    margin: 40px auto 20px;
+    color: #2e7d32;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.page-subtitle {
+    text-align: center;
+    margin: 40px auto 20px;
+    color: #65480a;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+/* -------- EVENT CARD -------- */
+.event-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    margin: 20px auto;
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+.event-card:hover {
+    transform: translateY(-5px);
+}
+
+.event-card img {
+    width: 180px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.event-details {
+    flex: 1;
+}
+
+.event-details h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #1b5e20;
+}
+
+.event-details p {
+    margin: 6px 0;
+    color: #555;
+}
+
+/* -------- BUTTON -------- */
+.btn-green {
+    background: #2e7d32;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+.btn-green:hover {
+    background: #1b5e20;
+}
+.small-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+/* -------- FOOTER -------- */
+footer {
+    background: #ffffff;
+    padding: 20px;
+    text-align: center;
+    margin-top: 40px;
+    color: #2e7d32;
+    border-top: 2px solid #e0e0e0;
+}
+
+/* -------- RESPONSIVE -------- */
+@media (max-width: 768px) {
+    .event-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    header {
+        flex-direction: column;
+        gap: 20px;
+    }   
+}
+/* ===============================
+   TABLEAU ECO MARKET
+================================ */
+
+.table-container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 30px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+/* Tableau */
+table.eco-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+/* En-tête */
+table.eco-table thead {
+    background: hwb(123 18% 51%); /* Vert foncé */
+    color: white;
+}
+
+table.eco-table thead th {
+    padding: 14px 10px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Lignes */
+table.eco-table tbody tr {
+    background: #f9fbf9;
+    border-bottom: 1px solid #e1e1e1;
+    transition: 0.2s ease;
+}
+
+table.eco-table tbody tr:hover {
+    background: #e8f5e9;
+}
+
+/* Cellules */
+table.eco-table td {
+    padding: 12px 10px;
+    color: #333;
+}
+
+/* Boutons dans le tableau */
+table.eco-table .btn-green {
+    padding: 6px 12px;
+    font-size: 14px;
+}
+
+/* Alternance lignes */
+table.eco-table tbody tr:nth-child(even) {
+    background: #f3f7f2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    table.eco-table thead {
+        display: none;
+    }
+
+    table.eco-table tr {
+        display: block;
+        margin-bottom: 15px;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    table.eco-table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 5px;
+        font-size: 14px;
+    }
+
+    table.eco-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #2e7d32;
+    }
+
+    .btn-brown {
+    background-color: #8B4513; /* Marron */
+    color: #fff;              /* Texte blanc */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    }
+}
+
+/*css pour la page meteo */
+
+.meteo-title {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 32px;
+    font-weight: bold;
+    color: #2d4739;
+}
+
+.weather-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    width: 90%;       /* largeur responsive */
+    max-width: 450px; /* limite maximale */
+    margin: 0 auto;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    gap: 20px;
+    flex-wrap: wrap; /* permet de passer en colonne si trop petit */
+}
+
+
+.weather-icon {
+    width: 130px;
+    height: 130px;
+}
+
+.weather-right {
+    text-align: left;
+}
+
+.temp {
+    font-size: 42px;
+    font-weight: bold;
+    color: #2d4739;
+    margin: 0;
+}
+
+.condition {
+    font-size: 18px;
+    margin-top: -5px;
+    color: #666;
+}
+
+.weather-details p {
+    margin: 4px 0;
+    font-size: 15px;
+}
+
+.back-btn-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.weather-attribution {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    opacity: 0.7;
+}
+.weather-attribution a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #2d4739;
+}
+.more-info a {
+    text-decoration: none;
+    color: #2d4739;
+    font-weight: bold;
+}
+.more-info a:hover {
+    text-decoration: underline;
+}
+
+/*pour petite ecrans */
+@media (max-width: 500px) {
+    .weather-card {
+        flex-direction: column;
+        padding: 20px;
+    }
+    .weather-icon {
+        width: 100px;
+        height: 100px;
+    }
+    .temp {
+        font-size: 32px;
+    }
+}
+
+

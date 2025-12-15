@@ -1,0 +1,136 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block body %}
+<!-- PAGE TITLE AREA START -->
+<div class="ltn__page-title-area text-center bg-overlay-white-30 bg-image" data-bg="img/bg/14.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="page-title-inner">
+                    <h1 class="page-title">Mes Achats</h1>
+                    <div class="ltn__breadcrumb-list">
+                        <ul>
+                            <li><a href="{{ path('client_home') }}">Accueil</a></li>
+                            <li>Mes Achats</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- PAGE TITLE AREA END -->
+
+<!-- MES ACHATS AREA START -->
+<div class="ltn__product-area ltn__product-gutter mb-100">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+
+                {# Vérifier si l'utilisateur n'est pas connecté #}
+                {% if userNotConnected is defined and userNotConnected %}
+                    <div class="alert alert-warning text-center">
+                        <h4>Connectez-vous pour voir vos achats</h4>
+                        <p class="mb-3">Vous devez être connecté pour accéder à cette page.</p>
+                        <a href="{{ path('app_client_produit_index') }}" class="btn btn-primary">
+                            <i class="fas fa-shopping-bag"></i> Retour aux produits
+                        </a>
+                    </div>
+                {% elseif produitsAchetes|length > 0 %}
+                    <div class="row">
+                        {% for produit in produitsAchetes %}
+                            <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                                <div class="ltn__product-item ltn__product-item-3 text-center">
+                                    <div class="product-img">
+                                        {% if produit.photo %}
+                                            <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" 
+                                                 alt="{{ produit.nomProduit }}"
+                                                 style="width: 100%; height: 200px; object-fit: cover;"
+                                                 class="rounded">
+                                        {% else %}
+                                            <div class="no-photo-placeholder rounded" 
+                                                 style="width: 100%; height: 200px; 
+                                                        background: linear-gradient(135deg, #38b2ac 0%, #319795 100%); 
+                                                        display: flex; align-items: center; justify-content: center; 
+                                                        color: white; border: 1px solid #e2e8f0;">
+                                                <div class="text-center">
+                                                    <i class="fas fa-leaf" style="font-size: 2.5rem; margin-bottom: 10px; opacity: 0.8;"></i>
+                                                    <p class="mb-0 fw-bold" style="font-size: 0.9rem;">PRODUIT ÉCOLOGIQUE</p>
+                                                    <small style="opacity: 0.8;">Image non disponible</small>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="product-info">
+                                        <h3 class="product-title">{{ produit.nomProduit }}</h3>
+                                        <p class="product-description">
+                                            {# Nettoyer la description du tag d'achat #}
+                                            {% set descriptionPropre = produit.description|replace({
+                                                (' [ACHETE_PAR:' ~ app.user.id ~ '_LE:' ~ "now"|date('Y-m-d') ~ ']'): ''
+                                            }) %}
+                                            {{ descriptionPropre|slice(0, 100) }}...
+                                        </p>
+                                        <div class="product-price">
+                                            <span class="text-success fw-bold">{{ produit.prix }} €</span>
+                                        </div>
+                                        <div class="product-meta">
+                                            <span class="badge bg-info">Acheté</span>
+                                            <span class="badge bg-secondary">
+                                                {# Extraire la date d'achat #}
+                                                {% set description = produit.description %}
+                                                {% set pattern = 'ACHETE_PAR:' ~ app.user.id ~ '_LE:' %}
+                                                {% if pattern in description %}
+                                                    {% set startPos = description|split(pattern)|last %}
+                                                    {% set dateAchat = startPos|slice(0, 10) %}
+                                                    {% if dateAchat matches '/^\\d{4}-\\d{2}-\\d{2}$/' %}
+                                                        Le {{ dateAchat|date('d/m/Y') }}
+                                                    {% else %}
+                                                        Date inconnue
+                                                    {% endif %}
+                                                {% else %}
+                                                    Date inconnue
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="product-actions mt-3">
+                                            <form action="{{ path('app_client_achat_annuler', {'id': produit.id}) }}" method="POST" style="display: inline;">
+                                                <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir annuler cet achat ?')">
+                                                    <i class="fas fa-undo"></i> Annuler
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-info text-center">
+                            <h4>Vous n'avez pas encore fait d'achats</h4>
+                            <p class="mb-3">Découvrez nos produits écologiques et faites votre premier achat !</p>
+                            <a href="{{ path('app_client_produit_index') }}" class="btn btn-primary">
+                                <i class="fas fa-shopping-bag"></i> Découvrir les produits
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- MES ACHATS AREA END -->
+{% endblock %}

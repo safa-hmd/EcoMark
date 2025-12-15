@@ -1,0 +1,103 @@
+{% extends 'VendeurT/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3>Liste des Produits</h3>
+                </div>
+                <div class="col-sm-6 text-end">
+                    <a href="{{ path('app_vendeur_produit_new') }}" class="btn btn-primary">
+                        <i class="fa fa-plus"></i> Nouveau Produit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        {% for message in app.flashes('success') %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Photo</th>
+                                        <th>ID</th>
+                                        <th>Nom</th>
+                                        <th>Description</th>
+                                        <th>Prix</th>
+                                        <th>Quantité</th>
+                                        <th>État</th>
+                                        <th>Date Ajout</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for produit in produits %}
+                                    <tr>
+                                        <td>
+                                            {% if produit.photo %}
+                                                <img src="{{ asset('uploads/produits/' ~ produit.photo) }}" 
+                                                     alt="{{ produit.nomProduit }}" 
+                                                     class="img-thumbnail" 
+                                                     style="width: 60px; height: 60px; object-fit: cover;">
+                                            {% else %}
+                                                <img src="{{ asset('BO/images/default-product.png') }}" 
+                                                     alt="Image par défaut" 
+                                                     class="img-thumbnail" 
+                                                     style="width: 60px; height: 60px; object-fit: cover;">
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ produit.id }}</td>
+                                        <td>{{ produit.nomProduit }}</td>
+                                        <td>{{ produit.description|slice(0, 50) }}{% if produit.description|length > 50 %}...{% endif %}</td>
+                                        <td>{{ produit.prix }} €</td>
+                                        <td>{{ produit.quantiteStock }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ produit.etatProduit == 'Disponible' ? 'success' : 'warning' }}">
+                                                {{ produit.etatProduit }}
+                                            </span>
+                                        </td>
+                                        <td>{{ produit.dateAjout ? produit.dateAjout|date('d/m/Y') : '' }}</td>
+                                        <td>
+                                            <a href="{{ path('app_vendeur_produit_show', {'id': produit.id}) }}" 
+                                               class="btn btn-info btn-sm">Voir</a>
+                                            <a href="{{ path('app_vendeur_produit_edit', {'id': produit.id}) }}" 
+                                               class="btn btn-warning btn-sm">Modifier</a>
+                                            <form method="post" action="{{ path('app_vendeur_produit_delete', {'id': produit.id}) }}" 
+                                                  style="display: inline-block;" 
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce produit?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ produit.id) }}">
+                                                <button class="btn btn-danger btn-sm">Supprimer</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="9" class="text-center">Aucun produit trouvé</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

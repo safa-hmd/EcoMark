@@ -1,0 +1,54 @@
+{% extends 'Vendeur/BO.html.twig' %}
+
+{% block body %}
+{{ parent() }}
+
+<div class="page-body">
+  <div class="container-fluid">
+    <div class="page-title"></div>
+  </div>
+
+
+  <div class="container-fluid">
+    <div class="edit-profile">
+      <div class="row">
+        <div class="col-xl-12">
+
+        
+         
+
+          <div class="card-header card-no-border pb-0">
+            <h3 class="card-title mb-0">Modifier le Profil</h3>
+          </div>
+   {{ form_start(form) }}
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-6 col-md-6">{{ form_row(form.nom, {'attr': {'class': 'form-control'}}) }}</div>
+              <div class="col-sm-6 col-md-6">{{ form_row(form.prenom, {'attr': {'class': 'form-control'}}) }}</div>
+              <div class="col-sm-6 col-md-6">{{ form_row(form.email, {'attr': {'class': 'form-control'}}) }}</div>
+              <div class="col-sm-6 col-md-6">{{ form_row(form.telephone, {'attr': {'class': 'form-control'}}) }}</div>
+              <div class="col-md-6">{{ form_row(form.adresse, {'attr': {'class': 'form-control'}}) }}</div>
+              <div class="col-md-6">{{ form_row(form.password, {'attr': {'class': 'form-control'}}) }}</div>
+              <div class="col-md-8">
+                {{ form_row(form.photo, {'attr': {'class': 'form-control'}}) }}
+                <small class="form-text text-muted">Image actuelle :</small><br>
+                <img alt="Photo" 
+                     src="{{ vendeur.photo ? asset('uploads/photos/' ~ vendeur.photo) : asset('uploads/default.jpg') }}" 
+                     width="100" class="mt-2 rounded">
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer text-end">
+            <button class="btn btn-primary" type="submit">Mettre à jour</button>
+          </div>
+
+   {{ form_end(form) }}       
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

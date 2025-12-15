@@ -1,0 +1,100 @@
+{% extends 'Client/FO.html.twig' %}
+
+{% block title %}EcoMarket{% endblock %}
+
+{% block body %}
+
+{% for type, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ type }} mt-3">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0 text-center">Ajouter Réclamation</h4>
+        </div>
+        <div class="card-body">
+
+            {{ form_start(form, {
+                'attr': {
+                    'id': 'contact-form',
+                    'class': 'row g-3 needs-validation',
+                    'novalidate': 'novalidate'
+                }
+            }) }}
+
+            <div class="col-md-12 position-relative">
+    <label class="form-label">Objet <strong class="text-danger">*</strong></label>
+    {{ form_widget(form.objet, {
+        'attr': {
+            'class': 'form-control',
+            'placeholder': 'Entrez l’objet',
+            'required': true,
+            'minlength': 5,
+            'maxlength': 10,
+            'spellcheck': true
+        }
+    }) }}
+    <div class="text-danger">
+        {{ form_errors(form.objet) }}
+    </div>
+</div>
+
+            <div class="col-md-12 position-relative">
+    <label class="form-label">Description <strong class="text-danger">*</strong></label>
+    {{ form_widget(form.description, {
+        'attr': {
+            'class': 'form-control',
+            'placeholder': 'Décrivez votre réclamation',
+            'required': true,
+            'rows': 5,
+            'minlength': 10,
+            'maxlength': 200,
+            'spellcheck': true
+        }
+    }) }}
+    <div class="text-danger">
+        {{ form_errors(form.description) }}
+    </div>
+</div>
+
+<div class="col-12 my-3">
+    <div class="g-recaptcha" data-sitekey="6LexHh0sAAAAADkTqqFjdDwoUgg5PQ-eLBCgpi_i"></div>
+</div>
+
+            <div class="col-12 mt-3 d-flex justify-content-center">
+                <button class="btn btn-primary text-uppercase" type="submit">Envoyer Réclamation</button>
+                                <a href="{{ path('reclamation_Afficher') }}" class="btn btn-secondary">Retour</a>
+
+            </div>
+
+            {{ form_end(form) }}
+
+        </div>
+    </div>
+</div>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<!--<script>
+(function () {
+    'use strict';
+    var forms = document.querySelectorAll('.needs-validation');
+
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+</script>-->
+
+{% endblock %}
