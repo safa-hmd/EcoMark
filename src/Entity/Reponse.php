@@ -25,7 +25,7 @@ class Reponse
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTime $dateCreation = null;
 
-    #[ORM\OneToOne(inversedBy: 'reponse', targetEntity: Reclamation::class)]
+    #[ORM\OneToOne(inversedBy: 'yes', targetEntity: Reclamation::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Reclamation $reclamation = null;
 

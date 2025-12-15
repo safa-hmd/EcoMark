@@ -31,7 +31,7 @@ class ReclamationRepository extends ServiceEntityRepository
                     $qb->expr()->like('r.description', ':search'),
                     $qb->expr()->like('r.statut', ':search'),
                     $qb->expr()->like('c.email', ':search'),
-                    $qb->expr()->like('rep.Contenu', ':search')
+                    $qb->expr()->like('rep.contenu', ':search')
                 )
             )
             ->setParameter('search', '%' . $search . '%');
