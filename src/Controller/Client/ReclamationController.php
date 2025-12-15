@@ -43,7 +43,9 @@ $reclamations = $paginator->paginate(
     3
 );
     return $this->render('Client/reclamation/afficherReclamation.html.twig', [
-        'reclamations' => $reclamations, ]);}
+        'reclamations' => $reclamations,
+     ]);
+    }
 
 
 
