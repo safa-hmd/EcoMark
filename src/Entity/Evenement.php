@@ -6,11 +6,14 @@ use App\Repository\EvenementRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Doctrine\DBAL\Types\Types;
+
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 #[ORM\Entity(repositoryClass: EvenementRepository::class)]
+#[UniqueEntity(fields: ['titre'],message: 'Ce titre d\'événement existe déjà.')]
 class Evenement
 {
     #[ORM\Id]
@@ -19,21 +22,28 @@ class Evenement
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le titre est obligatoire.")]
     private ?string $titre = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "La description est obligatoire.")]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\NotNull(message: "La date de l'événement est obligatoire.")]
+    #[Assert\GreaterThan(value: "today",message: "La date de l'événement doit être dans le futur.")]
     private ?\DateTime $dateEvent = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le lieu est obligatoire.")]
     private ?string $lieu = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotNull(message: "La capacité est obligatoire.")]
+    #[Assert\Range(min: 1,max: 300,notInRangeMessage: "La capacité doit être entre {{ min }} et {{ max }}.")]
     private ?string $capacite = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]

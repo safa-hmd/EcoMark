@@ -20,28 +20,39 @@ class PdfController extends AbstractController
         $options->set('isRemoteEnabled', true);
         $dompdf = new Dompdf($options);
 
-        // Convertir le logo en Base64
         $logoPath = $this->getParameter('kernel.project_dir') . '/public/BO/images/logo.svg';
         $logoBase64 = '';
         
         if (file_exists($logoPath)) {
             $imageData = file_get_contents($logoPath);
-            // Pour SVG
             $logoBase64 = 'data:image/svg+xml;base64,' . base64_encode($imageData);
         }
 
-        // Préparer le HTML
+        $cachePath = $this->getParameter('kernel.project_dir') . '/public/FO/img/stamp.svg';
+$cacheBase64 = '';
+if (file_exists($cachePath)) {
+    $imageData = file_get_contents($cachePath);
+    $cacheBase64 = 'data:image/png;base64,' . base64_encode($imageData);
+}
+
+$signaturePath = $this->getParameter('kernel.project_dir') . '/public/FO/img/signature.svg';
+$signatureBase64 = '';
+if (file_exists($signaturePath)) {
+    $imageData = file_get_contents($signaturePath);
+    $signatureBase64 = 'data:image/svg+xml;base64,' . base64_encode($imageData);
+}
+
         $html = $this->renderView('Client/pdf/reclamation.html.twig', [
             'reclamation' => $reclamation,
-            'logoBase64' => $logoBase64,  // On passe logoBase64
+            'logoBase64' => $logoBase64, 
+            'cacheBase64' => $cacheBase64, 
+            'signatureBase64' => $signatureBase64,
         ]);
 
-        // Générer le PDF
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
 
-        // Retourner le PDF
         return new Response(
             $dompdf->output(),
             200,

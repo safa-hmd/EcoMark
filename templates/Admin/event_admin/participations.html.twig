@@ -18,7 +18,8 @@
     <table class="admin-table">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>ID Participation </th>
+                <th> Nom de Participant </th>
                 <th>Événement</th>
                 <th>Date participation</th>
                 <th>Statut</th>
@@ -30,6 +31,7 @@
             {% for p in participations %}
                 <tr>
                     <td data-label="ID">{{ p.id }}</td>
+                    <td data-label="Utilisateur">{{ p.user.nom }} {{ p.user.prenom }}</td>
                     <td data-label="Événement">{{ p.evenement.titre }}</td>
                     <td data-label="Date">{{ p.dateParticipation|date('Y-m-d H:i') }}</td>
                     <td data-label="Statut">

@@ -6,18 +6,49 @@ parameters:
     openrouter_api_key: '%env(OPENROUTER_API_KEY)%'
 
 services:
+
     _defaults:
         autowire: true
         autoconfigure: true
+    Symfony\Contracts\HttpClient\HttpClientInterface: '@http_client'
+
+
+
+    App\Service\BadWordDetectorService:
+        public: true
+        arguments:
+            $huggingfaceApiKey: '%env(string:HUGGINGFACE_API_KEY)%'
 
     App\:
         resource: '../src/'
-        exclude: '../src/{DependencyInjection,Entity,Kernel.php}'
+        exclude:
+            -'../src/{DependencyInjection,Entity,Kernel.php}'
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
 
     App\Service\WeatherService:
         arguments:
             $apiKey: '%openweather_api_key%'
 
+
     App\Service\AIService:
         arguments:
             $apiKey: '%openrouter_api_key%'
+
+    App\Service\HuggingFaceImageService:
+        arguments:
+            $client: '@http_client'
+
+    App\Command\SendSmsAlertsCommand:
+        arguments:
+            $smsService: '@App\Service\SimpleSmsService'
+        tags: ['console.command']
+
+    App\Twig\NotificationExtension:
+        arguments:
+            $notifService: '@App\Service\NotificationService'
+        tags:
+            - { name: twig.extension }
+

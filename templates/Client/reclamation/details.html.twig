@@ -1,21 +1,112 @@
 {% extends 'Client/FO.html.twig' %}
 
-{% block title %}Détail Réclamation{% endblock %}
+{% block title %}Détails de la Réclamation{% endblock %}
 
 {% block body %}
 <div class="container mt-5">
     <h2>Détails de la Réclamation</h2>
 
-    <div class="card p-4 mt-3">
-        <p><strong>ID :</strong> {{ reclamation.id }}</p>
-        <p><strong>Objet :</strong> {{ reclamation.Objet }}</p>
-        <p><strong>Description :</strong> {{ reclamation.description }}</p>
-                <p><strong>Statut :</strong> {{ reclamation.statut }}</p>
-
+    <div class="card p-4 mt-3 shadow-sm">
+        <p><strong>Objet :</strong> {{ reclamation.objet }}</p>
+        <p><strong>Description :</strong></p>
+        <p class="border rounded p-2 bg-light">{{ reclamation.description|default('Pas de description') }}</p>
+        <p><strong>Statut :</strong> 
+            <span class="badge {{ reclamation.statut == 'traité' ? 'bg-success' : 'bg-warning' }}">
+                {{ reclamation.statut }}
+            </span>
+        </p>
         <p><strong>Date :</strong> {{ reclamation.dateCreation|date('d/m/Y H:i') }}</p>
-    </div>
 
-    <a href="{{ path('reclamation_Afficher') }}" class="btn btn-secondary mt-3">Retour</a>
-    <a href="{{ path('client_reclamation_pdf', { id: reclamation.id }) }}" class="btn btn-danger">Télécharger PDF</a>
+        <hr>
+
+        <h4>Informations sur le client</h4>
+        <p><strong>Nom :</strong> 
+            {% if reclamation.client %}
+                {{ reclamation.client.nom }} {{ reclamation.client.prenom }}
+            {% else %}
+                <span class="text-muted">Anonyme</span>
+            {% endif %}
+        </p>
+        <p><strong>Email :</strong> 
+            {% if reclamation.client %}
+                {{ reclamation.client.email }}
+            {% else %}
+                <span class="text-muted">--</span>
+            {% endif %}
+        </p>
+
+        {# ========================================= #}
+        {# 🔔 SECTION RÉPONSE SI ELLE EXISTE #}
+        {# ========================================= #}
+        {% if reclamation.yes %}
+            <hr class="my-4">
+            <div class="alert alert-info">
+                <h4 class="alert-heading">
+                    <i class="bi bi-reply-fill"></i> Réponse de l'administrateur
+                </h4>
+                
+                <div class="mt-3">
+                    <p><strong>Répondu par :</strong> 
+                        {% if reclamation.yes.admin %}
+                            {{ reclamation.yes.admin.nom }} {{ reclamation.yes.admin.prenom }}
+                        {% else %}
+                            <span class="text-muted">Administrateur</span>
+                        {% endif %}
+                    </p>
+                    
+                    <p><strong>Date de réponse :</strong> 
+                        {{ reclamation.yes.dateCreation|date('d/m/Y à H:i') }}
+                    </p>
+                    
+                    <hr>
+                    
+                    <p><strong>Contenu de la réponse :</strong></p>
+                    <div class="border rounded p-3 bg-light">
+                        {{ reclamation.yes.contenu|nl2br }}
+                    </div>
+
+                    {# Section réactions (si vous l'utilisez) #}
+                    {% if reclamation.yes.reactions is defined %}
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="bi bi-hand-thumbs-up"></i> 
+                                {{ reclamation.yes.reactions|filter(r => r.type == 'like')|length }} likes
+                                &nbsp;&nbsp;
+                                <i class="bi bi-hand-thumbs-down"></i> 
+                                {{ reclamation.yes.reactions|filter(r => r.type == 'dislike')|length }} dislikes
+                            </small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning mt-4">
+                <i class="bi bi-hourglass-split"></i> 
+                <strong>En attente de réponse</strong>
+                <p class="mb-0 mt-2">Votre réclamation est en cours de traitement. Vous serez notifié dès qu'une réponse sera disponible.</p>
+            </div>
+        {% endif %}
+
+        <div class="mt-4">
+            <a href="{{ path('reclamation_Afficher') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+            <a href="{{ path('client_reclamation_pdf', { id: reclamation.id }) }}" class="btn btn-danger">
+                <i class="bi bi-file-pdf"></i> Télécharger PDF
+            </a>
+        </div>
+    </div>
 </div>
+
+<style>
+    .alert-info {
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196F3;
+    }
+    
+    .alert-warning {
+        background-color: #fff3cd;
+        border-left: 4px solid #ffc107;
+    }
+</style>
 {% endblock %}

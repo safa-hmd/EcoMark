@@ -1,0 +1,155 @@
+{# templates/vendeur/sms/test.html.twig #}
+{% extends 'VendeurT/BO.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1>🧪 Test du Service SMS</h1>
+    
+    {# Afficher les messages flash #}
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+    
+    {% for message in app.flashes('warning') %}
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+    
+    <div class="alert alert-{{ resultat.service_actif ? 'success' : 'warning' }}">
+        <h5>Mode: {{ resultat.mode }}</h5>
+        <p>
+            {% if resultat.service_actif %}
+                ✅ Le service SMS Twilio est actif et configuré.
+            {% else %}
+                
+            {% endif %}
+        </p>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5>Résultat du test - {{ resultat.test_date|date('d/m/Y H:i:s') }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-info text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ resultat.vendeurs_configures }}</h3>
+                            <p>Vendeurs configurés</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-{{ resultat.resultat_test.statut == 'success' ? 'success' : 'danger' }} text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ resultat.resultat_test.sms_envoyes }}</h3>
+                            <p>SMS {{ resultat.resultat_test.statut == 'success' ? 'envoyés' : 'échoués' }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-secondary text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ resultat.resultat_test.stock }}</h3>
+                            <p>Stock test</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h5>Détails du test:</h5>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th style="width: 200px;">Produit de test:</th>
+                        <td>{{ resultat.resultat_test.produit }}</td>
+                    </tr>
+                    <tr>
+                        <th>Stock:</th>
+                        <td><span class="badge bg-danger">{{ resultat.resultat_test.stock }} unités</span> (CRITIQUE)</td>
+                    </tr>
+                    <tr>
+                        <th>Mode d'envoi:</th>
+                        <td><span class="badge bg-{{ resultat.resultat_test.mode == 'REEL' ? 'success' : 'warning' }}">{{ resultat.resultat_test.mode }}</span></td>
+                    </tr>
+                    <tr>
+                        <th>SMS envoyés:</th>
+                        <td>{{ resultat.resultat_test.sms_envoyes }}</td>
+                    </tr>
+                    <tr>
+                        <th>Destinataires:</th>
+                        <td>
+                            <ul class="mb-0">
+                                {% for destinataire in resultat.resultat_test.destinataires %}
+                                <li>{{ destinataire }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Statut:</th>
+                        <td>
+                            <span class="badge bg-{{ resultat.resultat_test.statut == 'success' ? 'success' : 'danger' }}">
+                                {{ resultat.resultat_test.statut|upper }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="mt-4">
+                <h6>Message SMS envoyé:</h6>
+                <div class="alert alert-light border">
+                    <pre class="mb-0">🚨 ALERTE STOCK EcoMarket
+Produit: {{ resultat.resultat_test.produit }}
+Stock: {{ resultat.resultat_test.stock }} unités (CRITIQUE)
+Prix: 19.99€
+👉 Action: Réapprovisionnement urgent!
+--
+Système automatisé EcoMarket</pre>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{{ path('app_vendeur_sms_alertes') }}" class="btn btn-primary">
+                    <i class="fas fa-chart-bar"></i> Voir le rapport complet des stocks
+                </a>
+                <a href="{{ path('app_vendeur_sms_config') }}" class="btn btn-secondary">
+                    <i class="fas fa-cog"></i> Configuration SMS
+                </a>
+                <button onclick="window.location.reload()" class="btn btn-warning">
+                    <i class="fas fa-redo"></i> Relancer le test
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5>📝 Logs </h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <strong>Information:</strong> 
+                {% if resultat.service_actif %}
+                    Les SMS ont été envoyés via Twilio. Vérifiez les téléphones des destinataires configurés.
+                {% else %}
+                    
+                    <div class="mt-2">
+                        <code>TWILIO_SID=AC1c87be31e2be4beacb0ac9da9b133dfb</code><br>
+                        <code>TWILIO_AUTH_TOKEN=65329e2031799a2e1cc9049bbe72e606</code><br>
+                        <code>TWILIO_PHONE_NUMBER=+21651908685</code>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

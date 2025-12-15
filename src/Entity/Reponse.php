@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ReponseRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -17,12 +19,7 @@ class Reponse
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
-    #[Assert\Length(
-        min: 10,
-        max: 200,
-        minMessage: "La description doit contenir au moins {{ limit }} caractères.",
-        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
-    )]
+    #[Assert\Length(min: 10, max: 200)]
     private ?string $contenu = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -36,9 +33,13 @@ class Reponse
     #[ORM\JoinColumn(nullable: true)]
     private ?User $admin = null;
 
+    #[ORM\OneToMany(mappedBy: 'reponse', targetEntity: ReactionReponse::class, cascade: ['remove'])]
+    private Collection $reactions;
+
     public function __construct()
     {
         $this->dateCreation = new \DateTime();
+        $this->reactions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -51,7 +52,7 @@ class Reponse
         return $this->contenu;
     }
 
-    public function setContenu(string $contenu): static
+    public function setContenu(?string $contenu): static
     {
         $this->contenu = $contenu;
         return $this;
@@ -62,7 +63,7 @@ class Reponse
         return $this->dateCreation;
     }
 
-    public function setDateCreation(\DateTime $dateCreation): static
+    public function setDateCreation(?\DateTime $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
         return $this;
@@ -73,7 +74,7 @@ class Reponse
         return $this->reclamation;
     }
 
-    public function setReclamation(?Reclamation $reclamation): static
+    public function setReclamation(Reclamation $reclamation): static
     {
         $this->reclamation = $reclamation;
         return $this;
@@ -87,6 +88,32 @@ class Reponse
     public function setAdmin(?User $admin): static
     {
         $this->admin = $admin;
+        return $this;
+    }
+
+    public function getReactions(): Collection
+    {
+        return $this->reactions;
+    }
+
+    public function addReaction(ReactionReponse $reaction): static
+    {
+        if (!$this->reactions->contains($reaction)) {
+            $this->reactions->add($reaction);
+            $reaction->setReponse($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReaction(ReactionReponse $reaction): static
+    {
+        if ($this->reactions->removeElement($reaction)) {
+            if ($reaction->getReponse() === $this) {
+                $reaction->setReponse(null);
+            }
+        }
+
         return $this;
     }
 }

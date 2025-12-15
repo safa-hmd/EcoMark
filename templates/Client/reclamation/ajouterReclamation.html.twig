@@ -29,17 +29,18 @@
 
             <div class="col-md-12 position-relative">
     <label class="form-label">Objet <strong class="text-danger">*</strong></label>
-    {{ form_widget(form.Objet, {
+    {{ form_widget(form.objet, {
         'attr': {
             'class': 'form-control',
             'placeholder': 'Entrez l’objet',
             'required': true,
             'minlength': 5,
-            'maxlength': 10
+            'maxlength': 10,
+            'spellcheck': true
         }
     }) }}
     <div class="text-danger">
-        {{ form_errors(form.Objet) }}
+        {{ form_errors(form.objet) }}
     </div>
 </div>
 
@@ -52,7 +53,8 @@
             'required': true,
             'rows': 5,
             'minlength': 10,
-            'maxlength': 200
+            'maxlength': 200,
+            'spellcheck': true
         }
     }) }}
     <div class="text-danger">
@@ -66,6 +68,8 @@
 
             <div class="col-12 mt-3 d-flex justify-content-center">
                 <button class="btn btn-primary text-uppercase" type="submit">Envoyer Réclamation</button>
+                                <a href="{{ path('reclamation_Afficher') }}" class="btn btn-secondary">Retour</a>
+
             </div>
 
             {{ form_end(form) }}

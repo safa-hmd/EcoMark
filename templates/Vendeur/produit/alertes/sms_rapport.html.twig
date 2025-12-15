@@ -1,0 +1,93 @@
+{# templates/vendeur/alertes/sms_rapport.html.twig #}
+{% extends 'VendeurT/BO.html.twig' %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1>📱 Alertes SMS des Stocks</h1>
+    
+    <div class="alert alert-{{ service_actif ? 'success' : 'warning' }}">
+        <h5>Service SMS: {{ service_actif ? '✅ ACTIF' : '⚠️ SIMULATION' }}</h5>
+        <p>
+            {% if service_actif %}
+                Les SMS sont envoyés via Twilio aux vendeurs configurés.
+            {% else %}
+                <strong>Mode simulation:</strong> Les SMS sont loggés mais non envoyés.
+                Configurez Twilio dans .env pour activer les vrais SMS.
+            {% endif %}
+        </p>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h5>Rapport du scan: {{ rapport.date_scan|date('d/m/Y H:i') }}</h5>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ rapport.total_produits }}</h3>
+                            <p>Produits scannés</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-danger text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ rapport.produits_critiques|length }}</h3>
+                            <p>Alertes critiques</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body text-center">
+                            <h3>{{ rapport.total_sms_envoyes }}</h3>
+                            <p>SMS envoyés</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if rapport.produits_critiques|length > 0 %}
+            <h5>Détails des alertes:</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Stock</th>
+                        <th>SMS envoyés</th>
+                        <th>Destinataires</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for alerte in rapport.produits_critiques %}
+                    <tr class="{{ alerte.statut == 'success' ? 'table-success' : 'table-warning' }}">
+                        <td>{{ alerte.produit }}</td>
+                        <td><span class="badge bg-danger">{{ alerte.stock }}</span></td>
+                        <td>{{ alerte.sms_envoyes }}</td>
+                        <td>{{ alerte.destinataires|join(', ') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-check-circle"></i> Aucun produit en stock critique !
+            </div>
+            {% endif %}
+            
+            <div class="mt-3">
+                <a href="{{ path('app_vendeur_test_sms') }}" class="btn btn-primary">
+                    <i class="fas fa-sms"></i> Envoi SMS
+                </a>
+                <form method="POST" action="{{ path('app_vendeur_sms_alertes') }}" class="d-inline">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-sync-alt"></i> Scanner à nouveau
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

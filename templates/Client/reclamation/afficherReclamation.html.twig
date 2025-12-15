@@ -11,100 +11,200 @@
         </div>
     {% endfor %}
 {% endfor %}
+
 <style>
-    .reclamation-list-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 70vh;
-        padding: 20px;
-    }
+.floating-btn {
+    position: fixed;      
+    bottom: 30px;          
+    right: 30px;        
+    padding: 12px 20px;    
+    border-radius: 50px;   
+    background-color: #28a745; 
+    color: #fff;          
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2); 
+    z-index: 9999;         
+    text-decoration: none; 
+    transition: transform 0.2s;
+}
 
-    .reclamation-card {
-        width: 100%;
-        max-width: 600px;
-        background: #fff;
-        box-shadow: 0 0 15px rgba(0,0,0,0.1);
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 10px;
-        position: relative;
-    }
+.floating-btn:hover {
+    transform: translateY(-3px); 
+    background-color: #218838;   
+}
 
-    .reclamation-card h5 {
-        margin-bottom: 10px;
-        font-weight: bold;
-    }
+.reclamation-list-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 70vh;
+    padding: 20px;
+}
 
-    .reclamation-card p {
-        margin-bottom: 5px;
-    }
+.reclamation-card {
+    width: 100%;
+    max-width: 600px;
+    background: #fff;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    position: relative;
+}
 
-    .reclamation-card .date {
-        font-size: 0.85rem;
-        color: #888;
-    }
+.reclamation-card h5 {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
 
-    .reclamation-card .actions {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-    }
+.reclamation-card p {
+    margin-bottom: 5px;
+}
 
-    .reclamation-card .actions a {
-        margin-left: 5px;
-        padding: 5px 10px;
-        font-size: 0.8rem;
-        border-radius: 5px;
-        text-decoration: none;
-        color: #fff;
-    }
+.reclamation-card .date {
+    font-size: 0.85rem;
+    color: #888;
+}
 
-    .btn-detail { background-color: #17a2b8; }
-    .btn-modifier { background-color: #ffc107; }
-    .btn-supprimer { background-color: #dc3545; }
+.reclamation-card .actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.reclamation-card .actions a {
+    margin-left: 5px;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.btn-detail { background-color: #17a2b8; }
+.btn-modifier { background-color: #ffc107; }
+.btn-supprimer { background-color: #dc3545; }
+
+/* Styles Like/Dislike */
+.reaction-buttons {
+    margin-top: 10px;
+}
+
+.btn-like, .btn-dislike {
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: 0.2s;
+    color: #888;
+    margin-right: 5px;
+}
+
+.btn-like.active { color: #007bff; } /* bleu */
+.btn-dislike.active { color: #dc3545; } /* rouge */
+
+.reaction-buttons span {
+    margin-right: 15px;
+    font-weight: bold;
+}
 </style>
+
+<script src="https://use.fontawesome.com/fe459689b4.js"></script>
+<a href="{{ path('reclamation_ajoutRec') }}" class="floating-btn">Ajouter Reclamation</a>
+
 
 <div class="reclamation-list-wrapper">
     <h2 class="title-2 text-center mb-4">Liste des Réclamations</h2>
 
-
-
-
     {% for reclamation in reclamations %}
         <div class="reclamation-card">
-            <h5>{{ reclamation.Objet }}</h5>
-            <p>{{ reclamation.description }}</p>
-                        <p>{{ reclamation.statut }}</p>
+            <p><strong>Objet :</strong> {{ reclamation.Objet }}</p>
+            <p><strong>Description :</strong> {{ reclamation.description }}</p>
+            <p><strong>Statut :</strong> {{ reclamation.statut }}</p>
+            <p class="date"><strong>Créée le: </strong> {{ reclamation.dateCreation|date('d/m/Y H:i') }}</p>
 
-            <p class="date">Créée le: {{ reclamation.dateCreation|date('d/m/Y H:i') }}</p>
-           {% if reclamation.yes %}
-    <p class="reponse">
-        Réponse : {{ reclamation.yes.Contenu }} <br>
-        <small class="text-muted">
-            Date de réponse : {{ reclamation.yes.dateCreation ? reclamation.yes.dateCreation|date('d/m/Y H:i') : 'Non défini' }}
-        </small>
-    </p>
-{% else %}
-    <p class="reponse text-warning">Pas encore de réponse</p>
-{% endif %}
+            {% if reclamation.yes %}
+                <p class="reponse">
+                   <strong> Réponse : </strong> {{ reclamation.yes.Contenu }} <br>
+                    <small class="text-muted">
+                     <strong>   Date de réponse :</strong> {{ reclamation.yes.dateCreation ? reclamation.yes.dateCreation|date('d/m/Y H:i') : 'Non défini' }}
+                    </small>
+                </p>
 
+                <div class="reaction-buttons" data-id="{{ reclamation.yes.id }}">
+                    <button class="btn-like {% if reclamation.yes.reactions|filter(r => r.user == app.user and r.type == 'like')|length %}active{% endif %}">
+                        <i class="fa fa-thumbs-up fa-lg"></i>
+                    </button>
+                    <span class="likes-count">{{ reclamation.yes.reactions|filter(r => r.type == 'like')|length }}</span>
+
+                    <button class="btn-dislike {% if reclamation.yes.reactions|filter(r => r.user == app.user and r.type == 'dislike')|length %}active{% endif %}">
+                        <i class="fa fa-thumbs-down fa-lg"></i>
+                    </button>
+                    <span class="dislikes-count">{{ reclamation.yes.reactions|filter(r => r.type == 'dislike')|length }}</span>
+                </div>
+            {% else %}
+                <p class="reponse text-warning">Pas encore de réponse</p>
+            {% endif %}
 
             <div class="actions">
-             <a href="{{ path('reclamation_modifierRec', {'ii': reclamation.id}) }}" class="btn-modifier">Modifier</a>
-             <a href="{{ path('reclamation_det', {'ii': reclamation.id}) }}" class="btn-detail">Détails</a>
-            <a href="{{ path('reclamation_supprimerReclamation', {'ii': reclamation.id}) }}" class="btn-supprimer" 
-                   onclick="return confirm('Voulez-vous vraiment supprimer cette réclamation ?');">Supprimer</a>
+                <a href="{{ path('reclamation_modifierRec', {'ii': reclamation.id}) }}" class="btn-modifier">Modifier</a>
+                <a href="{{ path('reclamation_det', {'ii': reclamation.id}) }}" class="btn-detail">Détails</a>
+                
+     {% if reclamation.statut == 'traité' %}
+        <a href="{{ path('reclamation_supprimerReclamation', {'ii': reclamation.id}) }}" 
+           class="btn-supprimer" 
+           onclick="return confirm('Voulez-vous vraiment supprimer cette réclamation ?');">
+           Supprimer
+        </a>
+    {% endif %}
             </div>
         </div>
     {% else %}
         <p>Aucune réclamation trouvée.</p>
     {% endfor %}
 </div>
+
 <div class="pagination-wrapper mt-4">
     {{ knp_pagination_render(reclamations) }}
 </div>
+                
 
+<a href="{{ path('reclamation_ajoutRec') }}">
+
+<script>
+document.querySelectorAll('.reaction-buttons').forEach(container => {
+    const id = container.dataset.id;
+    const btnLike = container.querySelector('.btn-like');
+    const btnDislike = container.querySelector('.btn-dislike');
+
+    btnLike.addEventListener('click', () => toggleReaction(id, 'like', container, btnLike, btnDislike));
+    btnDislike.addEventListener('click', () => toggleReaction(id, 'dislike', container, btnDislike, btnLike));
+});
+
+function toggleReaction(id, type, container, btn, otherBtn) {
+    let url = type === 'like'
+        ? "{{ path('reclamation_reaction_toggle', {'id': 'ID_PLACEHOLDER', 'type': 'like'}) }}".replace('ID_PLACEHOLDER', id)
+        : "{{ path('reclamation_reaction_toggle', {'id': 'ID_PLACEHOLDER', 'type': 'dislike'}) }}".replace('ID_PLACEHOLDER', id);
+
+    fetch(url, {
+        
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        container.querySelector('.likes-count').textContent = data.likes;
+        container.querySelector('.dislikes-count').textContent = data.dislikes;
+
+        if (type === 'like') {
+            btn.classList.toggle('active');
+            otherBtn.classList.remove('active');
+        } else {
+            btn.classList.toggle('active');
+            otherBtn.classList.remove('active');
+        }
+    })
+    .catch(err => console.error(err));
+}
+</script>
 
 {% endblock %}
-

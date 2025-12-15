@@ -168,7 +168,7 @@
                     <a class="sidebar-link" href="javascript:void(0)">
                         <h6 class="f-w-600">Users</h6>
                     </a>
-                    <ul class="sidebar-submenu">
+                    <ul class="sidebar-submenu"style="list-style:none; padding-left:20px; display:block; margin:5px 0 10px 0;>
                         <li><a href="{{ path('profilAdmin') }}">Users Profile</a></li>
                         <li><a href="{{ path('profilAdmin_edit', {id: app.user.id}) }}">Modifier Profil</a></li>
                     </ul>
@@ -198,7 +198,7 @@
                     <a class="sidebar-link" href="javascript:void(0)">
                         <h6 class="f-w-600">Evenement</h6>
                     </a>
-                    <ul class="sidebar-submenu">
+                    <ul class="sidebar-submenu"style="list-style:none; padding-left:20px; display:block; margin:5px 0 10px 0;>
                         <li><a href="{{ path('admin_evenement_ajout') }}">Ajouter Event</a></li>
                         <li><a href="{{ path('affiche_admin') }}">Consulter Event</a></li>
                     </ul>
@@ -231,12 +231,12 @@
         </div>
         <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
     </aside>
-    
+    {% endblock %}
     <!-- Contenu principal -->
     <div class="page-body">
         {% block content %}{% endblock %}
     </div>
-    {% endblock %}
+    
 </div>
 
 <footer class="footer"> 

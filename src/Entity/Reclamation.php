@@ -23,7 +23,7 @@ class Reclamation
         minMessage: "L'objet doit contenir au moins {{ limit }} caractères.",
         maxMessage: "L'objet ne peut pas dépasser {{ limit }} caractères."
     )]
-    private ?string $Objet = null;
+    private ?string $objet = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
@@ -64,21 +64,22 @@ class Reclamation
 
     public function getObjet(): ?string
     {
-        return $this->Objet;
+
+        return $this->objet;
+
     }
 
-    public function setObjet(string $Objet): static
-    {
-        $this->Objet = $Objet;
-        return $this;
-    }
-
+   public function setObjet(?string $objet): static
+{
+    $this->objet = $objet;
+    return $this;
+}
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
         return $this;
@@ -135,10 +136,7 @@ class Reclamation
 
     public function setReponse(?Reponse $reponse): static
     {
-        // unset the owning side of the relation if necessary
-        if ($reponse === null && $this->reponse !== null) {
-            $this->reponse->setReclamation(null);
-        }
+        
 
         // set the owning side of the relation if necessary
         if ($reponse !== null && $reponse->getReclamation() !== $this) {

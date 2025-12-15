@@ -10,9 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-
-final class Version20251205235733 extends AbstractMigration
-
+final class Version20251210122944 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -22,6 +20,7 @@ final class Version20251205235733 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
+        $this->addSql('CREATE TABLE censored_text (id INT AUTO_INCREMENT NOT NULL, text_hash VARCHAR(32) NOT NULL, original_text LONGTEXT NOT NULL, censored_text LONGTEXT NOT NULL, has_bad_words TINYINT NOT NULL, created_at DATETIME NOT NULL, last_used_at DATETIME DEFAULT NULL, usage_count INT NOT NULL, UNIQUE INDEX UNIQ_94A8BEF8D6C61C8D (text_hash), INDEX idx_text_hash (text_hash), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE commande (id INT AUTO_INCREMENT NOT NULL, statut VARCHAR(50) NOT NULL, date_commande DATETIME NOT NULL, montant_total DOUBLE PRECISION NOT NULL, produits LONGTEXT DEFAULT NULL, adresse_livraison VARCHAR(255) NOT NULL, ville VARCHAR(100) NOT NULL, code_postal VARCHAR(10) NOT NULL, methode_paiement VARCHAR(50) NOT NULL, user_id INT NOT NULL, INDEX IDX_6EEAA67DA76ED395 (user_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE evenement (id INT AUTO_INCREMENT NOT NULL, titre VARCHAR(255) NOT NULL, description VARCHAR(255) NOT NULL, date_event DATETIME DEFAULT NULL, lieu VARCHAR(255) NOT NULL, image VARCHAR(255) DEFAULT NULL, capacite VARCHAR(255) DEFAULT NULL, created_at DATETIME NOT NULL, PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
         $this->addSql('CREATE TABLE livraison (id INT AUTO_INCREMENT NOT NULL, adresse VARCHAR(255) NOT NULL, date_livraison DATETIME NOT NULL, statut VARCHAR(255) NOT NULL, numero_suivi VARCHAR(100) NOT NULL, transporteur VARCHAR(100) NOT NULL, frais_livraison DOUBLE PRECISION NOT NULL, commande_id INT DEFAULT NULL, UNIQUE INDEX UNIQ_A60C9F1F82EA2E54 (commande_id), PRIMARY KEY (id)) DEFAULT CHARACTER SET utf8mb4');
@@ -57,6 +56,7 @@ final class Version20251205235733 extends AbstractMigration
         $this->addSql('ALTER TABLE reclamation DROP FOREIGN KEY FK_CE606404642B8210');
         $this->addSql('ALTER TABLE reponse DROP FOREIGN KEY FK_5FB6DEC72D6BA2D9');
         $this->addSql('ALTER TABLE reponse DROP FOREIGN KEY FK_5FB6DEC7642B8210');
+        $this->addSql('DROP TABLE censored_text');
         $this->addSql('DROP TABLE commande');
         $this->addSql('DROP TABLE evenement');
         $this->addSql('DROP TABLE livraison');

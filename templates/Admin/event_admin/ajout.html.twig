@@ -5,6 +5,7 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('BO/styleadmin.css') }}">
 {% endblock %}
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
 
 {{ parent() }}
 
@@ -27,9 +28,12 @@
 
         {{ form_row(form.lieu, {'label': "Lieu", 'attr': {'class': 'form-control'}}) }}
 
-        {{ form_row(form.image, {'label': "Image", 'attr': {'class': 'form-control'}}) }}
+        
 
         {{ form_row(form.capacite, {'label': "Capacité", 'attr': {'class': 'form-control'}}) }}
+
+        {#{{ form_row(form.image, {'label': "Image", 'attr': {'class': 'form-control'}}) }}#} 
+       {{ form_row(form.promptIA) }}
 
         {{ form_row(form.createdAt, {'label': "Date de création", 'attr': {'class': 'form-control'}}) }}
 
