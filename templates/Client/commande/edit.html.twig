@@ -68,6 +68,15 @@
             <div class="form-field">
                 {{ form_label(form.adresseLivraison, 'Adresse complète *') }}
                 {{ form_widget(form.adresseLivraison, {'attr': {'class': 'form-input', 'placeholder': 'Ex: 123 Rue de la Paix, Appartement 4B'}}) }}
+                {# --- BOUTON POUR MODIFIER L’ADRESSE SUR LA CARTE --- #}
+<div style="margin: 10px 0;">
+    <a href="{{ path('client_commande_carte_livraison', {'id': commande.id}) }}"
+       class="btn btn-primary"
+       style="background:#3498db; color:white; padding:8px 15px; border-radius:5px;">
+        📍 Modifier l'adresse sur la carte
+    </a>
+</div>
+
                 <div class="error-container">
                     {{ form_errors(form.adresseLivraison) }}
                 </div>

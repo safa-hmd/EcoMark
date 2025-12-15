@@ -11,16 +11,16 @@
         <p class="text-muted">Liste complète des livraisons</p>
     </div>
 
-    {# ✅ Affichage des messages flash #}
+    {# Messages flash #}
     {% for message in app.flashes('success') %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show">
             <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     {% endfor %}
 
     {% for message in app.flashes('error') %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -28,11 +28,24 @@
 
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-truck"></i> Liste des Livraisons</h5>
-            <a href="{{ path('app_livraison_new') }}" class="btn btn-light btn-sm">
-                <i class="bi bi-plus-circle"></i> Nouvelle Livraison
-            </a>
+            <h5 class="mb-0">
+                <i class="bi bi-truck"></i> Liste des Livraisons
+            </h5>
+
+            {# ✅ BOUTONS AMÉLIORÉS #}
+            <div class="d-flex gap-2">
+                <a href="{{ path('admin_stats') }}"
+                   class="btn btn-sm btn-stats">
+                    <i class="bi bi-bar-chart-line"></i> Statistiques
+                </a>
+
+                <a href="{{ path('app_livraison_new') }}"
+                   class="btn btn-sm btn-new">
+                    <i class="bi bi-plus-circle"></i> Nouvelle Livraison
+                </a>
+            </div>
         </div>
+
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-hover table-striped mb-0">
@@ -40,7 +53,6 @@
                         <tr>
                             <th>N° Livraison</th>
                             <th>N° Commande</th>
-                            {# ✅ NOUVEAU : Colonne Client #}
                             <th>Client</th>
                             <th>Adresse</th>
                             <th>Date de Livraison</th>
@@ -55,105 +67,49 @@
                     {% for livraison in livraisons %}
                         <tr>
                             <td><strong>#{{ livraison.id }}</strong></td>
-                            
-                            {# ✅ Affichage du numéro de commande #}
+
                             <td>
                                 {% if livraison.commande %}
-                                    <a href="{{ path('app_commande_show', {'id': livraison.commande.id}) }}" 
-                                       class="text-decoration-none" 
-                                       title="Voir la commande">
-                                        <span class="badge bg-info">Commande #{{ livraison.commande.id }}</span>
-                                    </a>
+                                    <span class="badge bg-info">Commande #{{ livraison.commande.id }}</span>
                                 {% else %}
                                     <span class="text-muted">N/A</span>
                                 {% endif %}
                             </td>
 
-                            {# ✅ NOUVEAU : Affichage du client via commande.user #}
                             <td>
                                 {% if livraison.commande and livraison.commande.user %}
-                                    <div class="d-flex align-items-center">
-                                        <div class="customer-avatar me-2">
-                                            {{ livraison.commande.user.nom|first|upper }}{{ livraison.commande.user.prenom|first|upper }}
-                                        </div>
-                                        <div>
-                                            <strong>{{ livraison.commande.user.nom }} {{ livraison.commande.user.prenom }}</strong><br>
-                                            <small class="text-muted">{{ livraison.commande.user.email }}</small>
-                                        </div>
-                                    </div>
+                                    <strong>{{ livraison.commande.user.nom }} {{ livraison.commande.user.prenom }}</strong><br>
+                                    <small class="text-muted">{{ livraison.commande.user.email }}</small>
                                 {% else %}
                                     <span class="text-muted">Client inconnu</span>
                                 {% endif %}
                             </td>
 
-                            <td>
-                                <div class="text-truncate" style="max-width: 200px;" title="{{ livraison.adresse }}">
-                                    📍 {{ livraison.adresse }}
-                                </div>
+                            <td class="text-truncate" style="max-width:200px">
+                                📍 {{ livraison.adresse }}
                             </td>
 
-                            <td>
-                                {{ livraison.dateLivraison ? livraison.dateLivraison|date('d/m/Y') : 'Non définie' }}
-                            </td>
-
-                            {# ✅ Badge coloré pour le statut #}
-                            <td>
-                                {% if livraison.statut == 'en_preparation' %}
-                                    <span class="badge bg-warning text-dark">
-                                        <i class="bi bi-hourglass-split"></i> En préparation
-                                    </span>
-                                {% elseif livraison.statut == 'expediee' %}
-                                    <span class="badge bg-primary">
-                                        <i class="bi bi-truck"></i> Expédiée
-                                    </span>
-                                {% elseif livraison.statut == 'livree' %}
-                                    <span class="badge bg-success">
-                                        <i class="bi bi-check-circle"></i> Livrée
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-secondary">{{ livraison.statut }}</span>
-                                {% endif %}
-                            </td>
+                            <td>{{ livraison.dateLivraison|date('d/m/Y') }}</td>
 
                             <td>
-                                <span class="text-primary">
-                                    🚛 {{ livraison.transporteur }}
-                                </span>
+                                <span class="badge bg-success">Expédiée</span>
                             </td>
 
-                            <td>
-                                <code class="text-danger">{{ livraison.numeroSuivi }}</code>
-                            </td>
+                            <td>🚛 {{ livraison.transporteur }}</td>
 
-                            <td>
-                                <strong>{{ livraison.fraisLivraison|number_format(2, ',', ' ') }} €</strong>
-                            </td>
+                            <td><code>{{ livraison.numeroSuivi }}</code></td>
+
+                            <td><strong>{{ livraison.fraisLivraison|number_format(2, ',', ' ') }} €</strong></td>
 
                             <td class="text-center">
-                                <div class="btn-group" role="group">
-                                    <a href="{{ path('app_livraison_show', {'id': livraison.id}) }}" 
-                                       class="btn btn-sm btn-info" 
-                                       title="Voir les détails">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="{{ path('app_livraison_edit', {'id': livraison.id}) }}" 
-                                       class="btn btn-sm btn-warning" 
-                                       title="Modifier">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    {% else %}
-                        <tr>
-                            <td colspan="10" class="text-center py-5">
-                                <div class="empty-state">
-                                    <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
-                                    <p class="text-muted mt-3 mb-3">Aucune livraison trouvée</p>
-                                    <a href="{{ path('app_livraison_new') }}" class="btn btn-primary">
-                                        <i class="bi bi-plus-circle"></i> Créer la première livraison
-                                    </a>
-                                </div>
+                                <a href="{{ path('app_livraison_show', {'id': livraison.id}) }}"
+                                   class="btn btn-sm btn-info">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ path('app_livraison_edit', {'id': livraison.id}) }}"
+                                   class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -161,122 +117,33 @@
                 </table>
             </div>
         </div>
-        
-        {% if livraisons|length > 0 %}
-        <div class="card-footer bg-light">
-            <div class="d-flex justify-content-between align-items-center">
-                <span class="text-muted">
-                    <strong>{{ livraisons|length }}</strong> livraison(s) au total
-                </span>
-                <a href="{{ path('app_livraison_new') }}" class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus-circle"></i> Nouvelle Livraison
-                </a>
-            </div>
-        </div>
-        {% endif %}
     </div>
 </div>
 
+{# ===== STYLES BOUTONS ===== #}
 <style>
-.page-header {
-    padding-bottom: 1rem;
-    border-bottom: 2px solid #dee2e6;
-}
-
-.customer-avatar {
-    width: 35px;
-    height: 35px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 0.75rem;
-    flex-shrink: 0;
-}
-
-.table-responsive {
-    overflow-x: auto;
-}
-
-.table th {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.875rem;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-}
-
-.table td {
-    vertical-align: middle;
-    font-size: 0.9rem;
-}
-
-.text-truncate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-code {
-    background: #f8f9fa;
-    padding: 0.25rem 0.5rem;
-    border-radius: 3px;
-    font-size: 0.85rem;
-}
-
-.badge {
-    font-size: 0.8rem;
-    padding: 0.4em 0.8em;
+.btn-stats {
+    background: #16a085;
+    color: #fff;
+    border-radius: 20px;
+    padding: 6px 14px;
     font-weight: 600;
 }
-
-.btn-group .btn {
-    padding: 0.25rem 0.5rem;
+.btn-stats:hover {
+    background: #138d75;
+    color: #fff;
 }
 
-.empty-state {
-    padding: 2rem;
+.btn-new {
+    background: #4c84ff;
+    color: #fff;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-weight: 600;
 }
-
-.alert {
-    border-radius: 8px;
-    border: none;
-}
-
-.card {
-    border: none;
-    border-radius: 10px;
-}
-
-.card-header {
-    border-radius: 10px 10px 0 0 !important;
-    padding: 1rem 1.5rem;
-}
-
-.card-footer {
-    border-radius: 0 0 10px 10px;
-    padding: 1rem 1.5rem;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .table {
-        font-size: 0.85rem;
-    }
-    
-    .customer-avatar {
-        width: 30px;
-        height: 30px;
-        font-size: 0.7rem;
-    }
-    
-    .btn-sm {
-        font-size: 0.8rem;
-        padding: 0.25rem 0.5rem;
-    }
+.btn-new:hover {
+    background: #3b6fe0;
+    color: #fff;
 }
 </style>
 

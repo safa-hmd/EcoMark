@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier l'adresse de livraison</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        #map { height: 500px; margin-top: 20px; border-radius: 10px; }
+        .btn { padding: 10px 20px; background: #4a6cff; color:#fff; border-radius:6px; text-decoration:none; }
+    </style>
+</head>
+
+<body>
+
+<h2>📍 Modifier l'adresse de livraison 
+    {% if commande %}
+        – Commande #{{ commande.id }}
+    {% else %}
+        – Nouvelle commande
+    {% endif %}
+</h2>
+
+{% if commande %}
+    <p><strong>Adresse actuelle :</strong><br>{{ commande.adresseLivraison }}</p>
+{% else %}
+    <p><strong>Adresse actuelle :</strong><br><em>Aucune (nouvelle commande)</em></p>
+{% endif %}
+
+<div id="map"></div>
+
+<p id="newAddress" style="margin-top:15px; font-weight:bold; color:#444;">
+    Adresse sélectionnée : <span id="addr">Aucune</span>
+</p>
+
+
+{# 🔥 FORMULAIRE PROPRE #}
+
+{% if mode == 'edit' %}
+<form action="{{ path('client_commande_update_adresse', {id: commande.id}) }}" method="POST">
+{% else %}
+<form action="{{ path('client_commande_update_adresse_new') }}" method="POST">
+{% endif %}
+
+    <input type="hidden" name="adresse" id="adresseInput">
+
+    <button class="btn" type="submit">Confirmer l'adresse</button>
+</form>
+
+
+<script>
+    let map = L.map('map').setView([34.0, 9.0], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    let marker;
+
+    function reverseGeocode(lat, lon) {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const display = data.display_name;
+
+                document.getElementById("addr").textContent = display;
+                document.getElementById("adresseInput").value = display;
+
+                marker.bindPopup(display).openPopup();
+            });
+    }
+
+    map.on('click', function(e) {
+        if (marker) map.removeLayer(marker);
+
+        marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+
+        reverseGeocode(e.latlng.lat, e.latlng.lng);
+    });
+</script>
+
+</body>
+</html>

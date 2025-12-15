@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Sélection de l’adresse – Commande #{{ commande.id }}</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 16px;
+            width: 900px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        #map {
+            height: 450px;
+            border-radius: 12px;
+        }
+
+        .address-box {
+            padding: 12px;
+            background: #f4f4f4;
+            margin-top: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .btn-confirm {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .btn-confirm.enabled {
+            opacity: 1;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<div class="card">
+    <h2>📍 Modifier l'adresse de livraison – Commande #{{ commande.id }}</h2>
+
+    <p>Adresse actuelle :</p>
+    <p id="currentAddress"><strong>{{ commande.adresseLivraison }}</strong></p>
+
+    <div id="map"></div>
+
+    <div class="address-box">
+        Adresse sélectionnée (pas encore confirmée) :  
+        <span id="selectedAddress">Aucune</span>
+    </div>
+
+    <button id="confirmBtn" class="btn-confirm" disabled>Confirmer l'adresse</button>
+</div>
+
+<script>
+    const defaultLat = 36.8065;
+    const defaultLon = 10.1815;
+
+    let map = L.map('map').setView([defaultLat, defaultLon], 12);
+    let marker = null;
+    let adresseSelectionnee = null;
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    async function reverseGeocode(lat, lon) {
+        const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
+
+        const response = await fetch(url, {
+            headers: { "User-Agent": "EcoMarket" }
+        });
+
+        const data = await response.json();
+        return data.display_name || "Adresse introuvable";
+    }
+
+    map.on('click', async function (e) {
+        const lat = e.latlng.lat;
+        const lon = e.latlng.lng;
+
+        if (marker) map.removeLayer(marker);
+
+        marker = L.marker([lat, lon]).addTo(map);
+
+        adresseSelectionnee = await reverseGeocode(lat, lon);
+
+        document.getElementById("selectedAddress").innerText = adresseSelectionnee;
+
+        marker.bindPopup(adresseSelectionnee).openPopup();
+
+        // Activer bouton
+        const btn = document.getElementById("confirmBtn");
+        btn.classList.add("enabled");
+        btn.disabled = false;
+    });
+
+    // 🎯 CONFIRMATION DE L'ADRESSE — ENVOI À SYMFONY
+document.getElementById("confirmBtn").addEventListener("click", function () {
+    if (!adresseSelectionnee) return;
+
+    // Extraire ville + code postal depuis l'adresse retournée
+    let parts = adresseSelectionnee.split(",");
+    let codePostal = "";
+    let ville = "";
+
+    parts.forEach(p => {
+        p = p.trim();
+        if (/^\d{4,5}$/.test(p)) codePostal = p;  // CP
+        if (!ville && isNaN(p) && p.length > 2) ville = p; // Ville
+    });
+
+    // Créer un formulaire pour envoyer à Symfony
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "/mes-commandes/commande/{{ commande.id }}/update-adresse";
+
+    form.innerHTML = `
+        <input type="hidden" name="adresse" value="${adresseSelectionnee}">
+        <input type="hidden" name="ville" value="${ville}">
+        <input type="hidden" name="codePostal" value="${codePostal}">
+    `;
+
+    document.body.appendChild(form);
+    form.submit();
+});
+
+    
+</script>
+
+</body>
+</html>

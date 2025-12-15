@@ -66,12 +66,33 @@
             <h3>Adresse de livraison</h3>
             
             <div class="form-field">
-                {{ form_label(form.adresseLivraison, 'Adresse complète *') }}
-                {{ form_widget(form.adresseLivraison, {'attr': {'class': 'form-input', 'placeholder': 'Ex: 123 Rue de la Paix, Appartement 4B'}}) }}
-                <div class="error-container">
-                    {{ form_errors(form.adresseLivraison) }}
-                </div>
-            </div>
+    {{ form_label(form.adresseLivraison, 'Adresse complète *') }}
+
+    {% set adresseTemp = app.session.get('adresse_new_commande') %}
+
+    {{ form_widget(form.adresseLivraison, {
+        value: adresseTemp is not empty ? adresseTemp : form.adresseLivraison.vars.value,
+        attr: { class: 'form-input' }
+    }) }}
+
+
+
+
+
+
+
+                <div style="margin-bottom: 15px;">
+    <a href="{{ path('client_commande_modifier_adresse_new') }}"
+       class="btn btn-sm btn-primary"
+       style="background: #4a6cff; color:white; border-radius:6px;">
+        📍 Sélectionner sur la carte
+    </a>
+</div>
+
+                 <div class="error-container">
+        {{ form_errors(form.adresseLivraison) }}
+    </div>
+</div>
 
             <div class="form-row">
                 <div class="form-field half">
