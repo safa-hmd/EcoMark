@@ -17,22 +17,12 @@ class Reclamation
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "L'objet ne peut pas être vide.")]
-    #[Assert\Length(
-        min: 5,
-        max: 10,
-        minMessage: "L'objet doit contenir au moins {{ limit }} caractères.",
-        maxMessage: "L'objet ne peut pas dépasser {{ limit }} caractères."
-    )]
+    #[Assert\Length(min: 5, max: 10)]
     private ?string $objet = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: "La description ne peut pas être vide.")]
-    #[Assert\Length(
-        min: 10,
-        max: 200,
-        minMessage: "La description doit contenir au moins {{ limit }} caractères.",
-        maxMessage: "La description ne peut pas dépasser {{ limit }} caractères."
-    )]
+    #[Assert\Length(min: 10, max: 200)]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -50,7 +40,7 @@ class Reclamation
     private ?User $admin = null;
 
     #[ORM\OneToOne(mappedBy: 'reclamation', targetEntity: Reponse::class)]
-    private ?Reponse $reponse = null;
+    private ?Reponse $yes = null;
 
     public function __construct()
     {
@@ -64,16 +54,15 @@ class Reclamation
 
     public function getObjet(): ?string
     {
-
         return $this->objet;
-
     }
 
-   public function setObjet(?string $objet): static
-{
-    $this->objet = $objet;
-    return $this;
-}
+    public function setObjet(?string $objet): static
+    {
+        $this->objet = $objet;
+        return $this;
+    }
+
     public function getDescription(): ?string
     {
         return $this->description;
@@ -129,21 +118,18 @@ class Reclamation
         return $this;
     }
 
-    public function getReponse(): ?Reponse
+    public function getYes(): ?Reponse
     {
-        return $this->reponse;
+        return $this->yes;
     }
 
-    public function setReponse(?Reponse $reponse): static
+    public function setYes(?Reponse $yes): static
     {
-        
-
-        // set the owning side of the relation if necessary
-        if ($reponse !== null && $reponse->getReclamation() !== $this) {
-            $reponse->setReclamation($this);
+        if ($yes !== null && $yes->getReclamation() !== $this) {
+            $yes->setReclamation($this);
         }
 
-        $this->reponse = $reponse;
+        $this->yes = $yes;
         return $this;
     }
 }

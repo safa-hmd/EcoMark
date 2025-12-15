@@ -17,7 +17,7 @@
                 <div class="col-md-6">
                     <div class="input-group">
                         <span class="input-group-text bg-primary border-end-0 text-white">
-                            <i class="fas fa-search"></i>
+                            
                         </span>
                         <input type="text" id="searchInput" class="form-control border-start-0" 
                                placeholder="Rechercher un client..." value="{{ searchTerm }}">
@@ -34,17 +34,21 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Email</th>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Téléphone</th>
-                            <th>Adresse</th>
-                        </tr>
-                    </thead>
-                    {% include 'Admin/GestionUser/_clients_results.html.twig' %}
-                </table>
+    <thead class="table-dark">
+        <tr>
+            <th>Email</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Téléphone</th>
+            <th>Adresse</th>
+        </tr>
+    </thead>
+
+    <tbody id="results">
+        {% include 'Admin/GestionUser/_clients_results.html.twig' %}
+    </tbody>
+</table>
+
             </div>
         </div>
     </div>
@@ -60,11 +64,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const searchTerm = this.value;
         const adminId = {{ admin.id }};
         
-        fetch(`/profilAdmin/${adminId}/mes-clients?search=${encodeURIComponent(searchTerm)}`, {
-            headers: { 
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
+fetch(`/profilAdmin/mes-clients?search=${encodeURIComponent(searchTerm)}`, {
+    headers: { 
+        'X-Requested-With': 'XMLHttpRequest'
+    }
+})
+
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erreur réseau');

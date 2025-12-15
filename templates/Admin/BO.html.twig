@@ -1,214 +1,222 @@
-<!DOCTYPE html>
+
+<!DOCTYPE html >
 <html lang="en">
+  
+<!-- Mirrored from admin.pixelstrap.net/admiro/template/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 20 Jul 2025 09:24:38 GMT -->
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="Admiro admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities."/>
-    <meta name="keywords" content="admin template, Admiro admin template, javascript admin, dashboard template, bootstrap admin template, responsive admin template"/>
+    <meta name="keywords" content="admin template, Admiro admin template, best javascript admin, dashboard template, bootstrap admin template, responsive admin template, web app"/>
     <meta name="author" content="pixelstrap"/>
-    <title>EcoMarket - Admin</title>
-
-    <!-- Favicon-->
+    <title>Admiro - Premium Admin Template</title>
+    <!-- Favicon icon-->
     <link rel="icon" href="{{asset('BO/images/favicon.png')}}" type="image/x-icon"/>
-
-    <!-- Fonts & Icons -->
+    <link rel="shortcut icon" href="{{asset('BO/images/favicon.png')}}" type="image/x-icon"/>
+    <!-- Google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com/"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin=""/>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,200;6..12,300;6..12,400;6..12,500;6..12,600;6..12,700;6..12,800;6..12,900;6..12,1000&amp;display=swap" rel="stylesheet"/>
+    <!-- Flag icon css -->
     <link rel="stylesheet" href="{{asset('BO/css/vendors/flag-icon.css')}}"/>
     <link rel="stylesheet" href="{{asset('BO/css/iconly-icon.css')}}"/>
+    <link rel="stylesheet" href="{{asset('BO/css/bulk-style.css')}}"/>
     <link rel="stylesheet" href="{{asset('BO/css/themify.css')}}"/>
     <link rel="stylesheet" href="{{asset('BO/css/fontawesome-min.css')}}"/>
 
-    <!-- Styles -->
-    <link rel="stylesheet" href="{{asset('BO/css/color-1.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{asset('BO/css/vendors/weather-icons/weather-icons.min.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{asset('BO/css/vendors/scrollbar.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{asset('BO/css/vendors/slick.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{asset('BO/css/vendors/slick-theme.css')}}"/>
+    <!-- App css -->
+    <link id="color" rel="stylesheet" href="{{asset('BO/css/color-1.css" media="screen')}}"/>
     <link rel="stylesheet" href="{{asset('BO/css/style.css')}}"/>
-</head>
+  </head>
 
-<body>
-
-<div class="page-wrapper compact-wrapper" id="pageWrapper">
-<header class="page-header row">
-{% block header %}
-    <div class="logo-wrapper d-flex align-items-center col-auto">
-        <a href="#"><img class="light-logo img-fluid" src="{{asset('BO/images/logo/logo1.png')}}" alt="logo"/></a>
-        <a class="close-btn toggle-sidebar" href="javascript:void(0)">
-            <svg class="svg-color">
-                <use href="{{ asset('BO/svg/iconly-sprite.svg#Category') }}"></use>
-            </svg>
-        </a>
-    </div>
+  <body>
     
-    <div class="page-main-header col">
-        <div class="header-left">
+    <!-- page-wrapper Start-->
+    <!-- tap on top starts-->
+    <div class="tap-top"><i class="iconly-Arrow-Up icli"></i></div>
+    <!-- tap on tap ends-->
+    <!-- loader-->
+  
+    <div class="page-wrapper compact-wrapper" id="pageWrapper"> 
+      <header class="page-header row">
+        {% block header%}
+        <div class="logo-wrapper d-flex align-items-center col-auto"><img class="light-logo img-fluid" src="{{asset('BO/images/logo/logo.png')}}" alt="logo"/><img class="dark-logo img-fluid" src="{{asset('BO/images/logo/logo-dark.png')}}" alt="logo"/></a><a class="close-btn toggle-sidebar" href="javascript:void(0)">
+        </a></div>
+        <div class="page-main-header col">
+          <div class="header-left">
             <form class="form-inline search-full col" action="#" method="get">
-                <div class="form-group w-100">
-                    <div class="Typeahead Typeahead--twitterUsers">
-                        <div class="u-posRelative">
-                            <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text" placeholder="Search Admiro .." name="q" title="" autofocus="autofocus"/>
-                            <div class="spinner-border Typeahead-spinner" role="status"><span class="sr-only">Loading...</span></div><i class="close-search" data-feather="x"></i>
-                        </div>
-                        <div class="Typeahead-menu"></div>
-                    </div>
+              <div class="form-group w-100">
+                <div class="Typeahead Typeahead--twitterUsers">
+                  <div class="u-posRelative">
+                    <input class="demo-input Typeahead-input form-control-plaintext w-100" type="text" placeholder="Search Admiro .." name="q" title="" autofocus="autofocus"/>
+                    <div class="spinner-border Typeahead-spinner" role="status"><span class="sr-only">Loading...</span></div><i class="close-search" data-feather="x"></i>
+                  </div>
+                  <div class="Typeahead-menu"></div>
                 </div>
+              </div>
             </form>
             <div class="form-group-header d-lg-block d-none">
-                <div class="Typeahead Typeahead--twitterUsers">
-                    <div class="u-posRelative d-flex align-items-center"> 
-                        <input class="demo-input py-0 Typeahead-input form-control-plaintext w-100" type="text" placeholder="Type to Search..." name="q" title=""/><i class="search-bg iconly-Search icli"></i>
-                    </div>
+              <div class="Typeahead Typeahead--twitterUsers">
+                <div class="u-posRelative d-flex align-items-center"> 
+                  <input class="demo-input py-0 Typeahead-input form-control-plaintext w-100" type="text" placeholder="Type to Search..." name="q" title=""/>
                 </div>
+              </div>
             </div>
-        </div>
-        
-        <div class="nav-right">
+          </div>
+          <div class="nav-right">
             <ul class="header-right"> 
-                <li class="custom-dropdown">
-                    <div class="translate_wrapper">
-                        <div class="current_lang"><a class="lang" href="javascript:void(0)"><i class="flag-icon flag-icon-us"></i>
-                            <h6 class="lang-txt f-w-700">ENG</h6></a></div>
-                        <ul class="custom-menu profile-menu language-menu py-0 more_lang">
-                            <li class="d-block"><a class="lang" href="#" data-value="English"><i class="flag-icon flag-icon-us"></i>
-                                <div class="lang-txt">English</div></a></li>
-                            <li class="d-block"><a class="lang" href="#" data-value="fr"><i class="flag-icon flag-icon-fr"></i>
-                                <div class="lang-txt">Français</div></a></li>
-                            <li class="d-block"><a class="lang" href="#" data-value="es"><i class="flag-icon flag-icon-es"></i>
-                                <div class="lang-txt">Español</div></a></li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="search d-lg-none d-flex"> <a href="javascript:void(0)">
-                    <svg>
-                        <use href="https://admin.pixelstrap.net/admiro/asset/BO/svg/iconly-sprite.svg#Search"></use>
-                    </svg></a>
-                </li>
-                <li>  
-                    <a class="dark-mode" href="javascript:void(0)">
-                        <svg>
-                            <use href="https://admin.pixelstrap.net/admiro/asset/BO/svg/iconly-sprite.svg#moondark"></use>
-                        </svg>
-                    </a>
-                </li>
-                <li class="full-screen"> 
-                    <a href="javascript:void(0)"> 
-                        <svg>
-                            <use href="https://admin.pixelstrap.net/admiro/asset/BO/svg/iconly-sprite.svg#scanfull"></use>
-                        </svg>
-                    </a>
-                </li>
-                
-                <!-- AJOUTER TON PROFIL ICI -->
-                <li class="profile-nav custom-dropdown">
-                    <div class="user-wrap">
-                        <div class="user-img"><img src="{{asset('BO/images/profile.png')}}" alt="user"/></div>
-                        <div class="user-content">
-                            {% if app.user %}
-                                <h6>{{ app.user.nom }} {{ app.user.prenom }}</h6>
-                                <p class="mb-0">Admin</p>
-                            {% else %}
-                                <h6>Utilisateur</h6>
-                                <p class="mb-0">Non connecté</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="custom-menu overflow-hidden">
-                        <ul class="profile-body">
-                            <li class="d-flex">
-                                <svg class="svg-color">
-                                    <use xlink:href="https://admin.pixelstrap.net/admiro/asset/BO/svg/iconly-sprite.svg#Profile"></use>
-                                </svg>
-                                <a class="ms-2" href="{{ path('profilAdmin') }}">Account</a>
-                            </li>
-                            
-                            {% if app.user %}
-                                <li class="d-flex"> 
-                                    <svg class="svg-color">
-                                        <use href="https://admin.pixelstrap.net/admiro/asset/BO/svg/iconly-sprite.svg#Message"></use>
-                                    </svg>
-                                    <a class="ms-2" href="{{ path('profilAdmin_edit', {id: app.user.id}) }}">Modifier Profil</a>
-                                </li>
-                            {% endif %}
-                            
-                            <li class="d-flex"> 
-                                <svg class="svg-color">
-                                    <use href="https://admin.pixelstrap.net/admiro/asset/BO/svg/iconly-sprite.svg#Login"></use>
-                                </svg>
-                                <a class="ms-2" href="{{ path('app_logout') }}">Déconnexion</a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+              <li class="profile-nav custom-dropdown">
+                <div class="user-wrap">
+                  <div class="user-img"><img src="{{ asset('uploads/photos/' ~ admin.photo) }}" alt="user" /></div>
+                  <div class="user-content">
+                    <h6> {{admin.nom}} {{admin.prenom}}</h6>
+                    <p class="mb-0">Admin</p>
+                  </div>
+                </div>
+                <div class="custom-menu overflow-hidden">
+                  <ul class="profile-body">
+                  <li class="d-flex">
+                     <svg class="svg-color">
+                        <use xlink:href="https://admin.pixelstrap.net/admiro/asset/BO/svg/iconly-sprite.svg#Profile"></use>
+                      </svg>
+                     <a class="ms-2" href="#">Account</a>
+              </li>
+
+                    <li class="d-flex"> 
+                      <svg class="svg-color">
+                        <use href="https://admin.pixelstrap.net/admiro/asset/BO/svg/iconly-sprite.svg#Login"></use>
+                      </svg><a class="ms-2" href="{{path('app_logout')}}">Déconnexion</a>
+                    </li>
+
+                    
+                    
+                  </ul>
+                </div>
+              </li>
             </ul>
+          </div>
         </div>
-    </div>
-{% endblock %}
-</header>
+        {% endblock %}
+      </header>
 
-<!-- Page Body Start-->
-<div class="page-body-wrapper">
-    
-    {% block body %}
-    <!-- Page sidebar start-->
-    <aside class="page-sidebar"> 
-        <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
-        <div class="main-sidebar" id="main-sidebar">
+      <!-- Page Body Start-->
+      <div class="page-body-wrapper">
+        
+        {% block body %}
+        <!-- Page sidebar start-->
+        <aside class="page-sidebar"> 
+          <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+          <div class="main-sidebar" id="main-sidebar">
             <ul class="sidebar-menu" id="simple-bar">
-                <li class="pin-title sidebar-main-title">  
-                    <div> 
-                        <h5 class="sidebar-title f-w-700">Pinned</h5>
-                    </div>
-                </li>
-                <li class="sidebar-main-title">
-                    <div>
-                        <h5 class="sidebar-title">MENU</h5>
-                    </div>
-                </li>
+              <li class="pin-title sidebar-main-title">  
+                <div> 
+                  <h5 class="sidebar-title f-w-700">Pinned</h5>
+                </div>
+              </li>
+              <li class="sidebar-main-title">
+                <div>
+                  <h5  sidebar-title">MENU</h5>
+                </div>
+              </li>
+
+
+                  <li class="sidebar-list">
+          <a class="sidebar-link" href="{{ path('admin_photo_test') }}">
+             <svg class="stroke-icon">
+             </svg>
+             <h6 class="f-w-600">📸 Photo IA</h6>
+          </a>
+      </li>
+
+              
+
+
+
+
+              <li class="sidebar-list">
+    <a class="sidebar-link" href="{{ path('admin_ia_users_index') }}">
+        <svg class="stroke-icon">
+        </svg>
+        <h6 class="f-w-600"> Dashboard IA</h6>
+    </a>
+</li>
+
+               <li class="sidebar-list">
+                 <a class="sidebar-link" href="{{ path('admin_statistiques') }}">
+                  <svg class="stroke-icon">
+                  </svg>
+                  <h6 class="f-w-600">Statistiques </h6></a>
+              </li>
+
+       
+
+              <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+                  <svg class="stroke-icon">
+                  </svg>
+                  <h6 class="f-w-600">Users</h6></a>
+                <ul class="sidebar-submenu">
+                  <li><a href="{{ path('profilAdmin', {id: admin.id}) }}">Users Profile</a></li>
+                  <li><a href="{{ path('profilAdmin_edit', {id: admin.id}) }}">Modifier Profil</a></li>
+                
+                </ul>
+              </li>
+
+              <li class="sidebar-list">
+                 <a class="sidebar-link" href="{{path('admin_mes_clients', {id: admin.id})}}">
+                  <svg class="stroke-icon">
+                  </svg>
+                  <h6 class="f-w-600">Consulter Clients </h6></a>
+              </li>
+
+              <li class="sidebar-list"> <a class="sidebar-link" href="{{path('admin_mes_vendeurs', {id: admin.id})}}"
+                >
+                  <svg class="stroke-icon">
+                  </svg>
+                  <h6 class="f-w-600">Consulter Vendeurs</h6></a></li>
+
+              <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+                  <svg class="stroke-icon">
+                  </svg>
+                  <h6 class="f-w-600">Gestion Réponse Réclamation</h6></i></a>
+                <ul class="sidebar-submenu">
+                  <li> <a href="add-products.html">Consulter Réclamation  </a></li>
+                  <li> <a href="product.html">Ajouter Reponse</a></li>
+                  <li> <a href="product-page.html">Consulter Reponse</a></li>
+                </ul>
+              </li>
+
             
-                <!-- TES LIENS AJOUTÉS ICI -->
-                {% if app.user %}
-                <li class="sidebar-list"> 
-                    <a class="sidebar-link" href="javascript:void(0)">
-                        <h6 class="f-w-600">Users</h6>
-                    </a>
-                    <ul class="sidebar-submenu"style="list-style:none; padding-left:20px; display:block; margin:5px 0 10px 0;>
-                        <li><a href="{{ path('profilAdmin') }}">Users Profile</a></li>
-                        <li><a href="{{ path('profilAdmin_edit', {id: app.user.id}) }}">Modifier Profil</a></li>
-                    </ul>
-                </li>
+             
 
-                <li class="sidebar-list"> 
-                    <a class="sidebar-link" href="{{ path('admin_mes_clients', {id: app.user.id}) }}">
-                        <h6 class="f-w-600">Consulter Clients</h6>
-                    </a>
-                </li>
 
-                <li class="sidebar-list"> 
-                    <a class="sidebar-link" href="{{ path('admin_mes_vendeurs', {id: app.user.id}) }}">
-                        <h6 class="f-w-600">Consulter Vendeurs</h6>
-                    </a>
-                </li>
-                {% endif %}
+              <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+                  <svg class="stroke-icon">
+                  </svg>
+                  <h6 class="f-w-600">Evenement</h6></a>
+                <ul class="sidebar-submenu">
+                 <li> <a href="{{ path('admin_evenement_ajout') }}">Ajouter Event</a></li>
+                <li><a href="{{ path('affiche_admin') }}">Consulter Event</a></li>
+                
+                </ul>
+              </li>
+
 
                 <!-- LIENS EXISTANTS DE LA VERSION DISTANTE -->
                 <li class="sidebar-list"> 
                     <a class="sidebar-link" href="{{ path('reponseafficherReponse') }}">
-                        <h6 class="f-w-600">Traiter réclamation</h6>
+                        <h6 class="f-w-600">Traiter réclamation ({{nbReclamations}}) </h6>
                     </a>
                 </li>
 
-                <li class="sidebar-list"> 
-                    <a class="sidebar-link" href="javascript:void(0)">
-                        <h6 class="f-w-600">Evenement</h6>
-                    </a>
-                    <ul class="sidebar-submenu"style="list-style:none; padding-left:20px; display:block; margin:5px 0 10px 0;>
-                        <li><a href="{{ path('admin_evenement_ajout') }}">Ajouter Event</a></li>
-                        <li><a href="{{ path('affiche_admin') }}">Consulter Event</a></li>
-                    </ul>
-                </li>
 
-                <li class="sidebar-list"> 
-                    <a class="sidebar-link" href="#">
-                        <h6 class="f-w-600">Consulter Produits</h6>
-                    </a>
-                </li>
+              
+             
+
 
                 <li class="sidebar-list"> 
                     <a class="sidebar-link" href="#">
@@ -220,55 +228,70 @@
                     </a>
                 </li>
 
-                <li class="sidebar-list"> 
-                    <a class="sidebar-link" href="{{ path('app_commande_index') }}">
-                        <h6 class="f-w-600">Commandes</h6>
-                    </a>
-                </li>
 
-                <li class="sidebar-list"> 
-                    <a class="sidebar-link" href="{{ path('app_livraison_index') }}">
-                        <h6 class="f-w-600">Livraison</h6>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
-    </aside>
-    {% endblock %}
-    <!-- Contenu principal -->
-    <div class="page-body">
-        {% block content %}{% endblock %}
+
+              
+          
+             
+
+                 <ul class="sidebar-menu" id="simple-bar">
+    <li class="sidebar-list">
+        <a class="sidebar-link" href="{{ path('app_livraison_index') }}">
+            <h6 class="f-w-600">Livraison</h6>
+        </a>
+    </li>
+
+          </div>
+          <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+        </aside>
+          {% endblock %}
+        <!-- Page sidebar end-->
+        
+  
+        
+
+
+        <footer class="footer"> 
+            {% block footer%}
+          <div class="container-fluid">
+            <div class="row"> 
+              <div class="col-md-6 footer-copyright">
+                <p class="mb-0">EcoMarket 2026 © Achetez Vert ,Vivez Mieux.</p>
+              </div>
+          </div>
+          {%endblock%}
+          
+        </footer>
+        
+      </div>
+      
     </div>
+    <script src="{{asset('BO/js/vendors/jquery/jquery.min.js')}}"></script>
+    <script src="{{asset('BO/js/vendors/bootstrap/dist/js/bootstrap.bundle.min.js')}}" defer=""></script>
+    <script src="{{asset('BO/js/vendors/bootstrap/dist/js/popper.min.js')}}" defer=""></script>
+    <script src="{{asset('BO/js/vendors/font-awesome/fontawesome-min.js')}}"></script>
+    <script src="{{asset('BO/js/vendors/feather-icon/feather.min.js')}}"></script>
+    <script src="{{asset('BO/js/vendors/feather-icon/custom-script.js')}}"></script>
+    <script src="{{asset('BO/js/sidebar.js')}}"></script>
+    <script src="{{asset('BO/js/height-equal.js')}}"></script>
+    <script src="{{asset('BO/js/config.js')}}"></script>
+    <script src="{{asset('BO/js/chart/apex-chart/apex-chart.js')}}"></script>
+    <script src="{{asset('BO/js/chart/apex-chart/stock-prices.js')}}"></script>
+    <script src="{{asset('BO/js/scrollbar/simplebar.js')}}"></script>
+    <script src="{{asset('BO/js/scrollbar/custom.js')}}"></script>
+    <script src="{{asset('BO/js/slick/slick.min.js')}}"></script>
+    <script src="{{asset('BO/js/slick/slick.js')}}"></script>
+    <script src="{{asset('BO/js/js-datatables/datatables/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('BO/js/js-datatables/datatables/datatable.custom.js')}}"></script>
+    <script src="{{asset('BO/js/js-datatables/datatables/datatable.custom1.js')}}"></script>
+    <script src="{{asset('BO/js/datatable/datatables/datatable.custom.js')}}"></script>
     
-</div>
+    <script src="{{asset('BO/js/animation/tilt/tilt.jquery.js')}}"></script>
+    <script src="{{asset('BO/js/animation/tilt/tilt-custom.js')}}"></script>
+    <script src="{{asset('BO/js/dashboard/dashboard_1.js')}}"></script>
+    <script src="{{asset('BO/js/script.js')}}"></script>
 
-<footer class="footer"> 
-    {% block footer %}
-    <div class="container-fluid">
-        <div class="row"> 
-            <div class="col-md-6 footer-copyright">
-                <p class="mb-0">EcoMarket 2026 © Achetez Vert, Vivez Mieux.</p>
-            </div>
-        </div>
-    </div>
-    {% endblock %}
-</footer>
 
-</div>
+  </body>
 
-<!-- Scripts -->
-<script src="{{asset('BO/js/vendors/jquery/jquery.min.js')}}"></script>
-<script src="{{asset('BO/js/vendors/bootstrap/dist/js/bootstrap.bundle.min.js')}}"></script>
-<script src="{{asset('BO/js/vendors/feather/feather.min.js')}}"></script>
-<script src="{{asset('BO/js/vendors/simplebar/simplebar.min.js')}}"></script>
-<script src="{{asset('BO/js/vendors/typeahead/handlebars.js')}}"></script>
-<script src="{{asset('BO/js/vendors/typeahead/typeahead.bundle.js')}}"></script>
-<script src="{{asset('BO/js/vendors/counter/jquery.countto.min.js')}}"></script>
-<script src="{{asset('BO/js/vendors/chartjs/chart.min.js')}}"></script>
-<script src="{{asset('BO/js/vendors/apex-chart/apex-chart.js')}}"></script>
-<script src="{{asset('BO/js/vendors/apex-chart/apex.custom.js')}}"></script>
-<script src="{{asset('BO/js/script.js')}}"></script>
-
-</body>
 </html>

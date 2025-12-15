@@ -1,0 +1,434 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réinitialiser votre mot de passe{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+            border: 1px solid #e2e8f0;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            display: block;
+            text-align: center;
+            padding: 40px 40px 20px;
+            background: linear-gradient(135deg, #2d8b8b 0%, #1a6b6b 100%);
+        }
+
+        .logo img {
+            max-width: 180px;
+            height: auto;
+        }
+
+        .login-main {
+            padding: 40px;
+        }
+
+        .login-main h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #718096;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #2d8b8b 0%, #1a6b6b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .icon-wrapper svg {
+            width: 40px;
+            height: 40px;
+            stroke: white;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .col-form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            display: block;
+            font-size: 14px;
+        }
+
+        .form-input {
+            position: relative;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 50px 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2d8b8b;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45, 139, 139, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #a0aec0;
+        }
+
+        .show-hide {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .show-hide span {
+            display: block;
+            width: 24px;
+            height: 24px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'%3E%3C/path%3E%3Ccircle cx='12' cy='12' r='3'%3E%3C/circle%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            transition: all 0.3s ease;
+        }
+
+        .show-hide span.hide {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24'%3E%3C/path%3E%3Cline x1='1' y1='1' x2='23' y2='23'%3E%3C/line%3E%3C/svg%3E");
+        }
+
+        .password-requirements {
+            background: #f0fdf4;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 15px;
+            margin-bottom: 25px;
+        }
+
+        .password-requirements h6 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #166534;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .password-requirements ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .password-requirements li {
+            font-size: 13px;
+            color: #166534;
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .password-requirements li:before {
+            content: "•";
+            color: #2d8b8b;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2d8b8b 0%, #1a6b6b 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(45, 139, 139, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .back-to-login {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .back-to-login a {
+            color: #2d8b8b;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .back-to-login a:hover {
+            color: #1a6b6b;
+            gap: 8px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background-color: #fee;
+            border-left: 4px solid #e53e3e;
+            color: #c53030;
+        }
+
+        .alert-danger:before {
+            content: "⚠️";
+            font-size: 20px;
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                border-radius: 0;
+            }
+
+            .login-main {
+                padding: 30px 20px;
+            }
+
+            .logo {
+                padding: 30px 20px 15px;
+            }
+
+            .login-main h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="page-wrapper">
+        <div class="container-fluid p-0">
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <div class="login-card">
+                        <div>
+                            <div class="login-main">
+                                <div class="icon-wrapper">
+                                    <svg viewBox="0 0 24 24">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
+                                </div>
+
+                                <h2>Créer un nouveau mot de passe</h2>
+                                <p class="subtitle">
+                                    Votre nouveau mot de passe doit être différent des mots de passe précédemment utilisés.
+                                </p>
+
+                                {{ form_start(resetForm, {'attr': {'class': 'theme-form'}}) }}
+                                
+                                    <div class="form-group">
+                                        <label class="col-form-label">
+                                            Nouveau mot de passe
+                                        </label>
+                                        <div class="form-input position-relative">
+                                            {{ form_widget(resetForm.plainPassword.first, {
+                                                'attr': {
+                                                    'class': 'form-control',
+                                                    'placeholder': '••••••••',
+                                                    'id': 'password-field'
+                                                }
+                                            }) }}
+                                            <div class="show-hide">
+                                                <span class="show"></span>
+                                            </div>
+                                        </div>
+                                        {{ form_errors(resetForm.plainPassword.first) }}
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-form-label">
+                                            Confirmer le mot de passe
+                                        </label>
+                                        <div class="form-input position-relative">
+                                            {{ form_widget(resetForm.plainPassword.second, {
+                                                'attr': {
+                                                    'class': 'form-control',
+                                                    'placeholder': '••••••••',
+                                                    'id': 'password-confirm-field'
+                                                }
+                                            }) }}
+                                            <div class="show-hide">
+                                                <span class="show"></span>
+                                            </div>
+                                        </div>
+                                        {{ form_errors(resetForm.plainPassword.second) }}
+                                    </div>
+
+                                    <div class="password-requirements">
+                                        <h6>
+                                            🔒 Votre mot de passe doit contenir :
+                                        </h6>
+                                        <ul>
+                                            <li>Au moins 8 caractères</li>
+                                            <li>Une lettre majuscule et une minuscule</li>
+                                            <li>Au moins un chiffre</li>
+                                            <li>Un caractère spécial (@, #, $, etc.)</li>
+                                        </ul>
+                                    </div>
+
+                                    <button class="btn btn-primary" type="submit">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                        Réinitialiser le mot de passe
+                                    </button>
+
+                                    <div class="back-to-login">
+                                        <a href="{{ path('app_login') }}">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                                <polyline points="12 19 5 12 12 5"></polyline>
+                                            </svg>
+                                            Retour à la connexion
+                                        </a>
+                                    </div>
+
+                                {{ form_end(resetForm) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Toggle password visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButtons = document.querySelectorAll('.show-hide');
+            
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    const icon = this.querySelector('span');
+                    
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.add('hide');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('hide');
+                    }
+                });
+            });
+
+            // Auto-focus sur le premier champ
+            const firstPasswordField = document.getElementById('password-field');
+            if (firstPasswordField) {
+                firstPasswordField.focus();
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Upload Photo IA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .upload-box {
+            border: 3px dashed #2d8b8b;
+            padding: 40px;
+            text-align: center;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+        .upload-box:hover {
+            background: #f0fdf4;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .safe { background: #d4edda; color: #155724; }
+        .unsafe { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>📸 Upload Photo de Profil avec IA</h1>
+    
+    <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+        <p>📤 Cliquez pour choisir une photo</p>
+        <input type="file" id="fileInput" accept="image/*" style="display: none;">
+    </div>
+
+    <div id="result" class="result" style="display: none;">
+        <h2>🤖 Analyse IA</h2>
+        <div id="resultContent"></div>
+    </div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('photo', file);
+
+            try {
+                const response = await fetch('/user/photo/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                document.getElementById('result').style.display = 'block';
+                
+                if (data.success) {
+                    document.getElementById('resultContent').innerHTML = `
+                        <p>✅ ${data.message}</p>
+                        <img src="${data.url}" style="max-width: 300px; border-radius: 10px;">
+                        
+                        <h3>📊 Analyse:</h3>
+                        <p><strong>Modération:</strong> 
+                            <span class="badge ${data.analysis.moderation.is_safe ? 'safe' : 'unsafe'}">
+                                ${data.analysis.moderation.is_safe ? 'SAFE ✓' : 'UNSAFE ✗'}
+                            </span>
+                        </p>
+                        <p><strong>Score Qualité:</strong> ${data.analysis.quality.score}/10</p>
+                        <p><strong>Score Professionnel:</strong> ${data.analysis.professional_score}/10</p>
+                        
+                        <h3>💡 Suggestions:</h3>
+                        <ul>
+                            ${data.analysis.suggestions.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                    `;
+                } else {
+                    document.getElementById('resultContent').innerHTML = `
+                        <p style="color: red;">❌ ${data.error}</p>
+                        ${data.suggestions ? `
+                            <h3>Suggestions:</h3>
+                            <ul>
+                                ${data.suggestions.map(s => `<li>${s}</li>`).join('')}
+                            </ul>
+                        ` : ''}
+                    `;
+                }
+            } catch (error) {
+                alert('Erreur: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

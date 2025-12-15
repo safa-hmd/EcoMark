@@ -17,13 +17,31 @@ controllers:
     type: attribute
     
 
-# connect_google:
-#     path: /connect/google
-#     controller: App\Controller\GoogleController::connect
+connect_google:
+    path: /connect/google
+    controller: App\Controller\GoogleController::connect
 
-# connect_google_check:
-#     path: /connect/google/check
-#     controller: App\Controller\GoogleController::connectCheck
+connect_google_check:
+    path: /connect/google/check
+    controller: App\Controller\GoogleController::connectCheck
+
+
+# config/routes.yaml
+
+# app_forgot_password:
+#     path: /mot-de-passe-oublie
+#     controller: App\Controller\ResetPasswordController::forgotPassword
+#     methods: [GET, POST]
+
+# app_reset_password:
+#     path: /reinitialiser-mot-de-passe/{token}
+#     controller: App\Controller\ResetPasswordController::resetPassword
+#     methods: [GET, POST]    
+
+mot_de_passe_oublie:
+    path: /mot-de-passe-oublie
+    controller: App\Controller\ResetPasswordController::request
+
 
 
 

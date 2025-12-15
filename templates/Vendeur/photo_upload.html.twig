@@ -1,0 +1,480 @@
+{# templates/user/photo_upload.html.twig #}
+{% extends 'Vendeur/BO.html.twig' %}
+
+{% block title %}Photo de Profil IA{% endblock %}
+
+{% block body %}
+{{parent()}}
+<div class="photo-upload-container">
+    <h1>📸 Gérer votre Photo de Profil</h1>
+
+    <div class="upload-tabs">
+        <button class="tab active" data-tab="upload">Upload</button>
+        <button class="tab" data-tab="generate">Générer avec IA</button>
+        <button class="tab" data-tab="enhance">Améliorer</button>
+    </div>
+
+    <!-- Tab 1: Upload -->
+    <div class="tab-content active" id="upload-tab">
+        <div class="upload-zone" id="dropzone">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <p>Glissez votre photo ici ou cliquez pour choisir</p>
+            <input type="file" id="fileInput" accept="image/*" hidden>
+        </div>
+
+        <div id="analysis-result" class="analysis-card hidden">
+            <h3>🤖 Analyse IA</h3>
+            <div id="analysis-content"></div>
+        </div>
+    </div>
+
+    <!-- Tab 2: Generate -->
+    <div class="tab-content" id="generate-tab">
+        <div class="generate-form">
+            <h3>✨ Créer un Avatar IA</h3>
+            <p>Décrivez-vous et laissez l'IA créer votre avatar parfait !</p>
+
+            <textarea 
+                id="avatar-description" 
+                placeholder="Ex: Jeune femme souriante, cheveux bruns, style professionnel"
+                rows="3"
+            ></textarea>
+
+            <div class="style-selector">
+                <label>Style :</label>
+                <div class="style-options">
+                    <button class="style-btn active" data-style="professional">👔 Professionnel</button>
+                    <button class="style-btn" data-style="eco">🌿 Écologique</button>
+                    <button class="style-btn" data-style="casual">😊 Casual</button>
+                    <button class="style-btn" data-style="artistic">🎨 Artistique</button>
+                </div>
+            </div>
+
+            <button id="generate-btn" class="btn-primary">
+                <span id="generate-text">Générer 3 Options</span>
+                <span id="generate-loader" class="hidden">Génération...</span>
+            </button>
+
+            <div id="generated-avatars" class="avatar-grid hidden"></div>
+        </div>
+    </div>
+
+    <!-- Tab 3: Enhance -->
+    <div class="tab-content" id="enhance-tab">
+        <div class="enhance-form">
+            <h3>✨ Améliorer une Photo</h3>
+            
+            <div class="current-photo">
+                <img src="{{ user.photoUrl ?? '/images/default-avatar.png' }}" alt="Photo actuelle" id="current-photo">
+            </div>
+
+            <div class="enhance-actions">
+                <button class="action-btn" data-action="remove_bg">
+                    🎭 Supprimer l'arrière-plan
+                </button>
+                <button class="action-btn" data-action="eco_filter">
+                    🌿 Appliquer filtre éco
+                </button>
+                <button class="action-btn" data-action="resize">
+                    📐 Optimiser la taille
+                </button>
+            </div>
+
+            <div id="enhanced-result" class="hidden">
+                <h4>Résultat :</h4>
+                <img id="enhanced-image" alt="Photo améliorée">
+                <button class="btn-primary" id="save-enhanced">Sauvegarder</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.photo-upload-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+}
+
+.upload-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.tab {
+    padding: 12px 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: #718096;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+}
+
+.tab.active {
+    color: #2d8b8b;
+    border-bottom-color: #2d8b8b;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.upload-zone {
+    border: 3px dashed #cbd5e0;
+    border-radius: 15px;
+    padding: 60px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.upload-zone:hover {
+    border-color: #2d8b8b;
+    background: #f7fafc;
+}
+
+.upload-zone svg {
+    color: #2d8b8b;
+    margin-bottom: 20px;
+}
+
+.analysis-card {
+    margin-top: 30px;
+    padding: 25px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.generate-form textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 15px;
+    margin: 20px 0;
+    resize: vertical;
+}
+
+.style-selector {
+    margin: 25px 0;
+}
+
+.style-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.style-btn {
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.style-btn:hover {
+    border-color: #2d8b8b;
+}
+
+.style-btn.active {
+    border-color: #2d8b8b;
+    background: #f0fdf4;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #2d8b8b 0%, #1a6b6b 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(45, 139, 139, 0.3);
+}
+
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.avatar-option {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.avatar-option:hover {
+    transform: scale(1.05);
+}
+
+.avatar-option img {
+    width: 100%;
+    display: block;
+}
+
+.current-photo {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.current-photo img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid #2d8b8b;
+}
+
+.enhance-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.action-btn {
+    padding: 15px 20px;
+    background: white;
+    border: 2px solid #2d8b8b;
+    border-radius: 10px;
+    color: #2d8b8b;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-btn:hover {
+    background: #2d8b8b;
+    color: white;
+}
+
+#enhanced-result {
+    text-align: center;
+    margin-top: 30px;
+}
+
+#enhanced-image {
+    max-width: 400px;
+    border-radius: 15px;
+    margin: 20px 0;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion des tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            this.classList.add('active');
+            document.getElementById(this.dataset.tab + '-tab').classList.add('active');
+        });
+    });
+
+    // Upload de photo
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = '#2d8b8b';
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file) uploadPhoto(file);
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) uploadPhoto(file);
+    });
+
+    async function uploadPhoto(file) {
+        const formData = new FormData();
+        formData.append('photo', file);
+
+        try {
+            const response = await fetch('/user/photo/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showAnalysis(data.analysis);
+            } else {
+                alert(data.message || 'Erreur lors du téléchargement');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Une erreur est survenue');
+        }
+    }
+
+    function showAnalysis(analysis) {
+        const resultDiv = document.getElementById('analysis-result');
+        const contentDiv = document.getElementById('analysis-content');
+
+        contentDiv.innerHTML = `
+            <div class="analysis-section">
+                <h4>✅ Modération</h4>
+                <span class="badge ${analysis.moderation.status === 'safe' ? 'safe' : 'unsafe'}">
+                    ${analysis.moderation.status}
+                </span>
+            </div>
+            <div class="analysis-section">
+                <h4>⭐ Qualité: ${analysis.quality.score}/10</h4>
+                <p>${analysis.quality.details}</p>
+            </div>
+            <div class="analysis-section">
+                <h4>💡 Suggestions</h4>
+                <ul>
+                    ${analysis.suggestions.map(s => `<li>${s}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+
+        resultDiv.classList.remove('hidden');
+    }
+
+    // Génération d'avatar
+    const generateBtn = document.getElementById('generate-btn');
+    const descriptionInput = document.getElementById('avatar-description');
+    let selectedStyle = 'professional';
+
+    document.querySelectorAll('.style-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            selectedStyle = this.dataset.style;
+        });
+    });
+
+    generateBtn.addEventListener('click', async function() {
+        const description = descriptionInput.value.trim();
+        
+        if (!description) {
+            alert('Veuillez entrer une description');
+            return;
+        }
+
+        document.getElementById('generate-text').classList.add('hidden');
+        document.getElementById('generate-loader').classList.remove('hidden');
+        generateBtn.disabled = true;
+
+        try {
+            const response = await fetch('/user/photo/generate-options', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description, style: selectedStyle })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                displayGeneratedAvatars(data.options);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Erreur lors de la génération');
+        } finally {
+            document.getElementById('generate-text').classList.remove('hidden');
+            document.getElementById('generate-loader').classList.add('hidden');
+            generateBtn.disabled = false;
+        }
+    });
+
+    function displayGeneratedAvatars(options) {
+        const grid = document.getElementById('generated-avatars');
+        grid.innerHTML = options.map((option, index) => `
+            <div class="avatar-option" data-url="${option.image_url}">
+                <img src="${option.image_url}" alt="Avatar ${index + 1}">
+                <button class="select-avatar-btn">Choisir</button>
+            </div>
+        `).join('');
+
+        grid.classList.remove('hidden');
+
+        // Ajouter les événements de sélection
+        grid.querySelectorAll('.avatar-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const url = this.dataset.url;
+                saveAvatar(url);
+            });
+        });
+    }
+
+    async function saveAvatar(url) {
+        // Implémenter la sauvegarde
+        console.log('Saving avatar:', url);
+        alert('Avatar sélectionné ! (Implémentez la sauvegarde)');
+    }
+
+    // Amélioration de photo
+    document.querySelectorAll('.action-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const action = this.dataset.action;
+            const currentPhoto = document.getElementById('current-photo').src;
+
+            try {
+                const response = await fetch('/user/photo/enhance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        image_url: currentPhoto,
+                        action: action 
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('enhanced-result').classList.remove('hidden');
+                    // Afficher l'image améliorée
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
