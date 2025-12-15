@@ -1,33 +1,19 @@
-# yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
-
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-# See also https://symfony.com/doc/current/service_container/import.html
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-    photos_directory: '%kernel.project_dir%/public/uploads/photos%'
+    photos_directory: '%kernel.project_dir%/public/uploads/photos'
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
-    uploads_directory: '%kernel.project_dir%/public/uploads%'
+    uploads_directory: '%kernel.project_dir%/public/uploads'
     openweather_api_key: '%env(OPENWEATHER_API_KEY)%'
+    openrouter_api_key: '%env(OPENROUTER_API_KEY)%'
 
 services:
-    App\Twig\NotificationExtension:
-        arguments:
-            $notifService: '@App\Service\NotificationService'
-        tags:
-            - { name: twig.extension }
-
-    Symfony\Contracts\HttpClient\HttpClientInterface: '@http_client'
-
     _defaults:
         autowire: true
         autoconfigure: true
 
+    Symfony\Contracts\HttpClient\HttpClientInterface: '@http_client'
+
     App\Service\BadWordDetectorService:
         public: true
-        autowire: true
         arguments:
             $huggingfaceApiKey: '%env(string:HUGGINGFACE_API_KEY)%'
 
@@ -42,6 +28,10 @@ services:
         arguments:
             $apiKey: '%openweather_api_key%'
 
+    App\Service\AIService:
+        arguments:
+            $apiKey: '%openrouter_api_key%'
+
     App\Service\HuggingFaceImageService:
         arguments:
             $client: '@http_client'
@@ -50,3 +40,9 @@ services:
         arguments:
             $smsService: '@App\Service\SimpleSmsService'
         tags: ['console.command']
+
+    App\Twig\NotificationExtension:
+        arguments:
+            $notifService: '@App\Service\NotificationService'
+        tags:
+            - { name: twig.extension }

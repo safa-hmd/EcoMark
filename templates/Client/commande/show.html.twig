@@ -220,6 +220,11 @@
                 <a href="{{ path('app_commande_index') }}" class="btn btn-secondary">
                     ↩ Retour à la liste
                 </a>
+                <a href="{{ path('client_commande_carte_livraison', {id: commande.id}) }}"
+   class="btn btn-sm btn-primary">
+    📍 Voir la carte de livraison
+</a>
+
                 
                 <form method="post" action="{{ path('app_commande_delete', {'id': commande.id}) }}" 
                       onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette commande ? Cette action est irréversible.');"

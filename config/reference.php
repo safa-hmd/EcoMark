@@ -1558,6 +1558,22 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     convert_exception?: bool, // Default: false
  *     remove_first_page_param?: bool, // Default: false
  * }
+ * @psalm-type KnpSnappyConfig = array{
+ *     temporary_folder?: scalar|null,
+ *     process_timeout?: int, // Generator process timeout in seconds.
+ *     pdf?: array{
+ *         enabled?: bool, // Default: true
+ *         binary?: scalar|null, // Default: "wkhtmltopdf"
+ *         options?: array<string, scalar|null>,
+ *         env?: list<scalar|null>,
+ *     },
+ *     image?: array{
+ *         enabled?: bool, // Default: true
+ *         binary?: scalar|null, // Default: "wkhtmltoimage"
+ *         options?: array<string, scalar|null>,
+ *         env?: list<scalar|null>,
+ *     },
+ * }
  * @psalm-type CmenGoogleChartsConfig = array{
  *     version?: scalar|null, // Default: "current"
  *     language?: scalar|null, // Default: ""
@@ -1577,6 +1593,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *     monolog?: MonologConfig,
  *     ewz_recaptcha?: EwzRecaptchaConfig,
  *     knp_paginator?: KnpPaginatorConfig,
+ *     knp_snappy?: KnpSnappyConfig,
  *     cmen_google_charts?: CmenGoogleChartsConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
@@ -1596,6 +1613,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         maker?: MakerConfig,
  *         ewz_recaptcha?: EwzRecaptchaConfig,
  *         knp_paginator?: KnpPaginatorConfig,
+ *         knp_snappy?: KnpSnappyConfig,
  *         cmen_google_charts?: CmenGoogleChartsConfig,
  *     },
  *     "when@prod"?: array{
@@ -1613,6 +1631,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         monolog?: MonologConfig,
  *         ewz_recaptcha?: EwzRecaptchaConfig,
  *         knp_paginator?: KnpPaginatorConfig,
+ *         knp_snappy?: KnpSnappyConfig,
  *         cmen_google_charts?: CmenGoogleChartsConfig,
  *     },
  *     "when@test"?: array{
@@ -1631,6 +1650,7 @@ namespace Symfony\Component\DependencyInjection\Loader\Configurator;
  *         monolog?: MonologConfig,
  *         ewz_recaptcha?: EwzRecaptchaConfig,
  *         knp_paginator?: KnpPaginatorConfig,
+ *         knp_snappy?: KnpSnappyConfig,
  *         cmen_google_charts?: CmenGoogleChartsConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias

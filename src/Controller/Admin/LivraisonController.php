@@ -9,6 +9,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Knp\Snappy\Pdf;
+use Knp\Bundle\SnappyBundle\Snappy\Response\PdfResponse;
+
+
+
+
 
 #[Route('/admin/livraison')]
 final class LivraisonController extends AbstractController
@@ -46,7 +52,7 @@ final class LivraisonController extends AbstractController
             $entityManager->persist($livraison);
             $entityManager->flush();
 
-            // ✅ AJOUT : Message de succès
+            //  AJOUT : Message de succès
             $this->addFlash('success', 'La livraison a été créée avec succès.');
 
             return $this->redirectToRoute('app_livraison_index', [], Response::HTTP_SEE_OTHER);
@@ -75,7 +81,7 @@ final class LivraisonController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
             
-            // ✅ AJOUT : Message de succès
+            // AJOUT : Message de succès
             $this->addFlash('success', 'La livraison a été modifiée avec succès.');
             
             return $this->redirectToRoute('app_livraison_index', [], Response::HTTP_SEE_OTHER);
@@ -94,10 +100,44 @@ final class LivraisonController extends AbstractController
             $entityManager->remove($livraison);
             $entityManager->flush();
             
-            // ✅ AJOUT : Message de succès
+            //  AJOUT : Message de succès
             $this->addFlash('success', 'La livraison a été supprimée avec succès.');
         }
 
         return $this->redirectToRoute('app_livraison_index', [], Response::HTTP_SEE_OTHER);
     }
+
+
+
+
+
+
+
+#[Route('/{id}/pdf', name: 'livraison_pdf')]
+public function bonLivraison(Livraison $livraison, Pdf $pdf)
+{
+    // Chemin absolu vers le logo
+    $logoPath = realpath($this->getParameter('kernel.project_dir') . '/public/images/logo.png');
+
+    // Convertit les backslashes Windows en slashes compatibles wkhtmltopdf
+    $logoPath = str_replace('\\', '/', $logoPath);
+
+    
+
+    $html = $this->renderView('Admin/livraison/bon.html.twig', [
+        'livraison' => $livraison,
+        'logoPath' => $logoPath,
+    ]);
+
+    return new PdfResponse(
+        $pdf->getOutputFromHtml($html),
+        'bon-livraison-'.$livraison->getId().'.pdf'
+    );
+}
+
+
+
+
+
+
 }
