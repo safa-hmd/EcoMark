@@ -36,3 +36,8 @@ services:
     App\Service\HuggingFaceImageService:
         arguments:
             $client: '@http_client'
+    
+    App\Command\SendSmsAlertsCommand:
+        arguments:
+            $smsService: '@App\Service\SimpleSmsService'
+        tags: ['console.command']
