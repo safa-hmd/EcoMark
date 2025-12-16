@@ -22,14 +22,21 @@ final class LivraisonController extends AbstractController
     #[Route(name: 'app_livraison_index', methods: ['GET'])]
     public function index(LivraisonRepository $livraisonRepository): Response
     {
+         // Récupérer l'utilisateur connecté
+                $admin = $this->getUser();
+
         return $this->render('admin/livraison/index.html.twig', [
             'livraisons' => $livraisonRepository->findAll(),
+                        'admin' => $admin,  // On passe l'utilisateur à Twig
+
         ]);
     }
 
     #[Route('/new', name: 'app_livraison_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+                        $admin = $this->getUser();
+
         $livraison = new Livraison();
         $form = $this->createForm(LivraisonType::class, $livraison);
         $form->handleRequest($request);
@@ -61,20 +68,28 @@ final class LivraisonController extends AbstractController
         return $this->render('admin/livraison/new.html.twig', [
             'livraison' => $livraison,
             'form' => $form,
+                                    'admin' => $admin,  // On passe l'utilisateur à Twig
+
         ]);
     }
 
     #[Route('/{id}', name: 'app_livraison_show', methods: ['GET'])]
     public function show(Livraison $livraison): Response
     {
+                                $admin = $this->getUser();
+
         return $this->render('admin/livraison/show.html.twig', [
             'livraison' => $livraison,
+         'admin' => $admin,  // On passe l'utilisateur à Twig
+
         ]);
     }
 
     #[Route('/{id}/edit', name: 'app_livraison_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Livraison $livraison, EntityManagerInterface $entityManager): Response
     {
+                                        $admin = $this->getUser();
+
         $form = $this->createForm(LivraisonType::class, $livraison);
         $form->handleRequest($request);
 
@@ -90,6 +105,8 @@ final class LivraisonController extends AbstractController
         return $this->render('admin/livraison/edit.html.twig', [
             'livraison' => $livraison,
             'form' => $form,
+                                    'admin' => $admin,  // On passe l'utilisateur à Twig
+
         ]);
     }
 
@@ -105,6 +122,7 @@ final class LivraisonController extends AbstractController
         }
 
         return $this->redirectToRoute('app_livraison_index', [], Response::HTTP_SEE_OTHER);
+        
     }
 
 

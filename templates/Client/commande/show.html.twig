@@ -61,7 +61,6 @@
                 <div class="form-section">
                     <h3>👤 Client & Paiement</h3>
                     
-                    {# ✅ MODIFICATION PRINCIPALE : Afficher les infos du User au lieu de commande.client #}
                     <div class="info-field">
                         <label class="info-label">Client</label>
                         <div class="info-value">
@@ -81,7 +80,6 @@
                         </div>
                     </div>
 
-                    {# ✅ Afficher téléphone et adresse du user si disponibles #}
                     {% if commande.user and commande.user.telephone %}
                     <div class="info-field">
                         <label class="info-label">Téléphone</label>
@@ -110,7 +108,7 @@
                     <div class="info-field">
                         <label class="info-label">Adresse complète</label>
                         <div class="info-value">
-                            {{ commande.adresseLivraison|nl2br }}
+                            {{ commande.adresseLivraison }}
                         </div>
                     </div>
 
@@ -135,20 +133,52 @@
                 </div>
 
                 <div class="form-section full-width">
-                    <h3>📦 Produits commandés</h3>
-                    <div class="info-field">
-                        <label class="info-label">Détails des produits</label>
-                        <div class="info-value">
-                            {% if commande.produits %}
-                                {{ commande.produits|nl2br }}
-                            {% else %}
-                                <em class="text-muted">Aucun produit spécifié</em>
-                            {% endif %}
+                    <h3>📦 Produits commandés ({{ commande.produits|length }})</h3>
+                    
+                    {% if commande.produits is empty %}
+                        <div class="alert alert-warning">
+                            <p>❌ Aucun produit dans cette commande.</p>
                         </div>
-                    </div>
+                    {% else %}
+                        <div class="produits-list">
+                            {% for produit in commande.produits %}
+                                <div class="produit-card">
+                                    <div class="produit-header">
+                                        <strong>{{ produit.nomProduit }}</strong>
+                                        <span class="produit-prix">{{ produit.prix|number_format(2, '.', '') }} €</span>
+                                    </div>
+                                    {% if produit.description %}
+                                        <div class="produit-description">
+                                            {{ produit.description|length > 100 ? produit.description|slice(0, 100) ~ '...' : produit.description }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="produit-footer">
+                                        <span class="badge bg-info">
+                                            💰 {{ produit.prix|number_format(2, '.', '') }} €
+                                        </span>
+                                        <span class="badge 
+                                            {% if produit.etatProduit == 'Disponible' %}bg-success
+                                            {% elseif produit.etatProduit == 'Vendu' %}bg-danger
+                                            {% else %}bg-secondary{% endif %}">
+                                            {{ produit.etatProduit }}
+                                        </span>
+                                        {% if produit.quantiteStock > 0 %}
+                                            <span class="badge bg-warning">
+                                                Stock: {{ produit.quantiteStock }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="produits-total-card">
+                            <strong>Total : </strong>
+                            <span class="total-price">{{ commande.montantTotal|number_format(2, ',', ' ') }} €</span>
+                        </div>
+                    {% endif %}
                 </div>
 
-                {# ✅ NOUVEAU : Section Livraison (si elle existe) #}
                 {% if commande.livraison %}
                 <div class="form-section full-width livraison-section">
                     <h3>🚚 Informations de livraison</h3>
@@ -221,13 +251,12 @@
                     ↩ Retour à la liste
                 </a>
                 <a href="{{ path('client_commande_carte_livraison', {id: commande.id}) }}"
-   class="btn btn-sm btn-primary">
-    📍 Voir la carte de livraison
-</a>
-
+                   class="btn btn-primary">
+                    📍 Voir la carte
+                </a>
                 
                 <form method="post" action="{{ path('app_commande_delete', {'id': commande.id}) }}" 
-                      onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette commande ? Cette action est irréversible.');"
+                      onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette commande ?');"
                       class="delete-form">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ commande.id) }}">
                     <button type="submit" class="btn btn-danger">
@@ -241,7 +270,7 @@
 
 <style>
 .form-container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 2rem auto;
     padding: 0 1rem;
 }
@@ -261,7 +290,6 @@
     font-size: 1.1rem;
 }
 
-/* ✅ Styles pour les messages flash */
 .alert {
     padding: 1rem;
     border-radius: 8px;
@@ -290,6 +318,14 @@
     margin: 0;
 }
 
+.alert-warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 1rem;
+    border-radius: 5px;
+}
+
 .form-grid {
     display: grid;
     gap: 2rem;
@@ -302,7 +338,6 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-/* ✅ Style spécial pour la section livraison */
 .livraison-section {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -363,6 +398,77 @@
     word-break: break-word;
 }
 
+.produits-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.produit-card {
+    background: white;
+    border: 2px solid #3498db;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s;
+}
+
+.produit-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.produit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.produit-header strong {
+    font-size: 1.1rem;
+    color: #2c3e50;
+}
+
+.produit-prix {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #27ae60;
+}
+
+.produit-description {
+    color: #7f8c8d;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+.produit-footer {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.produits-total-card {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background: #27ae60;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.produits-total-card strong {
+    color: white;
+    font-size: 1.3rem;
+}
+
+.total-price {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
 .text-muted {
     color: #6c757d;
     font-size: 0.9rem;
@@ -377,17 +483,16 @@
 }
 
 code {
-    background: #f8f9fa;
+    background: rgba(255, 255, 255, 0.2);
     padding: 0.25rem 0.5rem;
     border-radius: 3px;
     font-family: 'Courier New', monospace;
-    color: #e74c3c;
 }
 
 .badge {
-    font-size: 0.85rem;
-    padding: 0.5em 1em;
-    border-radius: 5px;
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+    border-radius: 4px;
     font-weight: 600;
     display: inline-block;
 }
@@ -472,7 +577,7 @@ code {
 }
 
 .btn {
-    padding: 0.75rem 2rem;
+    padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 5px;
     font-size: 1rem;
@@ -503,6 +608,15 @@ code {
 
 .btn-secondary:hover {
     background: #7f8c8d;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
 }
 
 .btn-danger {

@@ -25,6 +25,11 @@ class AchatController extends AbstractController
 
         /** @var User $user */
         $user = $this->getUser();
+        
+        if (!$user instanceof User) {
+            $this->addFlash('error', 'Utilisateur non valide.');
+            return $this->redirectToRoute('app_client_produit_index');
+        }
 
         // Vérifier si le produit est disponible
         if ($produit->getQuantiteStock() <= 0 || $produit->getEtatProduit() !== 'Disponible') {
@@ -32,20 +37,27 @@ class AchatController extends AbstractController
             return $this->redirectToRoute('app_client_produit_show', ['id' => $produit->getId()]);
         }
 
-        // Solution temporaire : marquer l'achat dans la description
-        $ancienneDescription = $produit->getDescription();
-        $produit->setDescription($ancienneDescription . " [ACHETE_PAR:" . $user->getId() . "_LE:" . date('Y-m-d') . "]");
+        // 🔥 AJOUTER L'INFORMATION D'ACHAT DANS LA DESCRIPTION
+        $dateAchat = (new \DateTime())->format('Y-m-d');
+        $marqueAchat = sprintf('[ACHETE_PAR:%d_LE:%s]', $user->getId(), $dateAchat);
         
-        // Réduire le stock
+        $descriptionActuelle = $produit->getDescription() ?? '';
+        $nouvelleDescription = trim($descriptionActuelle . ' ' . $marqueAchat);
+        
+        $produit->setDescription($nouvelleDescription);
+
+        // Réduire la quantité en stock
         $produit->setQuantiteStock($produit->getQuantiteStock() - 1);
-        
+
+        // Si le stock atteint 0, le produit devient "Vendu"
         if ($produit->getQuantiteStock() <= 0) {
             $produit->setEtatProduit('Vendu');
         }
 
+        // Persister les modifications
         $entityManager->flush();
 
-        $this->addFlash('success', 'Produit acheté avec succès ! Merci pour votre achat écologique !');
+        $this->addFlash('success', 'Produit acheté avec succès ! 🎉');
         return $this->redirectToRoute('app_client_mes_achats');
     }
 
@@ -62,6 +74,13 @@ class AchatController extends AbstractController
         
         /** @var User $user */
         $user = $this->getUser();
+        
+        if (!$user instanceof User) {
+            return $this->render('Client/achat/mes_achats.html.twig', [
+                'produitsAchetes' => [],
+                'userNotConnected' => true
+            ]);
+        }
         
         // Récupérer les produits achetés par cet utilisateur
         $produitsAchetes = $produitRepository->createQueryBuilder('p')
@@ -88,6 +107,11 @@ class AchatController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         
+        if (!$user instanceof User) {
+            $this->addFlash('error', 'Utilisateur non valide.');
+            return $this->redirectToRoute('app_client_produit_index');
+        }
+        
         // Vérifier si l'utilisateur a bien acheté ce produit
         $pattern = 'ACHETE_PAR:' . $user->getId();
         if (strpos($produit->getDescription(), $pattern) === false) {
@@ -95,9 +119,9 @@ class AchatController extends AbstractController
             return $this->redirectToRoute('app_client_mes_achats');
         }
 
-        // Restaurer la description originale
-        $description = preg_replace('/\s*\[ACHETE_PAR:\d+_LE:\d{4}-\d{2}-\d{2}\]\s*/', '', $produit->getDescription());
-        $produit->setDescription($description);
+        // Restaurer la description originale (supprimer la marque d'achat)
+        $description = preg_replace('/\s*\[ACHETE_PAR:' . $user->getId() . '_LE:\d{4}-\d{2}-\d{2}\]\s*/', '', $produit->getDescription());
+        $produit->setDescription(trim($description));
         
         // Remettre le stock
         $produit->setQuantiteStock($produit->getQuantiteStock() + 1);

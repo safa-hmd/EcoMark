@@ -5,6 +5,10 @@ namespace App\Entity;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
+
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 #[UniqueEntity( 
@@ -66,6 +70,20 @@ class Produit
         message: "L'état du produit doit être l'une des valeurs suivantes: Disponible, En rupture, Bientôt disponible, Vendu."
     )]
     private ?string $etatProduit = null;
+
+
+
+    //Dans Produit.php
+    #[ORM\ManyToMany(targetEntity: Commande::class, mappedBy: 'produits')]
+    private $commandes;
+
+   // getter pour la relation ManyToMany avec Commande
+public function getCommandes(): Collection
+{
+    return $this->commandes;
+}
+
+
 
     #[ORM\Column]
     //#[Assert\NotNull(message: "La date d'ajout est obligatoire.")]
@@ -139,12 +157,18 @@ class Produit
         return $this->etatProduit;
     }
 
-    public function setEtatProduit(string $etatProduit): static
-    {
+  public function setEtatProduit(string $etatProduit): static
+{
+    // Si la quantité est 0, marquer comme 'Vendu'
+    if ($this->quantiteStock <= 0) {
+        $this->etatProduit = 'Vendu';
+    } else {
         $this->etatProduit = $etatProduit;
-
-        return $this;
     }
+    
+    return $this;
+}
+
 
     public function getDateAjout(): ?\DateTime
     {
@@ -182,4 +206,14 @@ class Produit
         return $this;
     }
     
+
+
+ public function __construct()
+{
+    $this->commandes = new ArrayCollection();
+}
+
+
+
+
 }

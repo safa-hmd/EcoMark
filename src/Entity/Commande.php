@@ -5,6 +5,8 @@ use App\Repository\CommandeRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 class Commande
@@ -30,8 +32,10 @@ class Commande
     #[Assert\NotNull(message: "Le client est obligatoire")]
     private ?User $user = null;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $produits = null;
+    // Relation ManyToMany avec Produit
+    #[ORM\ManyToMany(targetEntity: Produit::class, inversedBy: 'commandes')]
+    #[ORM\JoinTable(name: "commande_produit")]
+    private Collection $produits;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "L'adresse de livraison est obligatoire")]
@@ -69,9 +73,14 @@ class Commande
     #[Assert\NotBlank(message: "Veuillez sélectionner une méthode de paiement")]
     private ?string $methodePaiement = null;
 
-    // ✅ AJOUTER cette relation OneToOne vers Livraison
+    // Relation OneToOne avec Livraison
     #[ORM\OneToOne(mappedBy: 'commande', cascade: ['persist', 'remove'])]
     private ?Livraison $livraison = null;
+
+    public function __construct()
+    {
+        $this->produits = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -105,10 +114,21 @@ class Commande
         return $this->montantTotal;
     }
 
+    // ✅ MÉTHODE SIMPLIFIÉE : Accepte directement un float
     public function setMontantTotal(float $montantTotal): static
     {
         $this->montantTotal = $montantTotal;
         return $this;
+    }
+
+    // ✅ NOUVELLE MÉTHODE : Calcule le montant à partir des produits
+    public function calculerMontantTotal(): float
+    {
+        $montantTotal = 0;
+        foreach ($this->produits as $produit) {
+            $montantTotal += $produit->getPrix();
+        }
+        return $montantTotal;
     }
 
     public function getUser(): ?User
@@ -122,14 +142,23 @@ class Commande
         return $this;
     }
 
-    public function getProduits(): ?string
+    public function getProduits(): Collection
     {
         return $this->produits;
     }
 
-    public function setProduits(?string $produits): static
+    // Méthodes pour ajouter ou supprimer un produit de la commande
+    public function addProduit(Produit $produit): static
     {
-        $this->produits = $produits;
+        if (!$this->produits->contains($produit)) {
+            $this->produits[] = $produit;
+        }
+        return $this;
+    }
+
+    public function removeProduit(Produit $produit): static
+    {
+        $this->produits->removeElement($produit);
         return $this;
     }
 
@@ -177,7 +206,7 @@ class Commande
         return $this;
     }
 
-    // ✅ AJOUTER ces méthodes pour la relation avec Livraison
+    // Méthodes pour la relation avec Livraison
     public function getLivraison(): ?Livraison
     {
         return $this->livraison;
@@ -185,12 +214,10 @@ class Commande
 
     public function setLivraison(?Livraison $livraison): static
     {
-        // Unset the owning side of the relation if necessary
         if ($livraison === null && $this->livraison !== null) {
             $this->livraison->setCommande(null);
         }
 
-        // Set the owning side of the relation if necessary
         if ($livraison !== null && $livraison->getCommande() !== $this) {
             $livraison->setCommande($this);
         }

@@ -76,7 +76,7 @@
                     </div>
                 </div>
 
-                {# ✅ NOUVEAU : Section Client #}
+                {# ✅ Section Client #}
                 <div class="form-section">
                     <h3>👤 Informations Client</h3>
                     
@@ -182,11 +182,20 @@
                             </div>
                         </div>
 
-                        {% if livraison.commande.produits %}
+                        {# ✅ CORRECTION : Afficher les produits depuis la Collection #}
+                        {% if livraison.commande.produits is not empty %}
                         <div class="info-field">
-                            <label class="info-label">Produits</label>
+                            <label class="info-label">Produits commandés ({{ livraison.commande.produits|length }})</label>
                             <div class="info-value">
-                                {{ livraison.commande.produits|nl2br }}
+                                <div class="produits-mini-list">
+                                    {% for produit in livraison.commande.produits %}
+                                        <div class="produit-mini-item">
+                                            <i class="bi bi-box-seam"></i>
+                                            <strong>{{ produit.nomProduit }}</strong>
+                                            <span class="produit-prix">{{ produit.prix|number_format(2, '.', '') }} €</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                         {% endif %}
@@ -200,11 +209,11 @@
                         <label class="info-label">Adresse complète</label>
                         <div class="info-value address-box">
                             <i class="bi bi-geo-alt-fill text-danger"></i>
-                            {{ livraison.adresse|nl2br }}
+                            {{ livraison.adresse }}
                         </div>
                     </div>
 
-                    {# ✅ Afficher aussi ville et code postal de la commande si disponibles #}
+                    {# ✅ Afficher ville et code postal de la commande #}
                     {% if livraison.commande %}
                     <div class="row mt-3">
                         <div class="col-md-6">
@@ -234,15 +243,13 @@
                 </a>
                 <a href="{{ path('app_livraison_index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Retour à la liste
-                    
                 </a>
                 <a href="{{ path('livraison_pdf', { id: livraison.id }) }}" class="btn btn-primary">
-                <i class="bi bi-file-earmark-pdf"></i> Télécharger PDF
+                    <i class="bi bi-file-earmark-pdf"></i> Télécharger PDF
                 </a>
-
                 
                 <form method="post" action="{{ path('app_livraison_delete', {'id': livraison.id}) }}" 
-                      onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette livraison ? Cette action est irréversible.');"
+                      onsubmit="return confirm('⚠️ Êtes-vous sûr de vouloir supprimer cette livraison ?');"
                       class="delete-form">
                     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ livraison.id) }}">
                     <button type="submit" class="btn btn-danger">
@@ -276,7 +283,6 @@
     font-size: 1.1rem;
 }
 
-/* ✅ Messages flash */
 .alert {
     padding: 1rem 1.5rem;
     border-radius: 8px;
@@ -350,6 +356,38 @@
     word-break: break-word;
 }
 
+/* ✅ Styles pour les produits (mini version) */
+.produits-mini-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.produit-mini-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    background: white;
+    border-left: 3px solid #3498db;
+    border-radius: 4px;
+}
+
+.produit-mini-item i {
+    color: #3498db;
+    font-size: 1.2rem;
+}
+
+.produit-mini-item strong {
+    flex: 1;
+}
+
+.produit-prix {
+    color: #27ae60;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
 .fw-bold {
     font-weight: 700;
 }
@@ -367,7 +405,6 @@
     color: #e74c3c;
 }
 
-/* ✅ Avatar client */
 .customer-avatar {
     width: 50px;
     height: 50px;
@@ -388,6 +425,10 @@
 
 .align-items-center {
     align-items: center;
+}
+
+.me-2 {
+    margin-right: 0.5rem;
 }
 
 .me-3 {
@@ -545,6 +586,15 @@
 
 .btn-secondary:hover {
     background: #7f8c8d;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
 }
 
 .btn-danger {

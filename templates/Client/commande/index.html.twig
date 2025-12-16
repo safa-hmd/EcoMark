@@ -245,7 +245,9 @@
                     </td>
 
                     <td data-label="Produits">
-                        {{ commande.produits ? commande.produits|slice(0,30) ~ '…' : '—' }}
+                        {% for produit in commande.produits %}
+                            <li>{{ produit.nomProduit }} - {{ produit.prix }} €</li>
+                        {% endfor %}
                     </td>
 
                     <td data-label="Actions">
@@ -287,6 +289,7 @@
 </div>
 
 <script>
+// Script d'interaction avec l'Assistant IA
 const aiForm = document.getElementById('ecoAiForm');
 const aiInput = document.getElementById('ecoAiInput');
 const aiMessages = document.getElementById('ecoAiMessages');

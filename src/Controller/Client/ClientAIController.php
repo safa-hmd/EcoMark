@@ -3,13 +3,14 @@
 namespace App\Controller\Client;
 
 use App\Entity\Commande;
+use App\Entity\User;
 use App\Repository\CommandeRepository;
 use App\Service\AIService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class ClientAIController extends AbstractController
 {
@@ -17,10 +18,11 @@ class ClientAIController extends AbstractController
     #[Route('/client/assistant-ia', name: 'client_assistant_ia')]
     public function assistantIA(CommandeRepository $commandeRepository): Response
     {
+        /** @var User|null $user */
         $user = $this->getUser();
 
         $commandes = [];
-        if ($user) {
+        if ($user && $user instanceof User) {
             $commandes = $commandeRepository->findBy(
                 ['user' => $user],
                 ['dateCommande' => 'DESC']
@@ -32,16 +34,13 @@ class ClientAIController extends AbstractController
         ]);
     }
 
-    // ===============================
-    //  QUESTION → RÉPONSE IA
-    // ===============================
     #[Route('/client/assistant-ia/ask', name: 'client_assistant_ia_ask', methods: ['POST'])]
     public function askQuestion(
         Request $request,
         AIService $aiService,
         CommandeRepository $commandeRepository
     ): JsonResponse {
-        $question = trim($request->request->get('question', ''));
+        $question = trim($request->getPayload()->getString('question', ''));
 
         if ($question === '') {
             return new JsonResponse([
@@ -50,17 +49,18 @@ class ClientAIController extends AbstractController
             ]);
         }
 
+        /** @var User|null $user */
         $user = $this->getUser();
 
         $commandes = [];
-        if ($user) {
+        if ($user && $user instanceof User) {
             $commandes = $commandeRepository->findBy(
                 ['user' => $user],
                 ['dateCommande' => 'DESC']
             );
         }
 
-        // 🧠 CONTEXTE RÉEL (ID EXACTS)
+        // 🧠 CONTEXTE RÉEL
         $context = $this->buildContext($commandes);
 
         // 🔥 Appel IA
@@ -72,9 +72,6 @@ class ClientAIController extends AbstractController
         ]);
     }
 
-    // ===============================
-    //  CONTEXTE IA (CORRECT, SANS DÉCALAGE)
-    // ===============================
     private function buildContext(array $commandes): string
     {
         if (empty($commandes)) {
@@ -90,8 +87,13 @@ class ClientAIController extends AbstractController
             $context .= "- Statut : " . $commande->getStatut() . "\n";
             $context .= "- Montant total : " . number_format($commande->getMontantTotal(), 2, ',', ' ') . " €\n";
 
-            if ($commande->getProduits()) {
-                $context .= "- Produits : " . $commande->getProduits() . "\n";
+            // ✅ CORRECTION : getProduits() retourne une Collection, pas une string
+            $produits = $commande->getProduits();
+            if ($produits && count($produits) > 0) {
+                $context .= "- Produits :\n";
+                foreach ($produits as $produit) {
+                    $context .= "  * " . $produit->getNomProduit() . " - " . number_format($produit->getPrix(), 2, ',', ' ') . " €\n";
+                }
             } else {
                 $context .= "- Produits : Aucun\n";
             }
@@ -102,12 +104,15 @@ class ClientAIController extends AbstractController
         return $context;
     }
 
-    // ===============================
-    // 🗺️ CARTE DE LIVRAISON (OPTIONNEL)
-    // ===============================
     #[Route('/client/commande/{id}/carte-livraison', name: 'client_commande_carte_livraison')]
     public function carteLivraison(Commande $commande): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        
+        if ($commande->getUser() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Vous n\'avez pas accès à cette commande.');
+        }
+        
         return $this->render('Client/commande/carte_livraison.html.twig', [
             'commande' => $commande,
         ]);
