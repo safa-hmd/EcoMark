@@ -136,16 +136,6 @@
               
 
 
-
-
-              <li class="sidebar-list">
-    <a class="sidebar-link" href="{{ path('admin_ia_users_index') }}">
-        <svg class="stroke-icon">
-        </svg>
-        <h6 class="f-w-600"> Dashboard IA</h6>
-    </a>
-</li>
-
                <li class="sidebar-list">
                  <a class="sidebar-link" href="{{ path('admin_statistiques') }}">
                   <svg class="stroke-icon">
@@ -179,16 +169,7 @@
                   </svg>
                   <h6 class="f-w-600">Consulter Vendeurs</h6></a></li>
 
-              <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
-                  <svg class="stroke-icon">
-                  </svg>
-                  <h6 class="f-w-600">Gestion Réponse Réclamation</h6></i></a>
-                <ul class="sidebar-submenu">
-                  <li> <a href="add-products.html">Consulter Réclamation  </a></li>
-                  <li> <a href="product.html">Ajouter Reponse</a></li>
-                  <li> <a href="product-page.html">Consulter Reponse</a></li>
-                </ul>
-              </li>
+
 
             
              
@@ -209,24 +190,26 @@
                 <!-- LIENS EXISTANTS DE LA VERSION DISTANTE -->
                 <li class="sidebar-list"> 
                     <a class="sidebar-link" href="{{ path('reponseafficherReponse') }}">
-                        <h6 class="f-w-600">Traiter réclamation ({{nbReclamations}}) </h6>
+                        <h6 class="f-w-600">Traiter réclamation </h6>
                     </a>
                 </li>
 
 
               
-             
-
-
-                <li class="sidebar-list"> 
-                    <a class="sidebar-link" href="#">
-<li class="sidebar-list">
-    <a class="sidebar-link" href="{{ path('app_admin_point_recyclage_index') }}">
-        <h6 class="fw-600">Consulter point de recyclage</h6>
-    </a>
-</li>
+          
                     </a>
                 </li>
+
+                 <li class="sidebar-list"> <a class="sidebar-link" href="javascript:void(0)">
+                  <svg class="stroke-icon">
+                  </svg>
+                  <h6 class="f-w-600">Point de recyclage</h6></a>
+                <ul class="sidebar-submenu">
+                 <li> <a href="{{ path('app_admin_point_recyclage_index') }}">List point de recyclage</a></li>
+                <li><a href="{{ path('app_admin_point_recyclage_new') }}">Ajouter point de recyclage</a></li>
+                
+                </ul>
+              </li>
 
 
 

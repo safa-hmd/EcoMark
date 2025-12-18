@@ -79,23 +79,23 @@ public function ajout(Request $request, EntityManagerInterface $em , HuggingFace
     if ($form->isSubmitted() && $form->isValid()) {
 
         // Gestion de l'image (mazelt ma3raftech kifech bedhabt )
-       /* $file = $form->get('image')->getData();
-        if ($file) {
-            $fileName = uniqid() . '.' . $file->guessExtension();
-            $file->move($this->getParameter('uploads_directory'), $fileName);
-            $evenement->setImage($fileName);
-        }*/
+    //    $file = $form->get('image')->getData();
+    //     if ($file) {
+    //         $fileName = uniqid() . '.' . $file->guessExtension();
+    //         $file->move($this->getParameter('uploads_directory'), $fileName);
+    //         $evenement->setImage($fileName);
+    //     }
 
         //Gestion image par huggungFace
 
        // nrécupèriw le prompt IA
-        $prompt = $form->get('promptIA')->getData();
+        //$prompt = $form->get('promptIA')->getData();
 
         // Génération de l'image
-        if ($prompt) {
-            $generatedFileName = $hfService->generateImage($prompt);
-            $evenement->setImage($generatedFileName);
-        }
+        // if ($prompt) {
+        //     $generatedFileName = $hfService->generateImage($prompt);
+        //     $evenement->setImage($generatedFileName);
+        // }
 
 
 
